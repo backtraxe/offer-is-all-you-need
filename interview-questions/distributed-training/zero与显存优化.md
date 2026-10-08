@@ -130,7 +130,7 @@ PyTorch 官方原生 FSDP（FullyShardedDataParallel）相当于 **ZeRO 思想�
 | `FULL_SHARD` | **ZeRO-3**（默认） | 参数 + 梯度 + 优化器状态 |
 | `HYBRID_SHARD` | ZeRO-3 × 节点内 / DDP × 节点间 | 8 卡内分片，跨节点复制——**工程上最常用的折中** |
 
-答法要点：**FSDP 就是"PyTorch 原生版 ZeRO"**，FULL_SHARD ≈ ZeRO-3；
+答法要点：**FSDP 就是「PyTorch 原生版 ZeRO」**，FULL_SHARD ≈ ZeRO-3；
 HYBRID_SHARD 是大集群上的实用形态——节点内 8 卡分片、跨节点复制，把通信
 留在节点内/节点间分层。FSDP2（`fully_shard` API）把分片从整个 module 改成逐
 parameter，更细粒度、通信更好重叠，可作为加分项提一句。
@@ -164,7 +164,7 @@ parameter，更细粒度、通信更好重叠，可作为加分项提一句。
    → 详见 [三维并行的 EP 节](./三维并行.md)。
 2. **激活显存**：MoE 中间 FFN 维度 × top-k 放大，**激活比同参数稠密模型大
    k 倍量级**；加上 EP 通信是 AllToAll ×top-k，长 batch 时激活+通信双杀。
-   估算时记住：**只用激活参数算"等效 FFN 宽度"，再按 dense 的激活公式乘 k**。
+   估算时记住：**只用激活参数算「等效 FFN 宽度」，再按 dense 的激活公式乘 k**。
 
 ## 七、Offload：把数据从 HBM 请出去
 

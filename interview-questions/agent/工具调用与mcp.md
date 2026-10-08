@@ -83,7 +83,7 @@ sequenceDiagram
 好的 Schema 直接决定 FC 准确率。要点清单：
 
 1. **name 要小写蛇形、动词开头**（`query_order`、`send_email`），和工具语义强绑定。
-2. **description 要"对模型说话"**：写清什么场景该用、什么场景**不该用**、和相邻
+2. **description 要「对模型说话」**：写清什么场景该用、什么场景**不该用**、和相邻
    工具的边界。例：`"查询订单状态。仅当用户提供订单号时使用；不要用它查库存，
    库存查询用 query_stock"`。
 3. **参数最小化 + 强约束**：用枚举收窄（`status: ["paid","shipped","closed"]`），

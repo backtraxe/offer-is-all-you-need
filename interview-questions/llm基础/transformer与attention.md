@@ -88,7 +88,7 @@ flowchart TB
     D --> E["RMSNorm"]
     E --> F["FFN（SwiGLU，约 8d² 参数）"]
     F --> G["残差相加"]
-    G -->|"×L 层后" --> H["final RMSNorm → LM Head → softmax → 下一个 token"]
+    G -->|"×L 层后"| H["final RMSNorm → LM Head → softmax → 下一个 token"]
 ```
 
 参数量估算（忽略 bias）：每层 attention 有 $W_Q,W_K,W_V,W_O$ 四个 $d \times d$

@@ -81,16 +81,16 @@ encoder 输出，长度可以不同——上面的 forward 已经天然支持，
 
 **面试官常见追问：**
 
-- **"为什么除以 √d？"** Q、K 分量独立均值为 0 方差为 1 时点积方差是 d，
+- **「为什么除以 √d？」** Q、K 分量独立均值为 0 方差为 1 时点积方差是 d，
   除 √d 归一方差，防 softmax 饱和区梯度消失。详见
   [transformer与attention](../../interview-questions/llm基础/transformer与attention.md)。
-- **"W_q/W_k/W_v 为什么不初始化 scale？"** 缩发放前向里而不是权重初始化
+- **「W_q/W_k/W_v 为什么不初始化 scale？」** 缩发放前向里而不是权重初始化
   里，是因为 scale 依赖 d_head 且作用在 score 上；若塞进初始化，后面改
   head 数就失配，且初始化的目标是控制激活方差（Xavier/Kaiming），与
   score 尺度是两件事。
-- **"causal mask 训练时也要加吗？"** 要。Teacher forcing 并行训练整条序列，
+- **「causal mask 训练时也要加吗？」** 要。Teacher forcing 并行训练整条序列，
   靠 mask 防信息泄漏，训练和推理逻辑统一。
-- **"dropout 加在哪？"** 标准答案两个位置：attn 权重上（`attn = dropout(attn)`）
+- **「dropout 加在哪？」** 标准答案两个位置：attn 权重上（`attn = dropout(attn)`）
   和 W_o 输出上。白板能答出前者加分。
 
 ## 二、numpy 手撕 attention 前向（含手写 softmax）
@@ -131,10 +131,10 @@ def attention(Q, K, V):
 
 **面试官常见追问：**
 
-- **"时间/空间复杂度？"** QK^T O(n²d)，显存 O(n²) ——顺着引出 FlashAttention。
-- **"如果序列很长怎么写更稳？"** 分块 + online softmax（维护 running max
+- **「时间/空间复杂度？」** QK^T O(n²d)，显存 O(n²) ——顺着引出 FlashAttention。
+- **「如果序列很长怎么写更稳？」** 分块 + online softmax（维护 running max
   和 running sum），能口述 FlashAttention 思路即可。
-- **"自回归场景这个函数哪一步浪费？"** 历史 K/V 每步重算——引出下题 KV Cache。
+- **「自回归场景这个函数哪一步浪费？」** 历史 K/V 每步重算——引出下题 KV Cache。
 
 ## 三、KV Cache 增量推理（伪代码）
 
@@ -173,12 +173,12 @@ def forward_incremental(self, x_new, kv_cache, pos):
 
 **面试官常见追问：**
 
-- **"KV Cache 显存怎么算？"** 每 token $2 \times L \times n_{kv} \times d_{head}
+- **「KV Cache 显存怎么算？」** 每 token $2 \times L \times n_{kv} \times d_{head}
   \times \text{bytes}$，总乘序列长 × batch。计算演练见
   [手写transformer组件](./手写transformer组件.md) 第四节。
-- **"decode 为什么 memory-bound？"** 每步算术强度极低，瓶颈是把 cache 从
+- **「decode 为什么 memory-bound？」** 每步算术强度极低，瓶颈是把 cache 从
   HBM 搬到计算单元——所以 GQA/MLA 砍 KV 头数直接提速解码。
-- **"cache 能不能不 cat?"** 可以预分配 `[B, max_len, ...]` 的大 buffer 按
+- **「cache 能不能不 cat?」** 可以预分配 `[B, max_len, ...]` 的大 buffer 按
   下标写入（vLLM 的 PagedAttention 就是把 buffer 分页），口述即可。
 
 ## 四、RoPE 手撕（旋转位置编码）
@@ -227,12 +227,12 @@ def apply_rope_simple(x, cos, sin):
 
 **面试官常见追问：**
 
-- **"RoPE 为什么好？"** 相对位置特性：Q_m 与 K_n 的内积只依赖 m−n（旋转
+- **「RoPE 为什么好？」** 相对位置特性：Q_m 与 K_n 的内积只依赖 m−n（旋转
   矩阵的性质 $R_m^\top R_n = R_{n-m}$）；长度外推比 learned 绝对编码好；
   无参数。
-- **"为什么要频率递减？"** 低频通道管长程位置关系、高频通道管近邻细节，
+- **「为什么要频率递减？」** 低频通道管长程位置关系、高频通道管近邻细节，
   类似傅里叶分解的多尺度。
-- **"长上下文扩窗怎么办？"** 缩放 base（NTK-aware scaling / YaRN）或对
+- **「长上下文扩窗怎么办？」** 缩放 base（NTK-aware scaling / YaRN）或对
   位置索引做线性内插（position interpolation），都是改 `inv_freq` 或 `pos`，
   该方法一行就能指出来。
 
@@ -277,11 +277,11 @@ class RMSNorm(nn.Module):
 
 **面试官常见追问：**
 
-- **"为什么大模型改用 RMSNorm？"** LN 减均值和求均值两次归约计算量大且
+- **「为什么大模型改用 RMSNorm？」** LN 减均值和求均值两次归约计算量大且
   被证明对性能贡献小；RMSNorm 省掉 mean 统计，约快 10%~40%，效果持平。
-- **"为什么 RMSNorm 输出均值会漂移、要紧吗？"** 漂移由 gamma 学习补偿，
+- **「为什么 RMSNorm 输出均值会漂移、要紧吗？」** 漂移由 gamma 学习补偿，
   实践里不影响收敛——答出"gamma 吸收了平移自由度"即可。
-- **"Pre-Norm 还是 Post-Norm？"** 大模型标配 Pre-Norm：残差通路保持恒等，
+- **「Pre-Norm 还是 Post-Norm？」** 大模型标配 Pre-Norm：残差通路保持恒等，
   深层不炸梯度。展开见
   [transformer与attention](../../interview-questions/llm基础/transformer与attention.md)
   高频追问清单。
@@ -334,11 +334,11 @@ class GroupedQueryAttention(MultiHeadAttention):
 
 **面试官常见追问：**
 
-- **"省的是什么？参数还是显存？"** 都省，但主要动机是 **KV Cache 显存**
+- **「省的是什么？参数还是显存？」** 都省，但主要动机是 **KV Cache 显存**
   ——解码时 K/V 头数直接决定 cache 大小，GQA-8 比 MHA 省 h/8 倍。
-- **"训练好的 MHA 模型能转 GQA 吗？"** 能，把组内 K/V 头做平均（mean
+- **「训练好的 MHA 模型能转 GQA 吗？」** 能，把组内 K/V 头做平均（mean
   pooling）初始化再少量继续训练（GQA 论文的做法，uptraining）。
-- **"为什么 query 不共享？"** 共享 Q 会砍表达能力且省不了缓存——cache
+- **「为什么 query 不共享？」** 共享 Q 会砍表达能力且省不了缓存——cache
   只存 K/V。
 
 ## 练习路径

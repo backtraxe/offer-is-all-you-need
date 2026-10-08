@@ -5,14 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="大模型面试备战知识库：Agent 开发 / AI Infra 方向，含 JD 分析、高频考点、手撕题、系统设计与推理引擎源码解读。">
   <title>offer-is-all-you-need · 大模型面试知识库</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
+  <link id="main-theme" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/jetbrains-mono@5/index.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="assets/site.css">
 </head>
 <body>
   <div id="app">正在加载知识库…</div>
+
   <script>
     function esc(s) {
       return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
+    function unesc(s) {
+      var t = document.createElement('textarea');
+      t.innerHTML = s;
+      return t.value;
+    }
+    window.__mermaidSources = [];
     window.$docsify = {
       name: '<b>offer-is-all-you-need</b>',
       nameLink: 'https://github.com/backtraxe/offer-is-all-you-need',
@@ -28,35 +38,28 @@
         noData: '没有找到相关内容',
         depth: 6
       },
-      markdown: {
-        renderer: {
-          code: function (code, lang) {
-            if (lang === 'mermaid') {
-              return '<div class="mermaid">' + esc(code) + '</div>';
-            }
-            return this.origin.code.apply(this, arguments);
+      plugins: []
+    };
+    $docsify.markdown = {
+      renderer: {
+        code: function (code, lang) {
+          if (lang === 'mermaid') {
+            // marked 传入的 code 已转义，解码回原文；渲染由 site.js 统一接管
+            var src = unesc(code);
+            var i = window.__mermaidSources.length;
+            window.__mermaidSources.push(src);
+            return '<div class="mermaid" data-mermaid-id="' + i + '">' + esc(src) + '</div>';
           }
+          return this.origin.code.apply(this, arguments);
         }
-      },
-      plugins: [
-        function (hook) {
-          hook.doneEach(function () {
-            var els = document.querySelectorAll('.mermaid:not([data-processed])');
-            if (els.length && window.mermaid) {
-              mermaid.run({ nodes: els }).catch(function (e) {
-                console.warn('mermaid render:', e);
-              });
-            }
-          });
-        }
-      ]
+      }
     };
   </script>
+
   <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-  <script>
-    mermaid.initialize({ startOnLoad: false, securityLevel: 'loose', theme: 'default' });
-  </script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify-copy-code@3/dist/docsify-copy-code.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <script src="assets/site.js"></script>
 </body>
 </html>

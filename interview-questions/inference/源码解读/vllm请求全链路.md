@@ -160,7 +160,7 @@ EngineCore——tokenize 并行化，调度仍单点保序。
   SSE 协议本身的取舍见
   [vllm与推理加速核心.md](../vllm与推理加速核心.md#九sse--websocket流式输出怎么到用户)。
 
-一句话证据：**API 层完全不碰模型，它只做"协议 ↔ token id"的翻译**，
+一句话证据：**API 层完全不碰模型，它只做「协议 ↔ token id」的翻译**，
 所以它可以随便多开、随便重启（重启只断连接，不掉 GPU 状态）。
 
 ### b. Engine 客户端：AsyncLLM → ZMQ 队列
@@ -174,7 +174,7 @@ EngineCore——tokenize 并行化，调度仍单点保序。
      `EngineCoreRequest`；
    - `output_processor.add_request()` 在本地为本请求建一条
      `RequestState` + `RequestOutputCollector`（一个 asyncio.Event 驱动的
-     单请求队列）——**这就是后面流式输出的"信箱"**；
+     单请求队列）——**这就是后面流式输出的「信箱」**；
    - `await self.engine_core.add_request_async(request)` 通过
      `core_client.py::AsyncMPClient` 把请求 msgpack 序列化后 PUSH 进 ZMQ。
 2. 回程：AsyncLLM 启动时拉起 `_run_output_handler()` →
@@ -368,42 +368,42 @@ rank，前向内的 all-reduce 走 NCCL。Scheduler 只在 driver 侧存在一�
 
 ## 五、面试怎么用：八条"读源码答追问"武器
 
-1. **"continuous batching 在哪落地？"**
+1. **「continuous batching 在哪落地？」**
    → `vllm/v1/engine/core.py::EngineCore.step()`：
    每轮 `schedule()` → `execute_model()` → `update_from_output()`，
    每轮重新决定 batch 成员。说完补一句"`step_with_batch_queue()` 还把
    CPU 调度和 GPU 计算流水化了"，直接显出你读过主干新代码。
-2. **"prefix cache 怎么命中的？"**
+2. **「prefix cache 怎么命中的？」**
    → `Request` 生成时按块算链式哈希（`kv_cache_utils.py::hash_block_tokens`，
    默认 sha256）；调度时 `KVCacheManager.get_computed_blocks()` →
    `coordinator.find_longest_cache_hit()` 查哈希表，命中块 ref_cnt++
    直接复用。命中粒度 = block（默认 16 token）。
-3. **"为什么 V1 比 V0 快？"**
+3. **「为什么 V1 比 V0 快？」**
    → 三个结构原因：EngineCore 独立进程 busy loop，调度心跳不被
    tokenize/HTTP 的 GIL 争抢打断（`core.py::EngineCoreProc.run_busy_loop`）；
    全链路 msgspec + ZMQ，老请求只发 diff（`SchedulerOutput` 的
    New/Cached 分离）；Sampler 全向量化无 Python 循环
    （`v1/sample/sampler.py`）。
-4. **"长 prompt 进来为什么不会卡死别人的 decode？"**
+4. **「长 prompt 进来为什么不会卡死别人的 decode？」**
    → `scheduler.py::schedule()` 里
    `input_budget = max_num_batched_tokens`：一轮总 token 数封顶，
    长 prefill 被自动切片与 decode 混排（chunked prefill 本体）。
-5. **"KV 满了怎么办？"**
+5. **「KV 满了怎么办？」**
    → running 申请新块失败 → `_preempt_request()` 抢占队尾、释放
    blocks、回 waiting；恢复时靠 prefix cache 命中便宜重算。
    注意补一句："V1 只有 recompute 抢占，V0 的 swap-to-CPU 已被移除。"
-6. **"PagedAttention 的块索引在代码哪里？"**
+6. **「PagedAttention 的块索引在代码哪里？」**
    → 两层：CPU 侧 `BlockPool` + `KVCacheManager.allocate_slots()`
    管分配和 block table 账本；kernel 侧在
    `vllm/v1/attention/backends/flash_attn.py` 等 backend 里按
-   block table 取 K/V。**"块管理在调度器，块索引在 attention kernel"**
+   block table 取 K/V。**「块管理在调度器，块索引在 attention kernel」**
    这句话层次分得很清楚。
-7. **"流式输出为什么不影响引擎吞吐？"**
+7. **「流式输出为什么不影响引擎吞吐？」**
    → 跨进程只传 token id；detokenize 在 API server 进程
    `OutputProcessor` + `IncrementalDetokenizer`（fast 路径直接调 Rust
    的 `DecodeStream`）；SSE 拼装在最外层 `serving.py`。
    EngineCore 对"用户在看文字"一无所知。
-8. **"TP=4 时调度器有几份？"**
+8. **「TP=4 时调度器有几份？」**
    → 一份。Scheduler 只在 EngineCore（driver）侧存在，`SchedulerOutput`
    广播到各 TP rank 的 `GPUModelRunner`；卡间同步靠前向里的 NCCL
    all-reduce，调度本身无分布式一致性开销。

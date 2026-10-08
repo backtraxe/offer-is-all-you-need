@@ -1,0 +1,357 @@
+/* offer-is-all-you-need 站点主题
+ * 形状规则（唯一一套圆角）：内容容器 12px / 小控件 8-10px / 芯片类胶囊 999px / 行内码 6px
+ * 颜色规则（唯一一个 accent）：亮 #2563eb / 暗 #7c9cff，中性色统一 slate 家族
+ * 阴影规则：不使用纯黑影子，悬停阴影向 accent 着色
+ */
+
+:root {
+  --accent: #2563eb;
+  --accent-soft: #eff4fd;
+  --accent-ink: #1d4ed8;
+  --link: #2563eb;
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --text: #1e293b;
+  --text-strong: #0f172a;
+  --muted: #64748b;
+  --faint: #94a3b8;
+  --card-bg: #fbfcfe;
+  --code-bg: #f1f5f9;
+  --quote-bg: #f8fafc;
+  --page-bg: #fdfdfd;
+  --mono: "JetBrains Mono", "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+
+/* ============ 基础排版 ============ */
+body {
+  background: var(--page-bg);
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.app-name-link { font-weight: 700; letter-spacing: -0.01em; }
+
+.markdown-section {
+  max-width: 880px;
+  padding: 34px 40px 90px;
+  font-size: 15.5px;
+  line-height: 1.85;
+  color: var(--text);
+}
+
+.markdown-section h1 {
+  padding-bottom: 0.45em;
+  border-bottom: 1px solid var(--border);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--text-strong);
+}
+
+.markdown-section h2 {
+  margin-top: 2.3em;
+  padding-left: 0.55em;
+  border-left: 3px solid var(--accent);
+  font-weight: 650;
+  letter-spacing: -0.015em;
+  color: var(--text-strong);
+}
+
+.markdown-section h3 {
+  margin-top: 1.9em;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  color: var(--text-strong);
+}
+
+.markdown-section a {
+  color: var(--link);
+  text-decoration: none;
+  text-underline-offset: 3px;
+}
+.markdown-section a:hover { text-decoration: underline; }
+
+a:focus-visible, button:focus-visible, .sidebar a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* ============ 引用块（导读、注记） ============ */
+blockquote {
+  margin: 1.1em 0;
+  padding: 0.75em 1.15em;
+  background: var(--quote-bg);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 12px 12px 0;
+  color: var(--muted);
+}
+blockquote p { margin: 0.35em 0; }
+
+/* ============ 表格 ============ */
+.table-scroll { overflow-x: auto; margin: 1.2em 0; border-radius: 12px; border: 1px solid var(--border); }
+
+.markdown-section table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #fff;
+  border: none;
+  border-radius: 0;
+}
+.markdown-section th {
+  background: #f1f5f9;
+  font-weight: 650;
+  white-space: nowrap;
+  color: var(--text-strong);
+  border-bottom: 1px solid var(--border-strong);
+}
+.markdown-section th, .markdown-section td {
+  padding: 0.55em 0.95em;
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  vertical-align: top;
+}
+.markdown-section tr:last-child td { border-bottom: none; }
+.markdown-section th:last-child, .markdown-section td:last-child { border-right: none; }
+.markdown-section tbody tr:hover { background: #f8fafc; }
+
+/* ============ 代码 ============ */
+.markdown-section pre {
+  border-radius: 12px;
+  padding: 1.05em 1.25em;
+  line-height: 1.65;
+  border: 1px solid var(--border);
+}
+.markdown-section pre code,
+.markdown-section code {
+  font-family: var(--mono);
+  font-size: 0.86em;
+}
+.markdown-section code {
+  border-radius: 6px;
+  background: var(--code-bg);
+  padding: 1px 6px;
+}
+
+.docsify-copy-code-button {
+  border-radius: 8px !important;
+  opacity: 0;
+  transition: opacity 0.15s ease, transform 0.1s ease;
+  font-family: var(--mono);
+}
+pre:hover .docsify-copy-code-button { opacity: 1; }
+.docsify-copy-code-button:active { transform: translateY(1px); }
+
+/* ============ Mermaid 图表：卡片承载 + 点击放大 ============ */
+.markdown-section .mermaid {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin: 1.5em 0;
+  padding: 22px 18px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow-x: auto;
+  cursor: zoom-in;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.markdown-section .mermaid:hover {
+  border-color: var(--accent);
+  box-shadow: 0 6px 22px rgba(37, 99, 235, 0.14);
+}
+.markdown-section .mermaid svg { max-width: 100%; height: auto; }
+
+.mermaid-zoom-hint {
+  position: absolute;
+  top: 9px;
+  right: 12px;
+  padding: 3px 10px;
+  font-size: 11.5px;
+  color: var(--faint);
+  background: rgba(148, 163, 184, 0.1);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  pointer-events: none;
+  user-select: none;
+  transition: color 0.2s ease;
+}
+.markdown-section .mermaid:hover .mermaid-zoom-hint { color: var(--accent); }
+
+/* ============ 图表放大浮层 ============ */
+.mermaid-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+.mermaid-modal.open { opacity: 1; pointer-events: auto; }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .mermaid-modal { background: rgba(15, 23, 42, 0.92); }
+}
+
+.mermaid-modal .mz-canvas {
+  width: 92vw;
+  height: 88vh;
+  overflow: hidden;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 24px 80px rgba(15, 23, 42, 0.45);
+  cursor: grab;
+  touch-action: none;
+}
+.mermaid-modal .mz-canvas:active { cursor: grabbing; }
+.mermaid-modal .mz-stage { transform-origin: 0 0; display: inline-block; padding: 24px; }
+.mermaid-modal .mz-stage svg { max-width: none !important; }
+
+.mermaid-modal .mz-toolbar {
+  position: absolute;
+  top: 18px;
+  right: 24px;
+  display: flex;
+  gap: 8px;
+}
+.mermaid-modal .mz-toolbar button {
+  min-width: 38px;
+  height: 38px;
+  padding: 0 12px;
+  border: none;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.94);
+  color: #0f172a;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.28);
+  transition: transform 0.1s ease, background 0.15s ease;
+}
+.mermaid-modal .mz-toolbar button:hover { background: #e2e8f0; }
+.mermaid-modal .mz-toolbar button:active { transform: translateY(1px); }
+
+/* ============ 侧边栏 ============ */
+.sidebar {
+  border-right: 1px solid var(--border);
+  background: var(--page-bg);
+}
+.sidebar-nav > ul > li > p,
+.sidebar-nav li > p {
+  margin: 1.15em 0 0.3em;
+  padding-top: 0.85em;
+  border-top: 1px solid var(--border);
+  color: var(--faint);
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.sidebar-nav > ul > li:first-child > p { border-top: none; padding-top: 0; }
+
+/* 嵌套层级轨道 */
+.sidebar ul li ul {
+  margin-left: 7px;
+  padding-left: 12px;
+  border-left: 1px solid var(--border);
+}
+
+.sidebar a {
+  display: block;
+  padding: 3px 10px;
+  border-radius: 8px;
+  color: #475569;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.sidebar a:hover {
+  background: var(--accent-soft);
+  text-decoration: none;
+  color: var(--accent-ink);
+}
+.sidebar li.active > a {
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  font-weight: 600;
+}
+
+/* 搜索框 */
+.search { border-bottom: 1px solid var(--border); }
+.search input { border-radius: 8px; border: 1px solid var(--border); }
+.search input:focus { border-color: var(--accent); outline: none; }
+
+/* ============ 阅读进度条（单一 accent，无渐变彩虹） ============ */
+#reading-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2.5px;
+  width: 0;
+  background: var(--accent);
+  z-index: 10000;
+  transition: width 0.08s linear;
+}
+
+/* ============ 主题切换按钮 ============ */
+#theme-toggle {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 10001;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--text);
+  font-size: 18px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12);
+  transition: transform 0.12s ease, border-color 0.2s ease;
+}
+#theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+#theme-toggle:active { transform: translateY(1px) scale(0.97); }
+
+/* ============ 暗黑模式 ============ */
+body.dark {
+  --page-bg: #0c1220;
+  --border: #2a364d;
+  --border-strong: #3b475c;
+  --text: #dbe3ee;
+  --text-strong: #f1f5f9;
+  --muted: #8b99ad;
+  --faint: #6b7a90;
+  --card-bg: #141c2c;
+  --code-bg: #1a2436;
+  --quote-bg: #141c2c;
+  --accent: #7c9cff;
+  --accent-soft: rgba(124, 156, 255, 0.13);
+  --accent-ink: #a9bfff;
+  --link: #7c9cff;
+  background: var(--page-bg);
+}
+
+body.dark .markdown-section { color: var(--text); }
+body.dark .markdown-section table { background: #101828; }
+body.dark .markdown-section th { background: #1a2436; }
+body.dark .markdown-section tbody tr:hover { background: #16213a; }
+body.dark .markdown-section pre { border-color: var(--border); }
+body.dark .sidebar a { color: #b6c1d0; }
+body.dark #theme-toggle { background: #1a2436; border-color: var(--border); }
+body.dark .search input { background: #101828; color: var(--text); }
+body.dark .mermaid-modal .mz-canvas { background: #fff; } /* SVG 文字可读性优先 */
+
+/* ============ 移动端 ============ */
+@media (max-width: 768px) {
+  .markdown-section { padding: 24px 20px 70px; }
+  .markdown-section .mermaid { padding: 14px 12px; }
+  .mermaid-modal .mz-canvas { width: 96vw; height: 80vh; }
+}

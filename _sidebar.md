@@ -1,12 +1,12 @@
 - [首页](README.md)
 
-- **🧭 学习地图**
+- **学习地图**
   - [学习路线图](resources/学习路线图.md)
   - [JD 分析 · Agent 开发岗](resources/jd分析-agent开发岗.md)
   - [JD 分析 · AI Infra 岗](resources/jd分析-ai-infra岗.md)
   - [学习资源清单](resources/学习资源清单.md)
 
-- **📚 高频考点**
+- **高频考点**
   - [考点地图（README）](interview-questions/README.md)
   - [高频面试真题汇总](interview-questions/高频面试真题汇总.md)
   - LLM 基础
@@ -40,7 +40,7 @@
     - [ZeRO 与显存优化](interview-questions/distributed-training/zero与显存优化.md)
     - [训练框架与稳定性](interview-questions/distributed-training/训练框架与稳定性.md)
 
-- **⌨️ 手撕题（Coding）**
+- **手撕题**
   - [题库导读](coding/README.md)
   - 模型手撕
     - [手写 Attention](coding/模型手撕/手写attention.md)
@@ -51,7 +51,7 @@
     - [CUDA 算子手撕](coding/工程手撕/cuda算子手撕.md)
     - [通用手撕清单](coding/工程手撕/通用手撕清单.md)
 
-- **🏗️ 系统设计**
+- **系统设计**
   - [题库导读](system-design/README.md)
   - [设计企业知识库 Agent](system-design/设计企业知识库agent.md)
   - [设计 AI 客服 Agent](system-design/设计ai客服agent.md)
