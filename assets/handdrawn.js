@@ -20,7 +20,7 @@
   var FONT = '"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Segoe UI",sans-serif';
 
   // 画布尺寸上限：超出则 fallback 给 mermaid（避免自研布局在超宽图上失控）
-  var FLOW_MAX_W = 2600, FLOW_MAX_H = 2600;
+  var FLOW_MAX_W = 3200, FLOW_MAX_H = 2600;
   var SEQ_MAX_W = 1600, SEQ_MAX_H = 2600;
 
   /* ================= 文本工具 ================= */
@@ -76,26 +76,33 @@
     return Math.max(0, w);
   }
 
-  /** 贪心逐字换行；返回 [{text, w}] */
+  /** 自然断点：空格 / / _ · - \ （不选 . ，避免断版本号/文件名） */
+  var BREAK_CHARS = ' /_·-\\';
+  function naturalBreak(ch) { return BREAK_CHARS.indexOf(ch) >= 0; }
+
+  /** 贪心换行；优先在自然断点处断，避免在 ASCII 长词中间硬断；返回 [{text, w}] */
   function wrapLine(line, maxW, size) {
     if (maxW <= 0) return [{ text: line, w: measureLine(line, size) }];
-    var out = [], buf = '', bufW = 0;
+    var out = [], buf = '', bufW = 0, breakPos = -1;
     for (var i = 0; i < line.length; i++) {
       var ch = line.charAt(i);
       var cw = measureLine(ch, size);
       if (buf && bufW + cw > maxW) {
-        // 避免行首标点（中英文常见标点不抬行）
-        if (/^[，。、；：）】》！？,.;:)\]!?%]/.test(ch)) {
-          buf += ch; bufW += cw; i++;
-          if (i < line.length) { ch = ''; }
+        // 优先在 buf 中的自然断点处断（断点字符留在上一行行尾）
+        if (breakPos > 0 && breakPos < buf.length) {
+          out.push({ text: buf.slice(0, breakPos), w: measureLine(buf.slice(0, breakPos), size) });
+          buf = buf.slice(breakPos).replace(/^[ ]+/, '');
+          bufW = measureLine(buf, size);
         } else {
           out.push({ text: buf, w: bufW });
-          buf = ch; bufW = cw; ch = '';
+          buf = ''; bufW = 0;
         }
+        breakPos = naturalBreak(buf.charAt(buf.length - 1)) ? buf.length : -1;
       }
-      if (ch) { buf += ch; bufW += cw; }
+      buf += ch; bufW += cw;
+      if (naturalBreak(ch)) breakPos = buf.length;
     }
-    if (buf || !out.length) out.push({ text: buf || line, w: buf ? bufW : measureLine(line, size) });
+    if (buf || !out.length) out.push({ text: buf, w: buf ? bufW : measureLine(line, size) });
     return out;
   }
 
@@ -458,7 +465,7 @@
 
   /* ================= flow 布局 ================= */
 
-  var MARGIN = 26, HGAP = 48, VGAP = 42;
+  var MARGIN = 26, HGAP = 48, VGAP = 52;
   var NODE_FS = 13, NODE_LINE_H = 22, NODE_PADX = 13, NODE_PADY = 12;
   var EDGE_FS = 12, EDGE_PAD = 6;
 
@@ -624,125 +631,189 @@
     };
   }
 
-  /* ================= flow 驱动布局（两层：容器内 + 单元间） ================= */
+  /* ================= flow 驱动布局（全局 rank + 泳道列（lane）布局） ================= */
+
+  // 容器垂直留白需 ≤ VGAP（bottomPad + padTop + 标题区 ≤ 层间距），否则相邻 rank 的簇框会压线
+  var SUB_PADX = 18, SUB_PADY = 12, SUB_TITLE_H = 26;
 
   function epIsNode(ep) { return ep && ep.node != null; }
 
-  // 把 rank 容器（sub）和 lone 节点统一为单元
-  function buildUnits(state) {
-    var units = []; // {key, sub?|node?, w, h}
-    var unitOfNode = {};
+  /** 端点展开为节点 id 数组（容器端点展开为其成员节点） */
+  function expandEp(state, ep) {
+    if (epIsNode(ep)) return [ep.node];
+    var sub = state.subs[ep.sub];
+    return sub ? sub.members.slice() : [];
+  }
+
+  /** 排名用约束边：节点边原样进，容器引用边展开为成员笛卡尔积 */
+  function constraintEdges(state) {
+    var out = [];
+    state.edges.forEach(function (e) {
+      var froms = expandEp(state, e.s), tos = expandEp(state, e.t);
+      froms.forEach(function (s) {
+        tos.forEach(function (t) {
+          if (s !== t) out.push({ s: s, t: t, invis: e.invis });
+        });
+      });
+    });
+    return out;
+  }
+
+  /**
+   * mermaid 语义布局：
+   *  1) 全局 rank（跨子图对齐，同 rank 节点共享 y 带）
+   *  2) 泳道列：每个 subgraph 一列（多 rank 的簇自然竖排/横排），孤立节点自成一列
+   *  3) 列序按子图间的约束做 barycenter 平均（初值来自扁平布局的重心）
+   *  4) 每列内按 rank 分行居中；某 rank 只有一个“柔性”实体（孤立节点 / 单 rank 簇）时整行对画布居中
+   */
+  function layoutFlow(state) {
+    // 1. 节点尺寸 + 全局分层
+    state.order.forEach(function (id) { sizeNode(state.nodes[id]); });
+    var ids = state.order.slice();
+    var cEdges = constraintEdges(state);
+    var lev = layoutLevel(ids, state.nodes, cEdges, state.dir);
+    var flatPos = lev.pos, rank = lev.rank;
+    var horizontal = state.dir === 'LR' || state.dir === 'RL';
+    var mirror = state.dir === 'BT' || state.dir === 'RL';
+
+    // 2. 泳道单元
+    var memberOf = {};
     state.subs.forEach(function (sub) {
-      units.push({ key: 'U' + sub.idx, sub: sub.idx });
-      sub.members.forEach(function (id) { unitOfNode[id] = 'U' + sub.idx; });
+      sub.members.forEach(function (id) { memberOf[id] = sub.idx; });
+    });
+    var lanes = [];
+    state.subs.forEach(function (sub) {
+      var mem = sub.members.filter(function (id) { return flatPos[id]; });
+      if (mem.length) lanes.push({ kind: 'sub', sub: sub, members: mem });
     });
     state.order.forEach(function (id) {
-      if (unitOfNode[id] == null) {
-        var key = 'N' + id;
-        unitOfNode[id] = key;
-        units.push({ key: key, node: id });
-      }
+      if (memberOf[id] == null && flatPos[id]) lanes.push({ kind: 'lone', members: [id] });
     });
-    var unitByKey = {};
-    units.forEach(function (u) { unitByKey[u.key] = u; });
-    function unitOfEp(ep) {
-      if (ep.sub != null) return 'U' + ep.sub;
-      return unitOfNode[ep.node] || null;
-    }
-    return { units: units, unitByKey: unitByKey, unitOfEp: unitOfEp };
-  }
+    if (!lanes.length) lanes = [{ kind: 'lone', members: ids }];
 
-  function sizeSub(state, sub) {
-    // 容器内部布局（dir 可被子图的 direction 覆盖）
-    var dir = sub.dir || state.dir;
-    var nodeMap = state.nodes;
-    var ids = sub.members.filter(function (id) { return nodeMap[id] && !nodeMap[id].pseudo; });
-    if (!ids.length) { sub.layout = null; sub.cw = 60; sub.ch = 44; return; }
-    var innerEdges = state.edges.filter(function (e) {
-      return epIsNode(e.s) && epIsNode(e.t) &&
-             ids.indexOf(e.s.node) >= 0 && ids.indexOf(e.t.node) >= 0;
+    var laneOf = {};
+    lanes.forEach(function (l, i) {
+      l.idx = i;
+      l.members.forEach(function (id) { laneOf[id] = i; });
     });
-    var lev = layoutLevel(ids, nodeMap, innerEdges, dir);
-    sub.layout = lev;
-    // 内容包围盒
-    var minX = 1e9, minY = 1e9, maxX = -1e9, maxY = -1e9;
-    ids.forEach(function (id) {
-      var p = lev.pos[id], n = nodeMap[id];
-      minX = Math.min(minX, p.x); minY = Math.min(minY, p.y);
-      maxX = Math.max(maxX, p.x + n.w); maxY = Math.max(maxY, p.y + n.h);
-    });
-    sub.contentBox = { x: minX, y: minY, w: maxX - minX, h: maxY - minY };
-    sub.cw = sub.contentBox.w + SUB_PADX * 2;
-    sub.ch = sub.contentBox.h + SUB_PADY * 2 + SUB_TITLE_H;
-  }
 
-  var SUB_PADX = 18, SUB_PADY = 16, SUB_TITLE_H = 30;
-
-  function layoutFlow(state) {
-    // 1. 节点测尺寸
-    state.order.forEach(function (id) { sizeNode(state.nodes[id]); });
-    // 2. 容器内部
-    state.subs.forEach(function (sub) { sizeSub(state, sub); });
-    // 3. 单元间布局
-    var U = buildUnits(state);
-    U.units.forEach(function (u) {
-      if (u.sub != null) {
-        var sub = state.subs[u.sub];
-        u.w = sub.cw; u.h = sub.ch;
-      } else {
-        var n = state.nodes[u.node];
-        u.w = n.w; u.h = n.h;
-      }
+    // 3. 每列的行（按 rank 分组）、行跨度与列宽
+    lanes.forEach(function (l) {
+      var rows = {};
+      l.members.forEach(function (id) {
+        var r = rank[id] != null ? rank[id] : 0;
+        (rows[r] = rows[r] || []).push(id);
+      });
+      l.rows = rows;
+      l.minR = Math.min.apply(null, Object.keys(rows).map(Number));
+      l.maxR = Math.max.apply(null, Object.keys(rows).map(Number));
+      var w = 0;
+      Object.keys(rows).forEach(function (r) {
+        var mem = rows[r];
+        mem.sort(function (a, b) { return flatPos[a].cx - flatPos[b].cx; }); // 保序
+        var rw = 0;
+        mem.forEach(function (id) { rw += state.nodes[id].w; });
+        rw += HGAP * Math.max(0, mem.length - 1);
+        if (rw > w) w = rw;
+      });
+      l.width = w;
     });
-    var unitEdges = [];
-    state.edges.forEach(function (e) {
-      var a = U.unitOfEp(e.s), b = U.unitOfEp(e.t);
-      if (a && b && a !== b) {
-        unitEdges.push({ s: a, t: b, invis: e.invis });
-      }
-    });
-    var unitMap = {};
-    U.units.forEach(function (u) { unitMap[u.key] = u; });
-    var levU = layoutLevel(U.units.map(function (u) { return u.key; }), unitMap, unitEdges, state.dir);
 
-    // 4. 绝对位置：单元 → 容器 → 节点
+    // 4. 列序：起始 rank 早的列靠左（图上深向下），同一起点按扁平布局重心排序
+    var seed = lanes.map(function (l) {
+      var s = 0;
+      l.members.forEach(function (id) { s += flatPos[id].cx; });
+      return s / l.members.length;
+    });
+    var orderIdx = lanes.map(function (l, i) { return i; }).sort(function (a, b) {
+      return (lanes[a].minR - lanes[b].minR) || (seed[a] - seed[b]);
+    });
+
+    // 5. 列中心（交叉轴累计）
+    var cursor = 0;
+    var totalCross = 0;
+    orderIdx.forEach(function (i, k) {
+      var l = lanes[i];
+      l.cx = cursor + l.width / 2;
+      cursor += l.width + (k < orderIdx.length - 1 ? HGAP : 0);
+    });
+    totalCross = cursor;
+
+    // 6. 布置位置：列内按 rank 分行，行内成员沿交叉轴居中于列中心
+    var pos = {};
+    lanes.forEach(function (l) {
+      Object.keys(l.rows).forEach(function (rk) {
+        var mem = l.rows[rk];
+        var rowW = 0;
+        mem.forEach(function (id) { rowW += state.nodes[id].w; });
+        rowW += HGAP * (mem.length - 1);
+        var start = l.cx - rowW / 2;
+        mem.forEach(function (id) {
+          var n = state.nodes[id], fp = flatPos[id];
+          if (horizontal) {
+            pos[id] = { x: fp.x, y: start, cx: fp.cx, cy: start + n.h / 2 };
+            start += n.h + HGAP;
+          } else {
+            pos[id] = { x: start, y: fp.y, cx: start + n.w / 2, cy: fp.cy };
+            start += n.w + HGAP;
+          }
+        });
+      });
+    });
+
+    // 7. solo rank 居中：该 rank 只有一个柔性实体（孤立节点 / 单 rank 簇）时对总宽居中
+    var byRank = {};
+    lanes.forEach(function (l) {
+      Object.keys(l.rows).forEach(function (rk) {
+        (byRank[rk] = byRank[rk] || []).push(l);
+      });
+    });
+    Object.keys(byRank).forEach(function (rk) {
+      var ls = byRank[rk];
+      if (ls.length !== 1) return;
+      var l = ls[0];
+      var flexible = l.kind === 'lone' || (l.minR === l.maxR);
+      if (!flexible) return;
+      var mem = l.rows[rk];
+      var lo = 1e9, hi = -1e9;
+      mem.forEach(function (id) {
+        var p = pos[id], n = state.nodes[id];
+        var a = horizontal ? p.y : p.x, s = horizontal ? n.h : n.w;
+        lo = Math.min(lo, a); hi = Math.max(hi, a + s);
+      });
+      var shift = totalCross / 2 - (lo + hi) / 2;
+      if (!shift) return;
+      mem.forEach(function (id) {
+        if (horizontal) { pos[id].y += shift; pos[id].cy += shift; }
+        else { pos[id].x += shift; pos[id].cx += shift; }
+      });
+    });
+
+    // 8. 输出几何（容器 = 成员 bbox + padding + 标题区）
     var nodeGeom = {}, subGeom = {};
-    U.units.forEach(function (u) {
-      var p = levU.pos[u.key];
-      if (u.sub != null) {
-        var sub = state.subs[u.sub];
-        subGeom[u.sub] = { x: p.x, y: p.y, w: u.w, h: u.h, title: sub.title, tone: sub.tone || '' };
-        if (sub.layout) {
-          var ox = p.x + SUB_PADX - sub.contentBox.x;
-          var oy = p.y + SUB_PADY + SUB_TITLE_H - sub.contentBox.y;
-          sub.members.forEach(function (id) {
-            var ip = sub.layout.pos[id];
-            if (!ip) return;
-            var n = state.nodes[id];
-            nodeGeom[id] = { x: ox + ip.x, y: oy + ip.y, w: n.w, h: n.h };
-          });
-        }
-      } else {
-        nodeGeom[u.node] = { x: p.x, y: p.y, w: u.w, h: u.h };
-      }
+    ids.forEach(function (id) {
+      var p = pos[id] || flatPos[id], n = state.nodes[id];
+      nodeGeom[id] = { x: p.x, y: p.y, w: n.w, h: n.h };
+    });
+    state.subs.forEach(function (sub) {
+      var minX = 1e9, minY = 1e9, maxX = -1e9, maxY = -1e9, has = false;
+      sub.members.forEach(function (id) {
+        var g = nodeGeom[id];
+        if (!g) return;
+        has = true;
+        minX = Math.min(minX, g.x); minY = Math.min(minY, g.y);
+        maxX = Math.max(maxX, g.x + g.w); maxY = Math.max(maxY, g.y + g.h);
+      });
+      if (!has) return;
+      subGeom[sub.idx] = {
+        x: minX - SUB_PADX, y: minY - SUB_PADY - SUB_TITLE_H,
+        w: (maxX - minX) + SUB_PADX * 2, h: (maxY - minY) + SUB_PADY * 2 + SUB_TITLE_H,
+        title: sub.title, tone: sub.tone || ''
+      };
     });
 
-    // 5. 画布边界
-    var minX = 1e9, minY = 1e9, maxX = -1e9, maxY = -1e9;
-    function grow(x, y, w, h) {
-      minX = Math.min(minX, x); minY = Math.min(minY, y);
-      maxX = Math.max(maxX, x + w); maxY = Math.max(maxY, y + h);
-    }
-    Object.keys(nodeGeom).forEach(function (id) {
-      var g = nodeGeom[id]; grow(g.x, g.y, g.w, g.h);
-    });
-    Object.keys(subGeom).forEach(function (k) {
-      var g = subGeom[k]; grow(g.x, g.y, g.w, g.h);
-    });
-
-    return { nodeGeom: nodeGeom, subGeom: subGeom, state: state, levU: levU };
+    return { nodeGeom: nodeGeom, subGeom: subGeom, state: state, levU: lev };
   }
-
   /* ================= flow 路由 + 指令生成 ================= */
 
   function endpointBox(L, ep) {
@@ -1128,7 +1199,7 @@
         under.push('<g class="hd-cluster' + danger + '">' +
           '<rect class="hd-cluster-rect" x="' + fmt(cmd.x) + '" y="' + fmt(cmd.y) +
           '" width="' + fmt(cmd.w) + '" height="' + fmt(cmd.h) + '" rx="10"/>' +
-          '<text class="hd-cluster-title" x="' + fmt(cmd.x + 12) + '" y="' + fmt(cmd.y + 15) +
+          '<text class="hd-cluster-title" x="' + fmt(cmd.x + 12) + '" y="' + fmt(cmd.y + 13) +
           '" text-anchor="start" dominant-baseline="middle">' + escSvg(cmd.title) + '</text></g>');
       } else if (cmd.op === 'lifeline') {
         under.push('<line class="hd-lifeline" x1="' + fmt(cmd.x) + '" y1="' + fmt(cmd.y0) +
