@@ -61,6 +61,11 @@
     document.querySelectorAll('.mermaid').forEach(function (el) {
       var id = parseInt(el.getAttribute('data-mermaid-id'), 10);
       if (isNaN(id) || window.__mermaidSources[id] === undefined) return;
+      // 优先走手绘渲染（rough.js）；不支持或失败再回到 mermaid
+      if (window.__hd && window.__hd.render(el, window.__mermaidSources[id])) {
+        ensureZoomHint(el);
+        return;
+      }
       el.removeAttribute('data-processed');
       // textContent 赋值不走 HTML 解析，<br/> 与引号保持字面量给 mermaid
       el.textContent = window.__mermaidSources[id];
@@ -142,14 +147,12 @@
   }
 
   function fitToCanvas() {
-    var svg = stage.querySelector('svg');
-    if (!svg) { applyTransform(); return; }
-    var w = svg.getBoundingClientRect().width / view.scale;
-    var h = svg.getBoundingClientRect().height / view.scale;
+    var node = stage.querySelector('svg') || stage.querySelector('img');
+    if (!node) { applyTransform(); return; }
     view.x = 0; view.y = 0; view.scale = 1;
     stage.style.transform = 'none';
-    w = svg.getBoundingClientRect().width;
-    h = svg.getBoundingClientRect().height;
+    var w = node.getBoundingClientRect().width;
+    var h = node.getBoundingClientRect().height;
     if (w > 0 && h > 0) {
       view.scale = Math.min(canvas.clientWidth / (w + 48), canvas.clientHeight / (h + 48), 3);
       view.x = (canvas.clientWidth - w * view.scale) / 2;
@@ -161,9 +164,27 @@
   function openMermaidModal(el) {
     ensureModal();
     var svg = el.querySelector('svg');
-    if (!svg) return;
+    var hdCanvas = el.querySelector('canvas');
     stage.innerHTML = '';
-    stage.appendChild(svg.cloneNode(true));
+    if (hdCanvas) {
+      // 手绘图：canvas 快照为图片放大；浮层背景按当前主题补齐
+      try {
+        var img = document.createElement('img');
+        img.src = hdCanvas.toDataURL('image/png');
+        img.style.width = hdCanvas.style.width;
+        img.style.height = hdCanvas.style.height;
+        img.alt = 'diagram';
+        stage.appendChild(img);
+        canvas.style.background = document.body.classList.contains('dark') ? '#141c2b' : '#ffffff';
+      } catch (e) {
+        return;
+      }
+    } else if (svg) {
+      stage.appendChild(svg.cloneNode(true));
+      canvas.style.background = '';
+    } else {
+      return;
+    }
     modal.classList.add('open');
     document.body.style.overflow = 'hidden';
     view = { scale: 1, x: 0, y: 0 };
@@ -205,6 +226,7 @@
     if (btn) btn.innerHTML = dark ? '<i class="ti ti-sun"></i>' : '<i class="ti ti-moon-stars"></i>';
     try { localStorage.setItem('oiayn-theme', dark ? 'dark' : 'light'); } catch (e) {}
     if (rerender) renderMermaidDiagrams();
+    if (window.__hd) window.__hd.rerenderAll();
   }
 
   function initThemeToggle() {
