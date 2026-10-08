@@ -378,3 +378,94 @@ body.dark .markdown-section .mermaid svg .cluster rect { fill: #141c2b; }
   .markdown-section .mermaid { padding: 14px 12px; }
   .mermaid-modal .mz-canvas { width: 96vw; height: 80vh; }
 }
+
+/* ============ handdrawn.js 自研 mermaid → SVG：简约科技风 ============ */
+.hd-svg {
+  --hd-edge: #8b949e;
+  --hd-text: #1f2328;
+  --hd-muted: #65707d;
+  --hd-node-fill: #ffffff;
+  --hd-node-stroke: #d0d7de;
+  --hd-cluster-fill: #f8fafc;
+  --hd-cluster-stroke: #d0d7de;
+  --hd-cluster-text: #8b949e;
+  --hd-red: #cf222e;
+  --hd-red-fill: #ffeff0;
+  --hd-label-bg: #ffffff;
+  --hd-label-text: #57606a;
+  --hd-note-fill: #fff8dc;
+  --hd-note-stroke: #e6d27e;
+  --hd-note-text: #7a5c00;
+  --hd-lifeline: #d0d7de;
+  --hd-accent: #2563eb;
+  --hd-accent-fill: #eff6ff;
+  --hd-accent-text: #1d4ed8;
+  display: block;
+  font-family: var(--sans);
+}
+body.dark .hd-svg {
+  --hd-edge: #7d8590;
+  --hd-text: #e6edf3;
+  --hd-muted: #848d97;
+  --hd-node-fill: #161b22;
+  --hd-node-stroke: #30363d;
+  --hd-cluster-fill: #11161d;
+  --hd-cluster-stroke: #30363d;
+  --hd-cluster-text: #6e7681;
+  --hd-red: #ff7b72;
+  --hd-red-fill: #3d2027;
+  --hd-label-bg: #161b22;
+  --hd-label-text: #adb7c1;
+  --hd-note-fill: #322d12;
+  --hd-note-stroke: #8c6f35;
+  --hd-note-text: #d0a94b;
+  --hd-lifeline: #30363d;
+  --hd-accent: #4493f8;
+  --hd-accent-fill: #0f1f3a;
+  --hd-accent-text: #93c5fd;
+}
+
+/* 防冲突：旧的全局规则 .mermaid svg rect { rx:8px } 会覆盖 hd 圆角属性 */
+.markdown-section .mermaid svg.hd-svg rect { rx: auto; ry: auto; }
+
+/* 节点 */
+.hd-svg .hd-node-shape { fill: var(--hd-node-fill); stroke: var(--hd-node-stroke); stroke-width: 1.25; }
+.hd-svg .hd-node:hover .hd-node-shape { stroke: var(--hd-edge); filter: drop-shadow(0 1px 3px rgba(27, 31, 36, 0.12)); }
+.hd-svg .hd-danger .hd-node-shape { stroke: var(--hd-red); fill: var(--hd-red-fill); }
+.hd-svg .hd-node-text { fill: var(--hd-text); font-size: 13px; pointer-events: none; }
+.hd-svg .hd-node-text.hd-danger-text { fill: var(--hd-red); }
+.hd-svg .hd-node-point, .hd-svg .hd-node-pointend-inner { fill: var(--hd-edge); }
+.hd-svg .hd-node-pointend-outer { fill: none; stroke: var(--hd-edge); stroke-width: 1.6; }
+
+/* 容器（subgraph / loop 框 / note / 生命线） */
+.hd-svg .hd-cluster-rect { fill: var(--hd-cluster-fill); stroke: var(--hd-cluster-stroke); stroke-width: 1; stroke-dasharray: 5 4; }
+.hd-svg .hd-cluster.hd-danger .hd-cluster-rect { stroke: var(--hd-red); fill: var(--hd-red-fill); }
+.hd-svg .hd-cluster-title { fill: var(--hd-cluster-text); font-size: 12px; font-weight: 600; }
+.hd-svg .hd-cluster.hd-danger .hd-cluster-title { fill: var(--hd-red); }
+.hd-svg .hd-loopbox-rect { fill: none; stroke: var(--hd-cluster-stroke); stroke-width: 1; stroke-dasharray: 4 3; }
+.hd-svg .hd-loopbox-tab { fill: var(--hd-node-fill); stroke: var(--hd-node-stroke); stroke-width: 1; }
+.hd-svg .hd-loopbox-tab-text { fill: var(--hd-muted); font-size: 12px; font-weight: 600; }
+.hd-svg .hd-loopbox-label { fill: var(--hd-muted); font-size: 12px; }
+.hd-svg .hd-note-rect { fill: var(--hd-note-fill); stroke: var(--hd-note-stroke); stroke-width: 1; }
+.hd-svg .hd-note-text { fill: var(--hd-note-text); font-size: 12px; }
+.hd-svg .hd-lifeline { stroke: var(--hd-lifeline); stroke-width: 1.2; stroke-dasharray: 4 4; }
+
+/* 边与箭头 */
+.hd-svg .hd-edge-path { fill: none; stroke: var(--hd-edge); stroke-width: 1.4; }
+.hd-svg .hd-dash .hd-edge-path { stroke-dasharray: 6 4; }
+.hd-svg .hd-arrow { fill: var(--hd-edge); }
+.hd-svg .hd-arrow-open { fill: none; stroke: var(--hd-edge); stroke-width: 1.4; }
+.hd-svg .hd-edge:hover .hd-edge-path { stroke: var(--hd-text); stroke-width: 1.8; }
+.hd-svg .hd-edge:hover .hd-arrow { fill: var(--hd-text); }
+.hd-svg .hd-edge:hover .hd-arrow-open { stroke: var(--hd-text); stroke-width: 1.8; }
+
+/* sequence 头部框：唯一强调色（科技蓝） */
+.hd-svg .hd-seq-head-rect { fill: var(--hd-accent-fill); stroke: var(--hd-accent); stroke-width: 1.4; }
+.hd-svg .hd-seq-head-text { fill: var(--hd-accent-text); font-size: 13px; font-weight: 600; pointer-events: none; }
+
+/* 文字层 */
+.hd-svg text { font-family: var(--sans); }
+.hd-svg .hd-edge-label-text { fill: var(--hd-label-text); font-size: 12px; pointer-events: none; }
+.hd-svg .hd-label-bg { fill: var(--hd-label-bg); }
+.hd-svg .hd-seq-text { fill: var(--hd-text); font-size: 12px; }
+.hd-svg .hd-seq-num { fill: var(--hd-muted); font-size: 11px; font-weight: 700; pointer-events: none; }

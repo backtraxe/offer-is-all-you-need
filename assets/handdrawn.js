@@ -1,9 +1,10 @@
 /**
- * handdrawn.js — mermaid 子集 → 原生 Canvas 2D 渲染器（简约科技风）
+ * handdrawn.js — mermaid 子集 → SVG 渲染器（简约科技风）
  *
  * 管道：parse（mermaid 子集 → 模型）→ layout（模型 → 指令清单，纯函数）
- *       → drawCommands（指令清单 → canvas，crisp 细线）
+ *       → buildSvg（指令清单 → svg 元素字符串，样式全由 assets/site.css 的 .hd-* 规则驱动）
  * parse/layout 不依赖 DOM，可在 node 下测试；浏览器中通过 window.__hd 暴露。
+ * 亮/暗主题切换由 CSS 变量完成，无需重绘。
  *
  * 支持子集（超出即 fallback，不抛给用户）：
  *  - flowchart/graph TB|TD|BT|LR|RL、stateDiagram-v2
@@ -1054,362 +1055,234 @@
       dx: MARGIN - b.minX, dy: MARGIN - b.minY
     };
   }
-  /* ================= 主题（简约科技风，Linear/Vercel 色系） ================= */
+  /* ================= SVG 构建（视觉主题全部交给 assets/site.css 的 .hd-* 规则） ================= */
 
-  var THEMES = {
-    light: {
-      stroke: '#8b949e', text: '#1f2328', muted: '#65707d',
-      nodeFill: '#ffffff', nodeStroke: '#d0d7de',
-      clusterFill: '#f8fafc', clusterStroke: '#d0d7de', clusterText: '#8b949e',
-      red: '#cf222e', redFill: '#ffeff0',
-      labelBg: '#ffffff', labelText: '#57606a',
-      noteFill: '#fff8dc', noteStroke: '#e6d27e', noteText: '#7a5c00',
-      lifeline: '#d0d7de',
-      accent: '#2563eb', accentFill: '#eff6ff', accentText: '#1d4ed8',
-      loopTabFill: '#ffffff', loopTabStroke: '#d0d7de', loopTabText: '#6e7781'
-    },
-    dark: {
-      stroke: '#7d8590', text: '#e6edf3', muted: '#848d97',
-      nodeFill: '#161b22', nodeStroke: '#30363d',
-      clusterFill: '#11161d', clusterStroke: '#30363d', clusterText: '#6e7681',
-      red: '#ff7b72', redFill: '#3d2027',
-      labelBg: '#161b22', labelText: '#adb7c1',
-      noteFill: '#322d12', noteStroke: '#8c6f35', noteText: '#d0a94b',
-      lifeline: '#30363d',
-      accent: '#4493f8', accentFill: '#0f1f3a', accentText: '#93c5fd',
-      loopTabFill: '#161b22', loopTabStroke: '#30363d', loopTabText: '#848d97'
-    }
-  };
-
-  /* ================= 原生 Canvas 2D 绘制（crisp 细线） ================= */
-
-  function setFont(ctx, size, bold) {
-    ctx.font = (bold ? 'bold ' : '') + size + 'px ' + FONT;
-    ctx.textBaseline = 'middle';
+  function escSvg(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
-  function fillLines(ctx, lines, cx, top, lineH, align, color) {
-    ctx.fillStyle = color;
+  function fmt(n) {
+    var v = Math.round(n * 10) / 10;
+    return v === Math.round(v) ? String(Math.round(v)) : String(v);
+  }
+
+  function ptsAttr(pts) {
+    return pts.map(function (p) { return fmt(p.x) + ',' + fmt(p.y); }).join(' ');
+  }
+
+  /** 实心三角箭头（从 from 指向 tip），返回 polygon points 字符串 */
+  function triPoints(tip, from, size, spread) {
+    var ang = Math.atan2(tip.y - from.y, tip.x - from.x);
+    var a1 = ang - spread, a2 = ang + spread;
+    var p1 = fmt(tip.x) + ',' + fmt(tip.y);
+    var p2 = fmt(tip.x - size * Math.cos(a1)) + ',' + fmt(tip.y - size * Math.sin(a1));
+    var p3 = fmt(tip.x - size * Math.cos(a2)) + ',' + fmt(tip.y - size * Math.sin(a2));
+    return p1 + ' ' + p2 + ' ' + p3;
+  }
+
+  /** 开放箭头：两条斜线，返回 path d */
+  function openArrowD(tip, from, size, spread) {
+    var ang = Math.atan2(tip.y - from.y, tip.x - from.x);
+    var a1 = ang + spread, a2 = ang - spread;
+    return 'M' + fmt(tip.x - size * Math.cos(a1)) + ',' + fmt(tip.y - size * Math.sin(a1)) +
+      ' L' + fmt(tip.x) + ',' + fmt(tip.y) +
+      ' M' + fmt(tip.x - size * Math.cos(a2)) + ',' + fmt(tip.y - size * Math.sin(a2)) +
+      ' L' + fmt(tip.x) + ',' + fmt(tip.y);
+  }
+
+  /** 多行文本：每行一个 <text>，anchor=start|middle */
+  function svgTexts(lines, x, top, lineH, cls, anchor, attrs) {
+    var out = [];
     lines.forEach(function (l, i) {
       var y = top + (i + 0.5) * lineH;
-      var x = align === 'left' ? cx : cx - l.w / 2;
-      ctx.fillText(l.text, x, y);
+      out.push('<text class="' + cls + '" x="' + fmt(x) + '" y="' + fmt(y) +
+        '" text-anchor="' + (anchor || 'middle') + '" dominant-baseline="middle"' + (attrs || '') + '>' +
+        escSvg(l.text) + '</text>');
     });
+    return out.join('');
   }
 
-  /** 圆角矩形路径；ctx.roundRect 缺失时降级普通 rect */
-  function rr(ctx, x, y, w, h, r) {
-    r = Math.max(0, Math.min(r, w / 2, h / 2));
-    if (typeof ctx.roundRect === 'function') {
-      ctx.beginPath();
-      ctx.roundRect(x, y, w, h, r);
-    } else if (r > 0) {
-      ctx.beginPath();
-      ctx.moveTo(x + r, y);
-      ctx.lineTo(x + w - r, y);
-      ctx.arcTo(x + w, y, x + w, y + r, r);
-      ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
-      ctx.arcTo(x, y + h, x, y + h - r, r);
-      ctx.arcTo(x, y, x + r, y, r);
-      ctx.closePath();
-    } else {
-      ctx.beginPath();
-      ctx.rect(x, y, w, h);
-    }
-  }
-
-  function fillAndStroke(ctx, fill, stroke, lw) {
-    if (fill) { ctx.fillStyle = fill; ctx.fill(); }
-    if (stroke) {
-      ctx.strokeStyle = stroke;
-      ctx.lineWidth = lw || 1.25;
-      ctx.stroke();
-    }
-  }
-
-  function polyline(ctx, pts, color, lw, dash) {
-    ctx.save();
-    ctx.strokeStyle = color;
-    ctx.lineWidth = lw || 1.4;
-    ctx.lineJoin = 'miter';
-    ctx.setLineDash(dash || []);
-    ctx.lineDashOffset = 0;
-    ctx.beginPath();
-    ctx.moveTo(pts[0].x, pts[0].y);
-    for (var i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
-    ctx.stroke();
-    ctx.restore();
-  }
-
-  function circle(ctx, cx, cy, r, fill, stroke, lw) {
-    ctx.beginPath();
-    ctx.arc(cx, cy, r, 0, Math.PI * 2);
-    fillAndStroke(ctx, fill, stroke, lw || 1.25);
-  }
-
-  function diamond(ctx, x, y, w, h, fill, stroke, lw) {
-    ctx.beginPath();
-    ctx.moveTo(x + w / 2, y);
-    ctx.lineTo(x + w, y + h / 2);
-    ctx.lineTo(x + w / 2, y + h);
-    ctx.lineTo(x, y + h / 2);
-    ctx.closePath();
-    fillAndStroke(ctx, fill, stroke, lw || 1.25);
-  }
-
-  function triangle(ctx, tip, dirX, dirY, size, spread, color) {
-    var ang = Math.atan2(dirY, dirX);
-    ctx.save();
-    ctx.fillStyle = color;
-    ctx.beginPath();
-    ctx.moveTo(tip.x, tip.y);
-    ctx.lineTo(tip.x - size * Math.cos(ang - spread), tip.y - size * Math.sin(ang - spread));
-    ctx.lineTo(tip.x - size * Math.cos(ang + spread), tip.y - size * Math.sin(ang + spread));
-    ctx.closePath();
-    ctx.fill();
-    ctx.restore();
-  }
-
-  function drawArrowHead(ctx, theme, tip, from, head, color) {
-    var dX = tip.x - from.x, dY = tip.y - from.y;
-    if (!dX && !dY) return;
-    var ang = Math.atan2(dY, dX);
+  function edgesArrow(head, tip, from, edgeCls) {
     if (head === 'full') {
-      triangle(ctx, tip, dX, dY, 10, 0.5, color);
-    } else if (head === 'x') {
-      polyline(ctx, [
-        { x: tip.x - 7 * Math.cos(ang - 0.55), y: tip.y - 7 * Math.sin(ang - 0.55) },
-        { x: tip.x + 0, y: tip.y }
-      ], color, 1.4);
-      polyline(ctx, [
-        { x: tip.x - 7 * Math.cos(ang + 0.55), y: tip.y - 7 * Math.sin(ang + 0.55) },
-        { x: tip.x, y: tip.y }
-      ], color, 1.4);
-    } else { // open：两条斜线组成的空心箭头
-      var a1 = ang + 0.55, a2 = ang - 0.55, len = 9;
-      polyline(ctx, [
-        { x: tip.x - len * Math.cos(a1), y: tip.y - len * Math.sin(a1) }, tip
-      ], color, 1.4);
-      polyline(ctx, [
-        { x: tip.x - len * Math.cos(a2), y: tip.y - len * Math.sin(a2) }, tip
-      ], color, 1.4);
+      return '<polygon class="hd-arrow" points="' + triPoints(tip, from, 10, 0.5) + '"/>';
     }
+    if (head === 'x') {
+      return '<path class="hd-arrow-open" d="' + openArrowD(tip, from, 9, 0.55) + '"/>';
+    }
+    return '<path class="hd-arrow-open" d="' + openArrowD(tip, from, 9, 0.55) + '"/>';
   }
 
-  function nodePalette(c, theme) {
-    return {
-      stroke: c.tone === 'red' ? theme.red : theme.nodeStroke,
-      fill: c.tone === 'red' ? theme.redFill : theme.nodeFill,
-      text: c.tone === 'red' ? theme.red : theme.text
-    };
+  /** 长轴箭头类型：flow 边只有 full；seq 有 full/open/x */
+  function arrowFor(head, tip, from) {
+    if (!head) return '';
+    return edgesArrow(head, tip, from);
   }
 
-  function drawCommands(canvas, cmds, dx, dy, theme) {
-    var ctx = canvas.getContext('2d');
-    ctx.save();
-    ctx.translate(dx || 0, dy || 0);
+  /** 指令清单 → svg 字符串（dx/dy 用 translate 包装，不烘焙进坐标） */
+  function buildSvg(c, ariaLabel) {
+    var under = [], edges = [], nodes = [], labels = [];
 
-    // 分层：底层（容器/生命周期/循环框/note）→ 边 → 节点 → 文本
-    var layers = { under: [], edges: [], nodes: [], texts: [] };
-    cmds.forEach(function (c) {
-      if (c.op === 'cluster' || c.op === 'lifeline' || c.op === 'loopBox' || c.op === 'note') layers.under.push(c);
-      else if (c.op === 'edge' || c.op === 'seqMsg' || c.op === 'seqSelf') layers.edges.push(c);
-      else if (c.op === 'node' || c.op === 'seqHead') layers.nodes.push(c);
-      else layers.texts.push(c);
-    });
-
-    layers.under.forEach(function (c) {
-      if (c.op === 'cluster') {
-        ctx.save();
-        ctx.setLineDash(c.tone === 'red' ? [] : [5, 4]);
-        rr(ctx, c.x, c.y, c.w, c.h, 10);
-        fillAndStroke(ctx, c.tone === 'red' ? theme.redFill : theme.clusterFill,
-          c.tone === 'red' ? theme.red : theme.clusterStroke, 1);
-        ctx.restore();
-        setFont(ctx, 12, true);
-        fillLines(ctx, [{ text: c.title, w: measureLine(c.title, 12) }], c.x + 12, c.y + 7, 14, 'left',
-          c.tone === 'red' ? theme.red : theme.clusterText);
-      } else if (c.op === 'lifeline') {
-        polyline(ctx, [{ x: c.x, y: c.y0 }, { x: c.x, y: c.y1 }], theme.lifeline, 1.2, [4, 4]);
-      } else if (c.op === 'loopBox') {
-        ctx.save();
-        ctx.setLineDash([4, 3]);
-        rr(ctx, c.x, c.y, c.w, c.h, 8);
-        fillAndStroke(ctx, null, theme.clusterStroke, 1);
-        ctx.restore();
+    c.cmds.forEach(function (cmd) {
+      if (cmd.op === 'cluster') {
+        var danger = cmd.tone === 'red' ? ' hd-danger' : '';
+        under.push('<g class="hd-cluster' + danger + '">' +
+          '<rect class="hd-cluster-rect" x="' + fmt(cmd.x) + '" y="' + fmt(cmd.y) +
+          '" width="' + fmt(cmd.w) + '" height="' + fmt(cmd.h) + '" rx="10"/>' +
+          '<text class="hd-cluster-title" x="' + fmt(cmd.x + 12) + '" y="' + fmt(cmd.y + 15) +
+          '" text-anchor="start" dominant-baseline="middle">' + escSvg(cmd.title) + '</text></g>');
+      } else if (cmd.op === 'lifeline') {
+        under.push('<line class="hd-lifeline" x1="' + fmt(cmd.x) + '" y1="' + fmt(cmd.y0) +
+          '" x2="' + fmt(cmd.x) + '" y2="' + fmt(cmd.y1) + '"/>');
+      } else if (cmd.op === 'loopBox') {
         var tabW = 52, tabH = 20;
-        rr(ctx, c.x, c.y, tabW, tabH, 6);
-        fillAndStroke(ctx, theme.loopTabFill, theme.loopTabStroke, 1);
-        setFont(ctx, LOOP_FS, true);
-        fillLines(ctx, [{ text: 'loop', w: measureLine('loop', LOOP_FS) }], c.x + tabW / 2,
-          c.y + (tabH - LOOP_FS * 1.3) / 2, LOOP_FS * 1.3, 'center', theme.loopTabText);
-        if (c.label) {
-          setFont(ctx, LOOP_FS, false);
-          fillLines(ctx, [{ text: c.label, w: measureLine(c.label, LOOP_FS) }],
-            c.x + tabW + measureLine(c.label, LOOP_FS) / 2 + 5,
-            c.y + (tabH - LOOP_FS * 1.3) / 2, LOOP_FS * 1.3, 'center', theme.muted);
+        var box = '<rect class="hd-loopbox-rect" x="' + fmt(cmd.x) + '" y="' + fmt(cmd.y) +
+          '" width="' + fmt(cmd.w) + '" height="' + fmt(cmd.h) + '" rx="8"/>' +
+          '<rect class="hd-loopbox-tab" x="' + fmt(cmd.x) + '" y="' + fmt(cmd.y) +
+          '" width="' + tabW + '" height="' + tabH + '" rx="6"/>' +
+          '<text class="hd-loopbox-tab-text" x="' + fmt(cmd.x + tabW / 2) + '" y="' + fmt(cmd.y + tabH / 2) +
+          '" text-anchor="middle" dominant-baseline="middle">loop</text>';
+        if (cmd.label) {
+          box += '<text class="hd-loopbox-label" x="' + fmt(cmd.x + tabW + 5) + '" y="' + fmt(cmd.y + tabH / 2) +
+            '" text-anchor="start" dominant-baseline="middle">' + escSvg(cmd.label) + '</text>';
         }
-      } else if (c.op === 'note') {
-        rr(ctx, c.x, c.y, c.w, c.h, 6);
-        fillAndStroke(ctx, theme.noteFill, theme.noteStroke, 1);
-        setFont(ctx, c.size || NOTE_FS, false);
-        fillLines(ctx, c.lines, c.x + c.w / 2, c.y + 8, c.lineH, 'center', theme.noteText);
-      }
-    });
-
-    layers.edges.forEach(function (c) {
-      if (c.op === 'edge') {
-        polyline(ctx, c.pts, theme.stroke, 1.4, c.dash ? [6, 4] : null);
-        if (c.arrow === 'end' || c.arrow === 'both') {
-          drawArrowHead(ctx, theme, c.pts[c.pts.length - 1], c.pts[c.pts.length - 2], 'full', theme.stroke);
+        under.push('<g class="hd-loopbox">' + box + '</g>');
+      } else if (cmd.op === 'note') {
+        under.push('<g class="hd-note">' +
+          '<rect class="hd-note-rect" x="' + fmt(cmd.x) + '" y="' + fmt(cmd.y) +
+          '" width="' + fmt(cmd.w) + '" height="' + fmt(cmd.h) + '" rx="6"/>' +
+          svgTexts(cmd.lines, cmd.x + cmd.w / 2, cmd.y + 8, cmd.lineH, 'hd-note-text') + '</g>');
+      } else if (cmd.op === 'edge') {
+        var g = '<polyline class="hd-edge-path" points="' + ptsAttr(cmd.pts) + '" fill="none"/>';
+        if (cmd.arrow === 'end' || cmd.arrow === 'both') {
+          g += arrowFor('full', cmd.pts[cmd.pts.length - 1], cmd.pts[cmd.pts.length - 2]);
         }
-        if (c.arrow === 'both') {
-          drawArrowHead(ctx, theme, c.pts[0], c.pts[1], 'full', theme.stroke);
+        if (cmd.arrow === 'both') {
+          g += arrowFor('full', cmd.pts[0], cmd.pts[1]);
         }
-      } else if (c.op === 'seqMsg') {
-        polyline(ctx, [{ x: c.x0, y: c.y }, { x: c.x1, y: c.y }], theme.stroke, 1.3, c.dash ? [6, 4] : null);
-        drawArrowHead(ctx, theme, { x: c.x1, y: c.y }, { x: c.x0, y: c.y }, c.head, theme.stroke);
-      } else if (c.op === 'seqSelf') {
-        polyline(ctx, [{ x: c.x, y: c.y }, { x: c.x + c.w, y: c.y }, { x: c.x + c.w, y: c.y + c.h }, { x: c.x, y: c.y + c.h }],
-          theme.stroke, 1.3, c.dash ? [6, 4] : null);
-        drawArrowHead(ctx, theme, { x: c.x, y: c.y + c.h }, { x: c.x + c.w - 10, y: c.y + c.h }, c.head, theme.stroke);
-      }
-    });
-
-    layers.nodes.forEach(function (c) {
-      if (c.op === 'node') {
-        var pal = nodePalette(c, theme);
-        if (c.shape === 'diamond') {
-          diamond(ctx, c.x, c.y, c.w, c.h, pal.fill, pal.stroke, 1.25);
-        } else if (c.shape === 'round') {
-          rr(ctx, c.x, c.y, c.w, c.h, Math.min(c.h / 2, 20));
-          fillAndStroke(ctx, pal.fill, pal.stroke, 1.25);
-        } else if (c.shape === 'point') {
-          circle(ctx, c.x + c.w / 2, c.y + c.h / 2, 10, theme.stroke, theme.stroke, 1);
-        } else if (c.shape === 'pointEnd') {
-          circle(ctx, c.x + c.w / 2, c.y + c.h / 2, (c.w - 6) / 2, theme.nodeFill, theme.stroke, 1.6);
-          circle(ctx, c.x + c.w / 2, c.y + c.h / 2, (c.w - 16) / 2, theme.stroke, theme.stroke, 1);
+        edges.push('<g class="hd-edge' + (cmd.dash ? ' hd-dash' : '') + '">' + g + '</g>');
+      } else if (cmd.op === 'seqMsg') {
+        edges.push('<g class="hd-edge hd-seq-msg' + (cmd.dash ? ' hd-dash' : '') + '">' +
+          '<line class="hd-edge-path" x1="' + fmt(cmd.x0) + '" y1="' + fmt(cmd.y) +
+          '" x2="' + fmt(cmd.x1) + '" y2="' + fmt(cmd.y) + '"/>' +
+          arrowFor(cmd.head, { x: cmd.x1, y: cmd.y }, { x: cmd.x0, y: cmd.y }) + '</g>');
+      } else if (cmd.op === 'seqSelf') {
+        edges.push('<g class="hd-edge hd-seq-self' + (cmd.dash ? ' hd-dash' : '') + '">' +
+          '<polyline class="hd-edge-path" fill="none" points="' +
+          fmt(cmd.x) + ',' + fmt(cmd.y) + ' ' + fmt(cmd.x + cmd.w) + ',' + fmt(cmd.y) + ' ' +
+          fmt(cmd.x + cmd.w) + ',' + fmt(cmd.y + cmd.h) + ' ' + fmt(cmd.x) + ',' + fmt(cmd.y + cmd.h) + '"/>' +
+          arrowFor(cmd.head, { x: cmd.x, y: cmd.y + cmd.h }, { x: cmd.x + cmd.w - 10, y: cmd.y + cmd.h }) + '</g>');
+      } else if (cmd.op === 'node') {
+        var tone = cmd.tone === 'red' ? ' hd-danger' : '';
+        if (cmd.shape === 'diamond') {
+          nodes.push('<g class="hd-node hd-shape-diamond' + tone + '"><polygon class="hd-node-shape" points="' +
+            fmt(cmd.x + cmd.w / 2) + ',' + fmt(cmd.y) + ' ' +
+            fmt(cmd.x + cmd.w) + ',' + fmt(cmd.y + cmd.h / 2) + ' ' +
+            fmt(cmd.x + cmd.w / 2) + ',' + fmt(cmd.y + cmd.h) + ' ' +
+            fmt(cmd.x) + ',' + fmt(cmd.y + cmd.h / 2) + '"/></g>');
+        } else if (cmd.shape === 'round') {
+          nodes.push('<g class="hd-node hd-shape-round' + tone + '"><rect class="hd-node-shape" x="' + fmt(cmd.x) +
+            '" y="' + fmt(cmd.y) + '" width="' + fmt(cmd.w) + '" height="' + fmt(cmd.h) +
+            '" rx="' + fmt(Math.min(cmd.h / 2, 20)) + '"/></g>');
+        } else if (cmd.shape === 'point') {
+          nodes.push('<g class="hd-node hd-shape-point"><circle class="hd-node-point" cx="' +
+            fmt(cmd.x + cmd.w / 2) + '" cy="' + fmt(cmd.y + cmd.h / 2) + '" r="10"/></g>');
+        } else if (cmd.shape === 'pointEnd') {
+          nodes.push('<g class="hd-node hd-shape-pointend"><circle class="hd-node-pointend-outer" cx="' +
+            fmt(cmd.x + cmd.w / 2) + '" cy="' + fmt(cmd.y + cmd.h / 2) + '" r="' + fmt((cmd.w - 6) / 2) + '"/>' +
+            '<circle class="hd-node-pointend-inner" cx="' + fmt(cmd.x + cmd.w / 2) + '" cy="' +
+            fmt(cmd.y + cmd.h / 2) + '" r="' + fmt((cmd.w - 16) / 2) + '"/></g>');
         } else {
-          rr(ctx, c.x, c.y, c.w, c.h, 7);
-          fillAndStroke(ctx, pal.fill, pal.stroke, 1.25);
+          nodes.push('<g class="hd-node hd-shape-rect' + tone + '"><rect class="hd-node-shape" x="' + fmt(cmd.x) +
+            '" y="' + fmt(cmd.y) + '" width="' + fmt(cmd.w) + '" height="' + fmt(cmd.h) + '" rx="7"/></g>');
         }
-      } else if (c.op === 'seqHead') {
-        // sequence 头部框：唯一强调色（科技蓝）
-        rr(ctx, c.x, c.y, c.w, c.h, 8);
-        fillAndStroke(ctx, theme.accentFill, theme.accent, 1.4);
-        setFont(ctx, c.size || PART_FS, true);
-        fillLines(ctx, c.lines, c.x + c.w / 2, c.y + (c.h - c.lines.length * 20) / 2, 20, 'center', theme.accentText);
-      }
-    });
-
-    layers.texts.forEach(function (c) {
-      if (c.op === 'nodeText') {
-        setFont(ctx, c.size, false);
-        fillLines(ctx, c.lines, c.cx, c.top, c.lineH, 'center',
-          c.tone === 'red' ? theme.red : theme.text);
-      } else if (c.op === 'edgeLabel') {
+      } else if (cmd.op === 'seqHead') {
+        nodes.push('<g class="hd-seq-head"><rect class="hd-seq-head-rect" x="' + fmt(cmd.x) + '" y="' + fmt(cmd.y) +
+          '" width="' + fmt(cmd.w) + '" height="' + fmt(cmd.h) + '" rx="8"/>' +
+          svgTexts(cmd.lines, cmd.x + cmd.w / 2, cmd.y + (cmd.h - cmd.lines.length * 20) / 2, 20, 'hd-seq-head-text') + '</g>');
+      } else if (cmd.op === 'nodeText') {
+        labels.push(svgTexts(cmd.lines, cmd.cx, cmd.top, cmd.lineH, 'hd-node-text' + (cmd.tone === 'red' ? ' hd-danger-text' : '')));
+      } else if (cmd.op === 'edgeLabel') {
         var w = 0;
-        c.lines.forEach(function (l) { w = Math.max(w, l.w); });
-        var bh = c.lines.length * c.lineH + (c.bg ? 6 : 0), bw = w + (c.bg ? 10 : 0);
-        if (c.bg) {
-          rr(ctx, c.cx - bw / 2, c.cy - bh / 2, bw, bh, 4);
-          ctx.fillStyle = theme.labelBg;
-          ctx.fill();
+        cmd.lines.forEach(function (l) { if (l.w > w) w = l.w; });
+        var bh = cmd.lines.length * cmd.lineH + (cmd.bg ? 6 : 0);
+        var bgRect = '';
+        if (cmd.bg) {
+          bgRect = '<rect class="hd-label-bg" x="' + fmt(cmd.cx - (w + 10) / 2) + '" y="' + fmt(cmd.cy - bh / 2) +
+            '" width="' + fmt(w + 10) + '" height="' + fmt(bh) + '" rx="4"/>';
         }
-        setFont(ctx, c.size, false);
-        fillLines(ctx, c.lines, c.cx, c.cy - c.lines.length * c.lineH / 2, c.lineH, 'center', theme.labelText);
-      } else if (c.op === 'seqText') {
-        setFont(ctx, c.size || MSGLABEL_FS, false);
-        fillLines(ctx, c.lines, c.x, c.y, c.lineH, c.align || 'center', theme.text);
-      } else if (c.op === 'seqNum') {
-        setFont(ctx, 11, true);
-        var t = String(c.n);
-        var x = c.alignR ? c.x - measureLine(t, 11) - 2 : c.x;
-        fillLines(ctx, [{ text: t, w: measureLine(t, 11) }], x, c.y - 4, 11, 'left', theme.muted);
+        labels.push('<g class="hd-edge-label">' + bgRect +
+          svgTexts(cmd.lines, cmd.cx, cmd.cy - cmd.lines.length * cmd.lineH / 2 + (cmd.bg ? 3 : 0), cmd.lineH, 'hd-edge-label-text') + '</g>');
+      } else if (cmd.op === 'seqText') {
+        labels.push(svgTexts(cmd.lines, cmd.x, cmd.y, cmd.lineH, 'hd-seq-text', cmd.align === 'left' ? 'start' : 'middle'));
+      } else if (cmd.op === 'seqNum') {
+        labels.push('<text class="hd-seq-num" x="' + fmt(cmd.alignR ? cmd.x - 2 : cmd.x) + '" y="' + fmt(cmd.y) +
+          '" text-anchor="' + (cmd.alignR ? 'end' : 'start') + '" dominant-baseline="middle">' + cmd.n + '</text>');
       }
     });
 
-    ctx.restore();
+    var W = fmt(c.w), H = fmt(c.h);
+    var tran = (c.dx || c.dy) ? ' transform="translate(' + fmt(c.dx || 0) + ' ' + fmt(c.dy || 0) + ')"' : '';
+    return '<svg xmlns="http://www.w3.org/2000/svg" class="hd-svg" viewBox="0 0 ' + W + ' ' + H +
+      '" width="' + W + '" height="' + H + '" role="img" aria-label="' + escSvg(ariaLabel) + '"><g' + tran + '>' +
+      '<g class="hd-containers">' + under.join('') + '</g>' +
+      '<g class="hd-edges">' + edges.join('') + '</g>' +
+      '<g class="hd-nodes">' + nodes.join('') + '</g>' +
+      '<g class="hd-labels">' + labels.join('') + '</g>' +
+      '</g></svg>';
+  }
+
+  /** aria-label：取首个节点/participant 文本，兜底“示意图” */
+  function ariaLabelFor(cmds) {
+    for (var i = 0; i < cmds.length; i++) {
+      var cmd = cmds[i];
+      if ((cmd.op === 'nodeText' || cmd.op === 'seqHead') && cmd.lines && cmd.lines.length) {
+        var t = cmd.lines.map(function (l) { return l.text; }).join(' ').trim();
+        if (t) return (t.length > 60 ? t.slice(0, 57) + '...' : t) + '（示意图）';
+      }
+    }
+    return '示意图';
   }
 
   /* ================= 公共 API ================= */
 
-  var registry = [];
-
-  function isDark() {
-    try {
-      return !!(global.document && document.body && document.body.classList.contains('dark'));
-    } catch (e) { return false; }
+  /** source → svg 字符串；不支持时抛错（走 mermaid fallback） */
+  function svgStringFor(source) {
+    var c = compile(source);
+    return buildSvg(c, ariaLabelFor(c.cmds));
   }
 
-  function setupCanvas(w, h) {
-    var canvas = document.createElement('canvas');
-    var dpr = Math.min(2.5, global.devicePixelRatio || 1);
-    canvas.width = Math.ceil(w * dpr);
-    canvas.height = Math.ceil(h * dpr);
-    canvas.style.width = w + 'px';
-    canvas.style.height = h + 'px';
-    canvas.style.maxWidth = '100%';
-    canvas.style.display = 'block';
-    canvas.setAttribute('data-hd', '1');
-    var ctx = canvas.getContext('2d');
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    return canvas;
-  }
-
-  function paintToCanvas(c) {
-    var canvas = setupCanvas(c.w, c.h);
-    drawCommands(canvas, c.cmds, c.dx || 0, c.dy || 0, isDark() ? THEMES.dark : THEMES.light);
-    return canvas;
-  }
-
-  /** 尝试手绘渲染。成功 true；不支持/失败 false（el 已清空，交回 mermaid） */
+  /** 尝试渲染。成功 true；不支持/失败 false（el 已清空，交回 mermaid）。主题切换由 CSS 完成，不重绘。 */
   function render(el, source) {
     if (!global.document || !el) return false;
     try {
-      var c = compile(source);
+      var svg = svgStringFor(source);
+      if (el.__hdSvg === svg) return true; // 同图源（如主题切换重扫）：无需重建
       el.innerHTML = '';
-      var canvas = paintToCanvas(c);
-      el.appendChild(canvas);
-      registry = registry.filter(function (r) { return r.el !== el; });
-      registry.push({ el: el, source: source });
+      el.innerHTML = svg;
+      el.__hdSvg = svg;
       return true;
     } catch (err) {
       try {
         if (global.console && console.debug) console.debug('[handdrawn fallback]', err && err.message);
       } catch (_) { /* noop */ }
-      try { el.innerHTML = ''; } catch (_) { /* noop */ }
+      try { el.innerHTML = ''; el.__hdSvg = null; } catch (_) { /* noop */ }
       return false;
     }
   }
 
-  /** 主题切换时重绘全部已转换图 */
-  function rerenderAll() {
-    var alive = [];
-    registry.forEach(function (r) {
-      if (!r.el || (r.el.isConnected === false)) return;
-      try {
-        var c = compile(r.source);
-        r.el.innerHTML = '';
-        r.el.appendChild(paintToCanvas(c));
-        alive.push(r);
-      } catch (e) {
-        alive.push(r); // 保留原图，避免闪空
-      }
-    });
-    registry = alive;
-  }
+  /** 主题切换不再需要重绘（颜色全在 CSS 变量里）；保留作空实现以兼容旧调用点。 */
+  function rerenderAll() {}
 
   var Api = {
     render: render,
     rerenderAll: rerenderAll,
+    __buildSvg: buildSvg,
+    __svgStringFor: svgStringFor,
     __compile: compile,
     __parseFlow: parseFlow,
     __parseSequence: parseSequence,
-    __setMeasure: setMeasure,
-    __THEMES: THEMES
+    __setMeasure: setMeasure
   };
-
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = Api;
   } else {

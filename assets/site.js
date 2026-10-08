@@ -61,7 +61,7 @@
     document.querySelectorAll('.mermaid').forEach(function (el) {
       var id = parseInt(el.getAttribute('data-mermaid-id'), 10);
       if (isNaN(id) || window.__mermaidSources[id] === undefined) return;
-      // 优先走自研极简渲染（canvas）；不支持或失败再回到 mermaid
+      // 优先走自研 SVG 渲染（vector）；不支持或失败再回到 mermaid
       if (window.__hd && window.__hd.render(el, window.__mermaidSources[id])) {
         ensureZoomHint(el);
         return;
@@ -147,7 +147,7 @@
   }
 
   function fitToCanvas() {
-    var node = stage.querySelector('svg') || stage.querySelector('img');
+    var node = stage.querySelector('svg');
     if (!node) { applyTransform(); return; }
     view.x = 0; view.y = 0; view.scale = 1;
     stage.style.transform = 'none';
@@ -164,27 +164,12 @@
   function openMermaidModal(el) {
     ensureModal();
     var svg = el.querySelector('svg');
-    var hdCanvas = el.querySelector('canvas');
+    if (!svg) return;
     stage.innerHTML = '';
-    if (hdCanvas) {
-      // 手绘图：canvas 快照为图片放大；浮层背景按当前主题补齐
-      try {
-        var img = document.createElement('img');
-        img.src = hdCanvas.toDataURL('image/png');
-        img.style.width = hdCanvas.style.width;
-        img.style.height = hdCanvas.style.height;
-        img.alt = 'diagram';
-        stage.appendChild(img);
-        canvas.style.background = document.body.classList.contains('dark') ? '#141c2b' : '#ffffff';
-      } catch (e) {
-        return;
-      }
-    } else if (svg) {
-      stage.appendChild(svg.cloneNode(true));
-      canvas.style.background = '';
-    } else {
-      return;
-    }
+    stage.appendChild(svg.cloneNode(true));
+    // HD-SVG 的配色由 body.dark 下的 CSS 变量驱动，暗色时给浮层补深底
+    canvas.style.background =
+      (svg.classList.contains('hd-svg') && document.body.classList.contains('dark')) ? '#0d1117' : '';
     modal.classList.add('open');
     document.body.style.overflow = 'hidden';
     view = { scale: 1, x: 0, y: 0 };
@@ -225,8 +210,8 @@
     var btn = document.getElementById('theme-toggle');
     if (btn) btn.innerHTML = dark ? '<i class="ti ti-sun"></i>' : '<i class="ti ti-moon-stars"></i>';
     try { localStorage.setItem('oiayn-theme', dark ? 'dark' : 'light'); } catch (e) {}
+    // HD-SVG 的主题由 CSS 变量随 body.dark 自动切换，无需重绘
     if (rerender) renderMermaidDiagrams();
-    if (window.__hd) window.__hd.rerenderAll();
   }
 
   function initThemeToggle() {
