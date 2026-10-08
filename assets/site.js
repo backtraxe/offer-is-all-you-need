@@ -61,7 +61,7 @@
     document.querySelectorAll('.mermaid').forEach(function (el) {
       var id = parseInt(el.getAttribute('data-mermaid-id'), 10);
       if (isNaN(id) || window.__mermaidSources[id] === undefined) return;
-      // 优先走手绘渲染（rough.js）；不支持或失败再回到 mermaid
+      // 优先走自研极简渲染（canvas）；不支持或失败再回到 mermaid
       if (window.__hd && window.__hd.render(el, window.__mermaidSources[id])) {
         ensureZoomHint(el);
         return;

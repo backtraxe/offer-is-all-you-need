@@ -1,8 +1,8 @@
 /**
- * handdrawn.js — mermaid 子集 → rough.js 手绘渲染器
+ * handdrawn.js — mermaid 子集 → 原生 Canvas 2D 渲染器（简约科技风）
  *
  * 管道：parse（mermaid 子集 → 模型）→ layout（模型 → 指令清单，纯函数）
- *       → drawCanvas（指令清单 → rough.js canvas）
+ *       → drawCommands（指令清单 → canvas，crisp 细线）
  * parse/layout 不依赖 DOM，可在 node 下测试；浏览器中通过 window.__hd 暴露。
  *
  * 支持子集（超出即 fallback，不抛给用户）：
@@ -18,8 +18,7 @@
 
   var FONT = '"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Segoe UI",sans-serif';
 
-  // 画布尺寸上限：超出则 fallback 给 mermaid（避免手绘布局在超宽图上失控）
-  // 画布尺寸上限：超出则 fallback 给 mermaid（避免手绘布局在超宽图上失控）
+  // 画布尺寸上限：超出则 fallback 给 mermaid（避免自研布局在超宽图上失控）
   var FLOW_MAX_W = 2600, FLOW_MAX_H = 2600;
   var SEQ_MAX_W = 1600, SEQ_MAX_H = 2600;
 
@@ -1055,52 +1054,34 @@
       dx: MARGIN - b.minX, dy: MARGIN - b.minY
     };
   }
-
-  /* ================= 主题 ================= */
+  /* ================= 主题（简约科技风，Linear/Vercel 色系） ================= */
 
   var THEMES = {
     light: {
-      stroke: '#343a40', text: '#343a40', muted: '#868e96',
-      nodeFill: '#ffffff', cluster: '#98a1ac',
-      red: '#e03131', redFill: '#fff5f5',
-      labelBg: '#ffffff', labelText: '#495057',
-      noteFill: '#fff3bf', noteStroke: '#d3a674', noteText: '#5f4f1f',
-      lifeline: '#adb5bd', loopTabFill: '#f1f3f5', loopTabStroke: '#98a1ac', loopTabText: '#495057'
+      stroke: '#8b949e', text: '#1f2328', muted: '#65707d',
+      nodeFill: '#ffffff', nodeStroke: '#d0d7de',
+      clusterFill: '#f8fafc', clusterStroke: '#d0d7de', clusterText: '#8b949e',
+      red: '#cf222e', redFill: '#ffeff0',
+      labelBg: '#ffffff', labelText: '#57606a',
+      noteFill: '#fff8dc', noteStroke: '#e6d27e', noteText: '#7a5c00',
+      lifeline: '#d0d7de',
+      accent: '#2563eb', accentFill: '#eff6ff', accentText: '#1d4ed8',
+      loopTabFill: '#ffffff', loopTabStroke: '#d0d7de', loopTabText: '#6e7781'
     },
     dark: {
-      stroke: '#d6dee8', text: '#e2e8f0', muted: '#8b99ad',
-      nodeFill: '#1a2436', cluster: '#8b99ad',
-      red: '#ff8787', redFill: '#2b1a1e',
-      labelBg: '#1a2436', labelText: '#b6c1d0',
-      noteFill: '#2b2516', noteStroke: '#b08d57', noteText: '#e8d9ae',
-      lifeline: '#5b6774', loopTabFill: '#1f2a40', loopTabStroke: '#5b6774', loopTabText: '#b6c1d0'
+      stroke: '#7d8590', text: '#e6edf3', muted: '#848d97',
+      nodeFill: '#161b22', nodeStroke: '#30363d',
+      clusterFill: '#11161d', clusterStroke: '#30363d', clusterText: '#6e7681',
+      red: '#ff7b72', redFill: '#3d2027',
+      labelBg: '#161b22', labelText: '#adb7c1',
+      noteFill: '#322d12', noteStroke: '#8c6f35', noteText: '#d0a94b',
+      lifeline: '#30363d',
+      accent: '#4493f8', accentFill: '#0f1f3a', accentText: '#93c5fd',
+      loopTabFill: '#161b22', loopTabStroke: '#30363d', loopTabText: '#848d97'
     }
   };
 
-  /* ================= rough.js 绘制 ================= */
-
-  function roughOpts(theme, extra) {
-    var o = {
-      roughness: 1.6, bowing: 2, strokeWidth: 1.4,
-      disableMultiStroke: false, seed: 42,
-      stroke: theme.stroke
-    };
-    if (extra) { for (var k in extra) o[k] = extra[k]; }
-    return o;
-  }
-
-  function roundedRectPath(x, y, w, h, r) {
-    r = Math.min(r, w / 2, h / 2);
-    return 'M ' + (x + r) + ' ' + y +
-      ' L ' + (x + w - r) + ' ' + y +
-      ' Q ' + (x + w) + ' ' + y + ' ' + (x + w) + ' ' + (y + r) +
-      ' L ' + (x + w) + ' ' + (y + h - r) +
-      ' Q ' + (x + w) + ' ' + (y + h) + ' ' + (x + w - r) + ' ' + (y + h) +
-      ' L ' + (x + r) + ' ' + (y + h) +
-      ' Q ' + x + ' ' + (y + h) + ' ' + x + ' ' + (y + h - r) +
-      ' L ' + x + ' ' + (y + r) +
-      ' Q ' + x + ' ' + y + ' ' + (x + r) + ' ' + y;
-  }
+  /* ================= 原生 Canvas 2D 绘制（crisp 细线） ================= */
 
   function setFont(ctx, size, bold) {
     ctx.font = (bold ? 'bold ' : '') + size + 'px ' + FONT;
@@ -1116,46 +1097,117 @@
     });
   }
 
+  /** 圆角矩形路径；ctx.roundRect 缺失时降级普通 rect */
+  function rr(ctx, x, y, w, h, r) {
+    r = Math.max(0, Math.min(r, w / 2, h / 2));
+    if (typeof ctx.roundRect === 'function') {
+      ctx.beginPath();
+      ctx.roundRect(x, y, w, h, r);
+    } else if (r > 0) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.arcTo(x + w, y, x + w, y + r, r);
+      ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+      ctx.arcTo(x, y + h, x, y + h - r, r);
+      ctx.arcTo(x, y, x + r, y, r);
+      ctx.closePath();
+    } else {
+      ctx.beginPath();
+      ctx.rect(x, y, w, h);
+    }
+  }
+
+  function fillAndStroke(ctx, fill, stroke, lw) {
+    if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+    if (stroke) {
+      ctx.strokeStyle = stroke;
+      ctx.lineWidth = lw || 1.25;
+      ctx.stroke();
+    }
+  }
+
+  function polyline(ctx, pts, color, lw, dash) {
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = lw || 1.4;
+    ctx.lineJoin = 'miter';
+    ctx.setLineDash(dash || []);
+    ctx.lineDashOffset = 0;
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x, pts[0].y);
+    for (var i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function circle(ctx, cx, cy, r, fill, stroke, lw) {
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    fillAndStroke(ctx, fill, stroke, lw || 1.25);
+  }
+
+  function diamond(ctx, x, y, w, h, fill, stroke, lw) {
+    ctx.beginPath();
+    ctx.moveTo(x + w / 2, y);
+    ctx.lineTo(x + w, y + h / 2);
+    ctx.lineTo(x + w / 2, y + h);
+    ctx.lineTo(x, y + h / 2);
+    ctx.closePath();
+    fillAndStroke(ctx, fill, stroke, lw || 1.25);
+  }
+
+  function triangle(ctx, tip, dirX, dirY, size, spread, color) {
+    var ang = Math.atan2(dirY, dirX);
+    ctx.save();
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(tip.x, tip.y);
+    ctx.lineTo(tip.x - size * Math.cos(ang - spread), tip.y - size * Math.sin(ang - spread));
+    ctx.lineTo(tip.x - size * Math.cos(ang + spread), tip.y - size * Math.sin(ang + spread));
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawArrowHead(ctx, theme, tip, from, head, color) {
+    var dX = tip.x - from.x, dY = tip.y - from.y;
+    if (!dX && !dY) return;
+    var ang = Math.atan2(dY, dX);
+    if (head === 'full') {
+      triangle(ctx, tip, dX, dY, 10, 0.5, color);
+    } else if (head === 'x') {
+      polyline(ctx, [
+        { x: tip.x - 7 * Math.cos(ang - 0.55), y: tip.y - 7 * Math.sin(ang - 0.55) },
+        { x: tip.x + 0, y: tip.y }
+      ], color, 1.4);
+      polyline(ctx, [
+        { x: tip.x - 7 * Math.cos(ang + 0.55), y: tip.y - 7 * Math.sin(ang + 0.55) },
+        { x: tip.x, y: tip.y }
+      ], color, 1.4);
+    } else { // open：两条斜线组成的空心箭头
+      var a1 = ang + 0.55, a2 = ang - 0.55, len = 9;
+      polyline(ctx, [
+        { x: tip.x - len * Math.cos(a1), y: tip.y - len * Math.sin(a1) }, tip
+      ], color, 1.4);
+      polyline(ctx, [
+        { x: tip.x - len * Math.cos(a2), y: tip.y - len * Math.sin(a2) }, tip
+      ], color, 1.4);
+    }
+  }
+
   function nodePalette(c, theme) {
     return {
-      stroke: c.tone === 'red' ? theme.red : theme.stroke,
+      stroke: c.tone === 'red' ? theme.red : theme.nodeStroke,
       fill: c.tone === 'red' ? theme.redFill : theme.nodeFill,
       text: c.tone === 'red' ? theme.red : theme.text
     };
-  }
-
-  function arrowHeadPts(tip, dirX, dirY, size, spread) {
-    var ang = Math.atan2(dirY, dirX);
-    return [
-      [tip.x, tip.y],
-      [tip.x - size * Math.cos(ang - spread), tip.y - size * Math.sin(ang - spread)],
-      [tip.x - size * Math.cos(ang + spread), tip.y - size * Math.sin(ang + spread)]
-    ];
-  }
-
-  function drawArrowHead(ctx, rc, theme, tip, from, head, color) {
-    var dX = tip.x - from.x, dY = tip.y - from.y;
-    if (!dX && !dY) return;
-    var o = roughOpts(theme, { stroke: color });
-    if (head === 'full') {
-      var tri = arrowHeadPts({ x: tip.x, y: tip.y }, dX, dY, 13, 0.42);
-      rc.polygon(tri, roughOpts(theme, { stroke: color, fill: color, fillStyle: 'solid', seed: 9 }));
-    } else if (head === 'x') {
-      var t2 = arrowHeadPts({ x: tip.x, y: tip.y }, dX, dY, 9, 0.6);
-      rc.line(t2[1][0], t2[1][1], tip.x, tip.y, o);
-      rc.line(t2[2][0], t2[2][1], tip.x, tip.y, o);
-    } else { // open
-      var t3 = arrowHeadPts({ x: tip.x, y: tip.y }, dX, dY, 11, 0.5);
-      rc.line(t3[1][0], t3[1][1], tip.x, tip.y, o);
-      rc.line(t3[2][0], t3[2][1], tip.x, tip.y, o);
-    }
   }
 
   function drawCommands(canvas, cmds, dx, dy, theme) {
     var ctx = canvas.getContext('2d');
     ctx.save();
     ctx.translate(dx || 0, dy || 0);
-    var rc = global.rough.canvas(canvas);
 
     // 分层：底层（容器/生命周期/循环框/note）→ 边 → 节点 → 文本
     var layers = { under: [], edges: [], nodes: [], texts: [] };
@@ -1168,34 +1220,38 @@
 
     layers.under.forEach(function (c) {
       if (c.op === 'cluster') {
-        rc.rectangle(c.x, c.y, c.w, c.h, roughOpts(theme, {
-          stroke: c.tone === 'red' ? theme.red : theme.cluster,
-          strokeLineDash: [7, 5], strokeWidth: 1.1
-        }));
-        setFont(ctx, 13, true);
-        fillLines(ctx, [{ text: c.title, w: measureLine(c.title, 13) }], c.x + 12, c.y + 6, 15, 'left', theme.muted);
+        ctx.save();
+        ctx.setLineDash(c.tone === 'red' ? [] : [5, 4]);
+        rr(ctx, c.x, c.y, c.w, c.h, 10);
+        fillAndStroke(ctx, c.tone === 'red' ? theme.redFill : theme.clusterFill,
+          c.tone === 'red' ? theme.red : theme.clusterStroke, 1);
+        ctx.restore();
+        setFont(ctx, 12, true);
+        fillLines(ctx, [{ text: c.title, w: measureLine(c.title, 12) }], c.x + 12, c.y + 7, 14, 'left',
+          c.tone === 'red' ? theme.red : theme.clusterText);
       } else if (c.op === 'lifeline') {
-        rc.line(c.x, c.y0, c.x, c.y1, roughOpts(theme, {
-          stroke: theme.lifeline, strokeLineDash: [4, 4], strokeWidth: 1
-        }));
+        polyline(ctx, [{ x: c.x, y: c.y0 }, { x: c.x, y: c.y1 }], theme.lifeline, 1.2, [4, 4]);
       } else if (c.op === 'loopBox') {
-        rc.rectangle(c.x, c.y, c.w, c.h, roughOpts(theme, {
-          stroke: theme.cluster, strokeLineDash: [3, 3], strokeWidth: 1
-        }));
-        var tabW = 56, tabH = 22;
-        rc.rectangle(c.x, c.y, tabW, tabH, roughOpts(theme, {
-          stroke: theme.loopTabStroke, fill: theme.loopTabFill, fillStyle: 'solid', strokeWidth: 1
-        }));
+        ctx.save();
+        ctx.setLineDash([4, 3]);
+        rr(ctx, c.x, c.y, c.w, c.h, 8);
+        fillAndStroke(ctx, null, theme.clusterStroke, 1);
+        ctx.restore();
+        var tabW = 52, tabH = 20;
+        rr(ctx, c.x, c.y, tabW, tabH, 6);
+        fillAndStroke(ctx, theme.loopTabFill, theme.loopTabStroke, 1);
         setFont(ctx, LOOP_FS, true);
-        fillLines(ctx, [{ text: 'loop', w: measureLine('loop', LOOP_FS) }], c.x + tabW / 2, c.y + tabH / 2 - LOOP_FS * 0.7, LOOP_FS * 1.4, 'center', theme.loopTabText);
+        fillLines(ctx, [{ text: 'loop', w: measureLine('loop', LOOP_FS) }], c.x + tabW / 2,
+          c.y + (tabH - LOOP_FS * 1.3) / 2, LOOP_FS * 1.3, 'center', theme.loopTabText);
         if (c.label) {
           setFont(ctx, LOOP_FS, false);
-          fillLines(ctx, [{ text: c.label, w: measureLine(c.label, LOOP_FS) }], c.x + tabW + measureLine(c.label, LOOP_FS) / 2 + 4, c.y + tabH / 2 - LOOP_FS * 0.7, LOOP_FS * 1.4, 'center', theme.muted);
+          fillLines(ctx, [{ text: c.label, w: measureLine(c.label, LOOP_FS) }],
+            c.x + tabW + measureLine(c.label, LOOP_FS) / 2 + 5,
+            c.y + (tabH - LOOP_FS * 1.3) / 2, LOOP_FS * 1.3, 'center', theme.muted);
         }
       } else if (c.op === 'note') {
-        rc.rectangle(c.x, c.y, c.w, c.h, roughOpts(theme, {
-          stroke: theme.noteStroke, fill: theme.noteFill, fillStyle: 'solid', strokeWidth: 1
-        }));
+        rr(ctx, c.x, c.y, c.w, c.h, 6);
+        fillAndStroke(ctx, theme.noteFill, theme.noteStroke, 1);
         setFont(ctx, c.size || NOTE_FS, false);
         fillLines(ctx, c.lines, c.x + c.w / 2, c.y + 8, c.lineH, 'center', theme.noteText);
       }
@@ -1203,59 +1259,46 @@
 
     layers.edges.forEach(function (c) {
       if (c.op === 'edge') {
-        rc.linearPath(c.pts.map(function (p) { return [p.x, p.y]; }), roughOpts(theme, {
-          stroke: theme.stroke, strokeWidth: 1.3,
-          strokeLineDash: c.dash ? [7, 5] : undefined
-        }));
+        polyline(ctx, c.pts, theme.stroke, 1.4, c.dash ? [6, 4] : null);
         if (c.arrow === 'end' || c.arrow === 'both') {
-          drawArrowHead(ctx, rc, theme, c.pts[c.pts.length - 1], c.pts[c.pts.length - 2], 'full', theme.stroke);
+          drawArrowHead(ctx, theme, c.pts[c.pts.length - 1], c.pts[c.pts.length - 2], 'full', theme.stroke);
         }
         if (c.arrow === 'both') {
-          drawArrowHead(ctx, rc, theme, c.pts[0], c.pts[1], 'full', theme.stroke);
+          drawArrowHead(ctx, theme, c.pts[0], c.pts[1], 'full', theme.stroke);
         }
       } else if (c.op === 'seqMsg') {
-        rc.line(c.x0, c.y, c.x1, c.y, roughOpts(theme, {
-          stroke: theme.stroke, strokeWidth: 1.2,
-          strokeLineDash: c.dash ? [7, 5] : undefined
-        }));
-        var from = c.x1 > c.x0 ? { x: c.x0, y: c.y } : c.pts ? c.pts[0] : { x: c.x0, y: c.y };
-        drawArrowHead(ctx, rc, theme, { x: c.x1, y: c.y }, { x: c.x0, y: c.y }, c.head, theme.stroke);
+        polyline(ctx, [{ x: c.x0, y: c.y }, { x: c.x1, y: c.y }], theme.stroke, 1.3, c.dash ? [6, 4] : null);
+        drawArrowHead(ctx, theme, { x: c.x1, y: c.y }, { x: c.x0, y: c.y }, c.head, theme.stroke);
       } else if (c.op === 'seqSelf') {
-        var o = roughOpts(theme, {
-          stroke: theme.stroke, strokeWidth: 1.2,
-          strokeLineDash: c.dash ? [7, 5] : undefined
-        });
-        rc.linearPath([[c.x, c.y], [c.x + c.w, c.y], [c.x + c.w, c.y + c.h], [c.x, c.y + c.h]], o);
-        drawArrowHead(ctx, rc, theme, { x: c.x, y: c.y + c.h }, { x: c.x + 10, y: c.y + c.h }, c.head, theme.stroke);
+        polyline(ctx, [{ x: c.x, y: c.y }, { x: c.x + c.w, y: c.y }, { x: c.x + c.w, y: c.y + c.h }, { x: c.x, y: c.y + c.h }],
+          theme.stroke, 1.3, c.dash ? [6, 4] : null);
+        drawArrowHead(ctx, theme, { x: c.x, y: c.y + c.h }, { x: c.x + c.w - 10, y: c.y + c.h }, c.head, theme.stroke);
       }
     });
 
     layers.nodes.forEach(function (c) {
       if (c.op === 'node') {
         var pal = nodePalette(c, theme);
-        var o = roughOpts(theme, { stroke: pal.stroke, fill: pal.fill, fillStyle: 'solid' });
         if (c.shape === 'diamond') {
-          rc.polygon([[c.x + c.w / 2, c.y], [c.x + c.w, c.y + c.h / 2], [c.x + c.w / 2, c.y + c.h], [c.x, c.y + c.h / 2]], o);
+          diamond(ctx, c.x, c.y, c.w, c.h, pal.fill, pal.stroke, 1.25);
         } else if (c.shape === 'round') {
-          rc.path(roundedRectPath(c.x, c.y, c.w, c.h, Math.min(c.h / 2, 18)), o);
+          rr(ctx, c.x, c.y, c.w, c.h, Math.min(c.h / 2, 20));
+          fillAndStroke(ctx, pal.fill, pal.stroke, 1.25);
         } else if (c.shape === 'point') {
-          rc.circle(c.x + c.w / 2, c.y + c.h / 2, 20, roughOpts(theme, {
-            stroke: theme.stroke, fill: theme.stroke, fillStyle: 'solid'
-          }));
+          circle(ctx, c.x + c.w / 2, c.y + c.h / 2, 10, theme.stroke, theme.stroke, 1);
         } else if (c.shape === 'pointEnd') {
-          rc.circle(c.x + c.w / 2, c.y + c.h / 2, c.w - 4, roughOpts(theme, { stroke: theme.stroke, strokeWidth: 1.8 }));
-          rc.circle(c.x + c.w / 2, c.y + c.h / 2, c.w - 16, roughOpts(theme, {
-            stroke: theme.stroke, fill: theme.stroke, fillStyle: 'solid'
-          }));
+          circle(ctx, c.x + c.w / 2, c.y + c.h / 2, (c.w - 6) / 2, theme.nodeFill, theme.stroke, 1.6);
+          circle(ctx, c.x + c.w / 2, c.y + c.h / 2, (c.w - 16) / 2, theme.stroke, theme.stroke, 1);
         } else {
-          rc.rectangle(c.x, c.y, c.w, c.h, o);
+          rr(ctx, c.x, c.y, c.w, c.h, 7);
+          fillAndStroke(ctx, pal.fill, pal.stroke, 1.25);
         }
       } else if (c.op === 'seqHead') {
-        rc.rectangle(c.x, c.y, c.w, c.h, roughOpts(theme, {
-          stroke: theme.stroke, fill: theme.nodeFill, fillStyle: 'solid'
-        }));
+        // sequence 头部框：唯一强调色（科技蓝）
+        rr(ctx, c.x, c.y, c.w, c.h, 8);
+        fillAndStroke(ctx, theme.accentFill, theme.accent, 1.4);
         setFont(ctx, c.size || PART_FS, true);
-        fillLines(ctx, c.lines, c.x + c.w / 2, c.y + (c.h - c.lines.length * 20) / 2, 20, 'center', theme.text);
+        fillLines(ctx, c.lines, c.x + c.w / 2, c.y + (c.h - c.lines.length * 20) / 2, 20, 'center', theme.accentText);
       }
     });
 
@@ -1269,13 +1312,9 @@
         c.lines.forEach(function (l) { w = Math.max(w, l.w); });
         var bh = c.lines.length * c.lineH + (c.bg ? 6 : 0), bw = w + (c.bg ? 10 : 0);
         if (c.bg) {
-          ctx.save();
+          rr(ctx, c.cx - bw / 2, c.cy - bh / 2, bw, bh, 4);
           ctx.fillStyle = theme.labelBg;
-          ctx.fillRect(c.cx - bw / 2, c.cy - bh / 2, bw, bh);
-          rc.rectangle(c.cx - bw / 2, c.cy - bh / 2, bw, bh, roughOpts(theme, {
-            stroke: theme.labelBg, fill: theme.labelBg, fillStyle: 'solid'
-          }));
-          ctx.restore();
+          ctx.fill();
         }
         setFont(ctx, c.size, false);
         fillLines(ctx, c.lines, c.cx, c.cy - c.lines.length * c.lineH / 2, c.lineH, 'center', theme.labelText);
@@ -1326,7 +1365,7 @@
 
   /** 尝试手绘渲染。成功 true；不支持/失败 false（el 已清空，交回 mermaid） */
   function render(el, source) {
-    if (!global.rough || !global.document || !el) return false;
+    if (!global.document || !el) return false;
     try {
       var c = compile(source);
       el.innerHTML = '';
