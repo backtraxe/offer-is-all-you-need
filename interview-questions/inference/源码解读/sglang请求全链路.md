@@ -1,8 +1,8 @@
 # SGLang 源码解读：一个请求的全链路
 
 > 源码解读系列 SGLang 篇。原理口径（RadixAttention / continuous batching / PD 分离）以
-> [vllm与推理加速核心](../vllm与推理加速核心.md) 为准，本文只讲"这些原理在 SGLang 代码里
-> 长什么样"；vLLM 的对照解读见 [vllm请求全链路](./vllm请求全链路.md)。
+> [vllm 与推理加速核心](../vllm与推理加速核心.md) 为准，本文只讲"这些原理在 SGLang 代码里
+> 长什么样"；vLLM 的对照解读见 [vllm 请求全链路](./vllm请求全链路.md)。
 > 版本口径：**sgl-project/sglang main 分支，2026-10 现场核实**（最近稳定 release v0.5.21），
 > 所有路径/类名/函数名均逐一抓取确认，详见文末核实声明。
 
@@ -102,7 +102,7 @@ flowchart LR
 | scheduler-worker 间通信 | 同进程函数调用（再按 TP 情况跨进程） | 同进程调用 + TP rank 间通信用 NCCL/shm |
 | 请求标识状态 | `rid_to_state: Dict[str, ReqState]` | `request_id` + output queue |
 
-vLLM 侧的细节不再展开，对照阅读 [vllm请求全链路](./vllm请求全链路.md)。
+vLLM 侧的细节不再展开，对照阅读 [vllm 请求全链路](./vllm请求全链路.md)。
 
 ## 三、分段源码溯源
 
@@ -330,9 +330,9 @@ decode 角色专属的补丁——PD 架构下 decode 侧没有 prompt，被踢�
 | abort 怎么实现？ | `TokenizerManager.abort_request()` 发 `AbortReq`（io_struct.py），tokenizer 维护 `rid_to_state` 状态机，一路 ZMQ 消息即指令 |
 | cache-aware 调度为何适合 Agent？ | `schedule_policy.py::CacheAwarePolicy` 的 `LPM/DFS_WEIGHT/HRRN` 按前缀命中排序，同前缀请求聚批，树上路径共享拉满 |
 | PD 分离在代码里的样子？ | `disaggregation/` 目录双 Scheduler mixin（prefill.py / decode.py），KV 传输走 `common/conn.py` 多后端，decode 端 retraction 需先备份 KV |
-| attention backend 能换吗？ | `layers/attention/` 并存 flashattention/flashinfer/triton/flashmla 多 backend，由模型结构+参数可插拔 |
+| attention backend 能换吗？ | `layers/attention/` 并存 flashattention/flashinfer/triton/flashmla 多 backend，由模型结构 + 参数可插拔 |
 
-答这些题的时候先把"路径+函数名"抛出来（如 `scheduler.py::Scheduler.run_batch()`），
+答这些题的时候先把"路径 + 函数名"抛出来（如 `scheduler.py::Scheduler.run_batch()`），
 再用三句话讲清"干嘛的/怎么做的/为什么这么设计"——来源可信、细节可控，比背八股高一个段位。
 
 ## 六、版本与核实声明
@@ -365,6 +365,6 @@ decode 角色专属的补丁——PD 架构下 decode 侧没有 prompt，被踢�
 
 ---
 
-*配套阅读：原理口径与引擎对比见 [vllm与推理加速核心](../vllm与推理加速核心.md)、
+*配套阅读：原理口径与引擎对比见 [vllm 与推理加速核心](../vllm与推理加速核心.md)、
 [推理引擎选型与源码路线](../推理引擎选型与源码路线.md)；KV Cache 本身的原理和显存估算见
 [LLM 基础模块](../../llm基础/transformer与attention.md)。*

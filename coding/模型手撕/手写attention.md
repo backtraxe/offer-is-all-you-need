@@ -4,7 +4,7 @@
 > 公众号面经手撕榜的常驻题目。白板条件下要求的是**骨架对、shape 对、
 > 数值稳定细节对**，而不是工业级工程。本文每道题给三段：默写版代码、
 > 易错点清单、面试官常见追问。题源见
-> [高频面试真题汇总-手写代码题](../../interview-questions/高频面试真题汇总.md)。
+> [高频面试真题汇总 - 手写代码题](../../interview-questions/高频面试真题汇总.md)。
 
 ## 背诵总纲
 
@@ -83,7 +83,7 @@ encoder 输出，长度可以不同——上面的 forward 已经天然支持，
 
 - **「为什么除以 √d？」** Q、K 分量独立均值为 0 方差为 1 时点积方差是 d，
   除 √d 归一方差，防 softmax 饱和区梯度消失。详见
-  [transformer与attention](../../interview-questions/llm基础/transformer与attention.md)。
+  [transformer 与 attention](../../interview-questions/llm基础/transformer与attention.md)。
 - **「W_q/W_k/W_v 为什么不初始化 scale？」** 缩发放前向里而不是权重初始化
   里，是因为 scale 依赖 d_head 且作用在 score 上；若塞进初始化，后面改
   head 数就失配，且初始化的目标是控制激活方差（Xavier/Kaiming），与
@@ -175,7 +175,7 @@ def forward_incremental(self, x_new, kv_cache, pos):
 
 - **「KV Cache 显存怎么算？」** 每 token $2 \times L \times n_{kv} \times d_{head}
   \times \text{bytes}$，总乘序列长 × batch。计算演练见
-  [手写transformer组件](./手写transformer组件.md) 第四节。
+  [手写 transformer 组件](./手写transformer组件.md) 第四节。
 - **「decode 为什么 memory-bound？」** 每步算术强度极低，瓶颈是把 cache 从
   HBM 搬到计算单元——所以 GQA/MLA 砍 KV 头数直接提速解码。
 - **「cache 能不能不 cat?」** 可以预分配 `[B, max_len, ...]` 的大 buffer 按
@@ -183,7 +183,7 @@ def forward_incremental(self, x_new, kv_cache, pos):
 
 ## 四、RoPE 手撕（旋转位置编码）
 
-▶ 真题:手写 RoPE 旋转矩阵部分——**中高频**（公众号面经手撕高频）
+▶ 真题：手写 RoPE 旋转矩阵部分——**中高频**（公众号面经手撕高频）
 
 记住思想就能现场推：把 d 维向量两两配对成 d/2 个二维子向量，第 i 对按
 角度 $\theta_i \cdot pos$ 旋转，频率 $\theta_i = 10000^{-2i/d}$ 从大到小。
@@ -283,7 +283,7 @@ class RMSNorm(nn.Module):
   实践里不影响收敛——答出"gamma 吸收了平移自由度"即可。
 - **「Pre-Norm 还是 Post-Norm？」** 大模型标配 Pre-Norm：残差通路保持恒等，
   深层不炸梯度。展开见
-  [transformer与attention](../../interview-questions/llm基础/transformer与attention.md)
+  [transformer 与 attention](../../interview-questions/llm基础/transformer与attention.md)
   高频追问清单。
 
 ## 六、GQA 的分组广播写法
@@ -350,10 +350,10 @@ class GroupedQueryAttention(MultiHeadAttention):
   **Tiny Universe**（中文、逐 tensor 手搓，live coding 几乎照它出题）。
 - 推理侧（KV Cache 的 buffer/paged 实现）看清单里的 **nano-vllm**，
   1200 行读得完。
-- 写完对着 [transformer与attention](../../interview-questions/llm基础/transformer与attention.md)
+- 写完对着 [transformer 与 attention](../../interview-questions/llm基础/transformer与attention.md)
   的自查公式核 shape——能说出每一步的 shape 才算背下来了。
 
 ---
 
-*同目录：[手写transformer组件](./手写transformer组件.md) ·
+*同目录：[手写 transformer 组件](./手写transformer组件.md) ·
 [对齐与并行代码](./对齐与并行代码.md) · [coding/ 目录](../)*

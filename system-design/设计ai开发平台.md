@@ -1,7 +1,7 @@
-# 设计AI开发平台（训练/微调/评测/部署/服务一体化）
+# 设计 AI 开发平台（训练/微调/评测/部署/服务一体化）
 
 ▶ **真题来源：腾讯混元（中频）**——"训练/微调/评测/部署一体化 AI 开发平台怎么分层"
-（收入 [高频面试真题汇总-系统设计题](../interview-questions/高频面试真题汇总.md#八系统设计题)）。
+（收入 [高频面试真题汇总 - 系统设计题](../interview-questions/高频面试真题汇总.md#八系统设计题)）。
 
 > 平台岗招牌题，直接对应 [JD 分析-AI Infra 岗](../resources/jd分析-ai-infra岗.md)
 > 里腾讯 ML 平台 / Moonshot Infra 系统应用岗的 JD："MaaS、K8s、OpenAI API、生产管线"。
@@ -64,7 +64,7 @@ flowchart TB
   "万卡 GPU 调度"一条）；任务按优先级抢占，离线训练让位在线推理。
 - **存储分层**：训练数据（对象存储 + 本地 NVMe 缓存）/ checkpoint（高吞吐并行
   文件系统，checkpoint 的开销与异步落盘见
-  [训练框架与稳定性-容错一节](../interview-questions/distributed-training/训练框架与稳定性.md#二容错与断点续训)）/
+  [训练框架与稳定性 - 容错一节](../interview-questions/distributed-training/训练框架与稳定性.md#二容错与断点续训)）/
   模型仓库（版本化、元数据、血缘：这个 ckpt 是哪个 job、哪个数据集、哪个评测
   报告长出来的）。
 - **租户与配额**：CPU/GPU 配额按部门、按任务优先级；计量计费与
@@ -124,11 +124,11 @@ LoRA (QLoRA 级) 单任务 4~8 卡 × 70 = 560 卡
 ```
 
 显存侧的微观账交给框架文档：
-[ZeRO 与显存优化-计算题](../interview-questions/distributed-training/zero与显存优化.md) 有现成公式。
+[ZeRO 与显存优化 - 计算题](../interview-questions/distributed-training/zero与显存优化.md) 有现成公式。
 
 **资源利用率是平台第一 KPI**：GPU util + 排队时长，比"平台能跑多少任务"更值钱；
 引擎离线/在线混部提利用率的思路见
-[分布式推理服务-第五节](./设计分布式推理服务.md#五弹性伸缩与-gpu-超卖)。
+[分布式推理服务 - 第五节](./设计分布式推理服务.md#五弹性伸缩与-gpu-超卖)。
 
 ## 五、RLHF / 标注子平台（低频追问但要会）
 
@@ -186,6 +186,6 @@ flowchart LR
 ---
 
 *配套阅读：[distributed-training 三篇](../interview-questions/distributed-training/三维并行.md)
-（训练侧原理）· [vllm与推理加速核心](../interview-questions/inference/vllm与推理加速核心.md) ·
+（训练侧原理）· [vllm 与推理加速核心](../interview-questions/inference/vllm与推理加速核心.md) ·
 [设计分布式推理服务](./设计分布式推理服务.md)（平台推理层的下游落地）·
 [设计大模型统一接入网关](./设计大模型统一接入网关.md)（计量/鉴权复用）。*

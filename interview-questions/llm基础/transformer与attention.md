@@ -255,7 +255,7 @@ specialization、生产消费流水"即可，不用背 kernel 代码。
 
 ## 七、手撕练习（→ coding/）
 
-本主题对应的手写代码真题（详见 [高频面试真题汇总-手写代码题](../高频面试真题汇总.md#七手写代码题live-coding-真题)）：
+本主题对应的手写代码真题（详见 [高频面试真题汇总 - 手写代码题](../高频面试真题汇总.md#七手写代码题live-coding-真题)）：
 
 - **手撕 Multi-Head Attention**（PyTorch，可扩展 cross-attention）——字节算法岗，
   高频。核心考点：reshape 成多头、`QK^T/√d`、causal mask、softmax、`W_O`。

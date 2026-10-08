@@ -16,12 +16,12 @@
 | 5 | 腾讯（ML 平台） | 机器学习平台研发工程师 | 平台·MaaS | Java/Go/Python，K8s/Docker，模型一键部署、多推理框架接入 |
 | 6 | 腾讯（ML 平台） | 机器学习平台调度工程师 | 平台·调度 | 万卡 GPU 调度，K8s 调度器/CSI/CRD，RDMA、混部容灾 |
 | 7 | 字节（基础设施） | 大模型推理研发专家 | 推理·Serving | 全链路性能分析（Perf/eBPF/Nsight），SLO 下吞吐/时延平衡 |
-| 8 | 字节（Seed） | 大模型推理引擎专家 | 推理·引擎 | 自研推理引擎、在线+批式推理，集群弹性调度/GPU 超卖 |
+| 8 | 字节（Seed） | 大模型推理引擎专家 | 推理·引擎 | 自研推理引擎、在线 + 批式推理，集群弹性调度/GPU 超卖 |
 | 9 | 字节（Data） | 硬件加速推理引擎运行时开发 | 推理·Runtime | C++，Runtime/UMD 软件栈，CUDA Runtime、ROCm |
 | 10 | 字节（Data） | 训练系统与优化工程师（VLM/Agent RL） | 训练·RL | 100B~1T 分布式训练、MFU 优化、PPO/GRPO/Agent RL 框架 |
 | 11 | 字节（抖音） | 大模型训练框架开发工程师 | 训练·框架 | FSDP/ZeRO、TP/PP/EP/SP，NCCL/HCCL，32B+/100B+ MoE 经验 |
-| 12 | 字节（基础设施） | AI Infra 研发工程师-存储 | 平台·存储 | 并行策略优化、集合通信（AllReduce/AllGather）、数据缓存 |
-| 13 | Moonshot/Kimi | 大规模推理系统工程师 | 推理·Serving | 分布式服务架构；Python/Go/Rust/TS；CS 基础+开源加分，**校招友好** |
+| 12 | 字节（基础设施） | AI Infra 研发工程师 - 存储 | 平台·存储 | 并行策略优化、集合通信（AllReduce/AllGather）、数据缓存 |
+| 13 | Moonshot/Kimi | 大规模推理系统工程师 | 推理·Serving | 分布式服务架构；Python/Go/Rust/TS；CS 基础 + 开源加分，**校招友好** |
 | 14 | Moonshot/Kimi | RL Infra 研究工程师 | 训练·RLHF infra | 万亿参数 RL 后训练框架，Megatron-LM/vLLM，verl/slime 加分 |
 | 15 | Moonshot/Kimi | Infra 系统应用工程师 | 平台·生态 | LLM 生产管线（网关/任务流/可观测），K8s，OpenAI API 标准 |
 
@@ -54,21 +54,21 @@
 | 核心知识域 | CUDA kernel、访存/低比特、编译、PD 分离/continuous batch、SLO/SLA | 并行策略、通信、显存管理、数据管线、收敛性排查 |
 | 评价指标 | 吞吐/时延/成本、tokens/s、GPU 利用率 | MFU、训练吞吐、故障恢复时间、收敛正确性 |
 | 新兴热点 | PD 分离、异构推理、端侧推理 | **Agent RL 训练框架**、长序列训练、训推一致性 |
-| 经验门槛 | 2-3 年即可进；Moonshot 校招友好 | 普遍 2 年+ 且要大模型尺寸背书 |
+| 经验门槛 | 2-3 年即可进；Moonshot 校招友好 | 普遍 2 年 + 且要大模型尺寸背书 |
 
 > 趋势：**推理与训练的边界在合拢**——推理岗也开始要求懂训练；RL/后训练岗
 > 要求同时熟悉 vLLM（推理）与 Megatron（训练），字节和 Moonshot 都在抢这类人。
 
 ## 四、高频技术关键词榜
 
-1. GPU（25 次） 2. 分布式训练/系统（29） 3. 推理框架/引擎（18） 4. 性能分析/瓶颈定位（17）
-5. 并行策略 TP/PP/DP/EP（13） 6. Python（13） 7. **RL/GRPO/Agent RL（13）** 8. C/C++（12）
-9. 异构计算/昇腾（11） 10. 算子优化/融合（10） 11. 开源贡献/PR（10） 12. CUDA（9）
-13. vLLM（8） 14. PyTorch（8） 15. K8s/Docker/云原生（13） 16. 多模态/VLM（8）
-17. 编译/图优化（8） 18. 模型量化（6） 19. NCCL/集合通信（5） 20. RDMA/NVLink（5）、PD 分离（5）
+1. GPU（25 次）2. 分布式训练/系统（29）3. 推理框架/引擎（18）4. 性能分析/瓶颈定位（17）
+5. 并行策略 TP/PP/DP/EP（13）6. Python（13）7. **RL/GRPO/Agent RL（13）** 8. C/C++（12）
+9. 异构计算/昇腾（11）10. 算子优化/融合（10）11. 开源贡献/PR（10）12. CUDA（9）
+13. vLLM（8）14. PyTorch（8）15. K8s/Docker/云原生（13）16. 多模态/VLM（8）
+17. 编译/图优化（8）18. 模型量化（6）19. NCCL/集合通信（5）20. RDMA/NVLink（5）、PD 分离（5）
 
 > 注：KV Cache/PagedAttention 在 JD 原文频次低（2 次），但属于面试深挖**必考点**——
-> JD 以"框架名+项目经验"写要求，原理以面试题形式出现。
+> JD 以"框架名 + 项目经验"写要求，原理以面试题形式出现。
 
 ## 五、层级差异
 

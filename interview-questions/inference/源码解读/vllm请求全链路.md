@@ -1,6 +1,6 @@
 # vLLM 源码解读：一个请求的完整旅程（V1 架构）
 
-> [vllm与推理加速核心.md](../vllm与推理加速核心.md) 讲"引擎为什么这么设计"，
+> [vllm 与推理加速核心.md](../vllm与推理加速核心.md) 讲"引擎为什么这么设计"，
 > 本文讲"这些设计在代码里长什么样"——跟着 `POST /v1/chat/completions`
 > 从 FastAPI 一路走到 CUDA kernel 再流回 SSE。面试被问"看过 vLLM 源码吗"，
 > 本文就是你的弹药库：**每一段都给出可直接打开的文件路径 + 类/函数名**。
@@ -8,7 +8,7 @@
 > 版本口径：vLLM **main 分支 / V1 架构**（V0 engine 已于 v0.11 前后彻底移除）。
 > 文中所有路径均于 2026-10 在 GitHub main 分支逐一核实，核实清单见
 > [文末第六节](#六勘误与版本声明)。原理名词口径与
-> [vllm与推理加速核心.md](../vllm与推理加速核心.md) 完全一致，先读那篇再读本篇
+> [vllm 与推理加速核心.md](../vllm与推理加速核心.md) 完全一致，先读那篇再读本篇
 > 体验最佳；读源码的总体规划在
 > [推理引擎选型与源码路线.md](../推理引擎选型与源码路线.md#三源码学习路线从-1200-行复刻开始)。
 
@@ -158,7 +158,7 @@ EngineCore——tokenize 并行化，调度仍单点保序。
   `AsyncLLM.generate()` 的 async generator 逐条转成
   `ChatCompletionStreamResponse` 再 SSE 写出——**SSE delta 的拼装发生在这里**。
   SSE 协议本身的取舍见
-  [vllm与推理加速核心.md](../vllm与推理加速核心.md#九sse--websocket流式输出怎么到用户)。
+  [vllm 与推理加速核心.md](../vllm与推理加速核心.md#九sse--websocket流式输出怎么到用户)。
 
 一句话证据：**API 层完全不碰模型，它只做「协议 ↔ token id」的翻译**，
 所以它可以随便多开、随便重启（重启只断连接，不掉 GPU 状态）。
@@ -214,7 +214,7 @@ def step(self):
 **这就是 continuous batching 的代码本体**：`step()` 每跑一轮就是
 "一个 iteration"，每轮都重新 `schedule()`——完成的请求在
 `update_from_output()` 里判停释放，新请求在下一轮 `schedule()` 里插入。
-原理对照 [vllm与推理加速核心.md](../vllm与推理加速核心.md#四continuous-batching按-iteration-调度不按请求调度)
+原理对照 [vllm 与推理加速核心.md](../vllm与推理加速核心.md#四continuous-batching按-iteration-调度不按请求调度)
 的时序图，两者是同一件事的"论文视角"和"代码视角"。
 
 细节补给（面试很加分）：
@@ -255,7 +255,7 @@ flowchart TB
    一轮所有请求调度的 token 总数不超过这个预算，所以超长 prompt 会被
    切成多轮 chunk，和 decode 混排——**这就是为什么长 prompt 不会把
    同批 decode 的 TPOT 打出大毛刺**。原理见
-   [vllm与推理加速核心.md](../vllm与推理加速核心.md#四continuous-batching按-iteration-调度不按请求调度)
+   [vllm 与推理加速核心.md](../vllm与推理加速核心.md#四continuous-batching按-iteration-调度不按请求调度)
    的"工程取舍追问"。
 2. **prefix cache 命中**：waiting 请求进来先走
    `kv_cache_manager.py::KVCacheManager.get_computed_blocks(request)`
@@ -350,7 +350,7 @@ rank，前向内的 all-reduce 走 NCCL。Scheduler 只在 driver 侧存在一�
 4. `OpenAIServingChat.chat_completion_stream_generator()` 从
    `generate()` 拿到 delta → 组装 OpenAI 格式 chunk → SSE 逐条 flush，
    最后一个 `data: [DONE]` 收场。协议层为什么用 SSE 见
-   [vllm与推理加速核心.md](../vllm与推理加速核心.md#九sse--websocket流式输出怎么到用户)。
+   [vllm 与推理加速核心.md](../vllm与推理加速核心.md#九sse--websocket流式输出怎么到用户)。
 
 ## 四、关键数据结构卡片
 
@@ -457,8 +457,8 @@ Scheduler/EngineCore/ModelRunner 骨架已稳定多版本）。
 
 ---
 
-*配套阅读：原理篇 [vllm与推理加速核心.md](../vllm与推理加速核心.md)；
+*配套阅读：原理篇 [vllm 与推理加速核心.md](../vllm与推理加速核心.md)；
 源码入门路线（nano-vllm 复刻）
 [推理引擎选型与源码路线.md](../推理引擎选型与源码路线.md)；
-SGLang 侧的同款解读见本目录 [sglang请求全链路.md](./sglang请求全链路.md)
+SGLang 侧的同款解读见本目录 [sglang 请求全链路.md](./sglang请求全链路.md)
 （RadixAttention 视角，两篇对照服用效果最佳）。*

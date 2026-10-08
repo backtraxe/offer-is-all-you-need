@@ -62,7 +62,7 @@ flowchart TB
 | 7 | Function Calling 原理 / MCP 区别 | 极高 |
 | 8 | ReAct 范式与循环控制 | 极高 |
 | 9 | PPO / DPO / GRPO 差异与推导 | 极高（算法岗） |
-| 10 | 混合检索（BM25+向量）/ Rerank | 极高 |
+| 10 | 混合检索（BM25+ 向量）/ Rerank | 极高 |
 | 11 | 手撕 Multi-Head Attention | 极高（算法/Infra） |
 | 12 | vLLM / PagedAttention / Continuous Batching | 高 |
 | 13 | RoPE 位置编码原理 | 高 |
@@ -81,7 +81,7 @@ flowchart TB
 - **阿里**：算法岗深挖 RL 理论（GRPO loss、Advantage、KL 摆放、on/off-policy）；Infra 挖 CUDA kernel、
   FlashAttention 底层、NCCL 排障。
 - **腾讯**：结构细节题（Pre/Post-Norm、Decoder-only 原因）+ 微调框架横评 + 一体化平台设计。
-- **美团**：具体结构+工程细节（SwiGLU、LoRA、手撕 MoE、SSE 流式）；场景设计题多。
+- **美团**：具体结构 + 工程细节（SwiGLU、LoRA、手撕 MoE、SSE 流式）；场景设计题多。
 - **快手**：框架横评型（vLLM、LangChain vs LangGraph、Harness/Skills 管理）；重设计取舍。
 - **滴滴**：AI Infra 极硬核——显存计算、ZeRO 通信量、AdamW 4 倍显存、CUDA 手撕。
 - **京东**：RAG 工程味浓（RRF、多路召回）；Java 生态（Spring AI vs LangChain4j）特色。

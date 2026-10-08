@@ -315,7 +315,7 @@ flowchart LR
 
 ## 十四、手撕练习（→ coding/）
 
-本主题对应的手写练习（详见 [高频面试真题汇总-手写代码题](../高频面试真题汇总.md#七手写代码题live-coding-真题)）：
+本主题对应的手写练习（详见 [高频面试真题汇总 - 手写代码题](../高频面试真题汇总.md#七手写代码题live-coding-真题)）：
 
 - **手撕 DPO loss**：输入 policy/ref 模型对 chosen/rejected 的 logprob，
   写 sigmoid 偏好损失（十几行 PyTorch）——阿里/字节的 live coding 变体。
@@ -331,5 +331,5 @@ SFT/DPO/PPO/GRPO trainer）与 **OpenRLHF** 是手撕 loss 的最佳对照。写
 
 ---
 
-*相关阅读：[预训练与sft](./预训练与sft.md) ·
-[lora与参数高效微调](./lora与参数高效微调.md) · 上一页 [模块导航](../README.md)*
+*相关阅读：[预训练与 sft](./预训练与sft.md) ·
+[lora 与参数高效微调](./lora与参数高效微调.md) · 上一页 [模块导航](../README.md)*

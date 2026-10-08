@@ -89,7 +89,7 @@ QK^T：2·n²·d  FLOPs，softmax(×V)：2·n²·d → attention 主体 ≈ 4·n
 ## 配套练习
 
 - 手撕题指引与各题频率：见
-  [高频面试真题汇总-手写代码题](../高频面试真题汇总.md#七手写代码题live-coding-真题)
+  [高频面试真题汇总 - 手写代码题](../高频面试真题汇总.md#七手写代码题live-coding-真题)
   （手撕 MHA、numpy attention、RoPE、CUDA RMSNorm 都是本模块考点）；
 - 代码实现目录：[coding/](../../coding/)（随本仓库持续补充）；
 - 学完本模块后顺序推进：[训练与对齐](../训练与对齐/) 或

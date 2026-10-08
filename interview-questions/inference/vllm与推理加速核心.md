@@ -22,7 +22,7 @@
 
 ### Roofline 直觉
 
-Roofline 模型一句话：**一个 kernel 的快慢，取 min(算力上限, 带宽上限 × 算术强度)**。
+Roofline 模型一句话：**一个 kernel 的快慢，取 min(算力上限，带宽上限 × 算术强度)**。
 算术强度 = 计算量 / 访存量（FLOPs per Byte）。
 
 - Prefill 每个权重被 seq_len 个 token 复用，算术强度高，卡在算力屋顶（拿 A100 说，
@@ -175,7 +175,7 @@ decode 怎么混在同一批？vLLM 用的是 chunked prefill（把长 prompt �
 
 | | vLLM (APC, Automatic Prefix Caching) | SGLang (RadixAttention) |
 |---|---|---|
-| 数据结构 | 按 block 哈希的 **map**：key 是 (token ids + 前缀hash)，query 时逐块查表 | **Radix Tree（前缀树）**：节点是 token 序列段，边上是 KV 指针 |
+| 数据结构 | 按 block 哈希的 **map**：key 是 (token ids + 前缀 hash)，query 时逐块查表 | **Radix Tree（前缀树）**：节点是 token 序列段，边上是 KV 指针 |
 | 命中粒度 | block 对齐（默认 16 token 的倍数） | 任意前缀长度（树本身逐 token/段共享） |
 | 淘汰策略 | 引用计数 + LRU | 树节点的 LRU 驱逐 |
 | 多轮对话 | 每轮请求重命中历史轮的共同前缀 | 天然贴合——对话历史就是一条从根走下去的路径 |

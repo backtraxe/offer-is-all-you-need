@@ -11,16 +11,16 @@
 
 | 文档 | 覆盖真题 | 来源 |
 |---|---|---|
-| [手写attention.md](模型手撕/手写attention.md) | PyTorch MHA、numpy attention 前向、KV Cache 增量推理、RoPE、LayerNorm/RMSNorm、GQA 广播 | 字节算法岗/AML 一面 |
-| [手写transformer组件.md](模型手撕/手写transformer组件.md) | Pre-Norm Block + SwiGLU FFN、简易 MoE、BPE 合并、参数量/显存手算 | 美团、滴滴、通用 |
+| [手写 attention.md](模型手撕/手写attention.md) | PyTorch MHA、numpy attention 前向、KV Cache 增量推理、RoPE、LayerNorm/RMSNorm、GQA 广播 | 字节算法岗/AML 一面 |
+| [手写 transformer 组件.md](模型手撕/手写transformer组件.md) | Pre-Norm Block + SwiGLU FFN、简易 MoE、BPE 合并、参数量/显存手算 | 美团、滴滴、通用 |
 | [对齐与并行代码.md](模型手撕/对齐与并行代码.md) | LoRA 层、DPO loss、GRPO advantage、TP 行切/列切、ZeRO-3 伪代码 | 阿里深挖、Infra 岗 |
 
 ### 工程手撕/（应用/Infra 岗重点）
 
 | 文档 | 覆盖真题 | 来源 |
 |---|---|---|
-| [手写最小agent.md](工程手撕/手写最小agent.md) | 脱框架最小 ReAct Agent、Function Calling JSON 模式、滑动窗口摘要 | 2026 新高频（应用岗） |
-| [cuda算子手撕.md](工程手撕/cuda算子手撕.md) | RMSNorm / Softmax / Online Softmax / SwiGLU（CUDA + Triton 备选） | 滴滴 AI Infra 一面原题 |
+| [手写最小 agent.md](工程手撕/手写最小agent.md) | 脱框架最小 ReAct Agent、Function Calling JSON 模式、滑动窗口摘要 | 2026 新高频（应用岗） |
+| [cuda 算子手撕.md](工程手撕/cuda算子手撕.md) | RMSNorm / Softmax / Online Softmax / SwiGLU（CUDA + Triton 备选） | 滴滴 AI Infra 一面原题 |
 | [通用手撕清单.md](工程手撕/通用手撕清单.md) | LRU、Top-K、链表三件套、DP 选型、岗位备考权重表 | 通用 |
 
 ## 使用方法

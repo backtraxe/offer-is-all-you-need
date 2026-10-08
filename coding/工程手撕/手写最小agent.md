@@ -1,7 +1,7 @@
 # 手写最小 Agent（脱框架 ReAct + 上下文压缩）
 
 > 应用岗 2026 年 live coding 新高频。理论口径与
-> [agent基础与规划](../../interview-questions/agent/agent基础与规划.md)
+> [agent 基础与规划](../../interview-questions/agent/agent基础与规划.md)
 > 保持一致：ReAct = Thought/Action/Observation 交错循环（TAO），死循环靠"三层防护"
 > （最大步数硬兜底 → 重复指纹拦截 → 反思退出）。本文把这三层直接写成能默写的代码。
 
@@ -179,8 +179,8 @@ def run_agent(task: str) -> str:
 
 - **工具重复调用怎么检测？** 答：对 `(tool_name, normalized_args)` 算指纹（canonical
   JSON + hash），指纹出现 N 次（实战设 2）就拦截并回喂"换思路"。更狠的做法把
-  (规划状态, 观测摘要) 也做去重，抓"参数变了但本质在绕圈"的变体循环——这就是
-  agent基础与规划.md 里"三层防护"的第二层，追问会顺到"为什么三层而非一层"。
+  (规划状态，观测摘要) 也做去重，抓"参数变了但本质在绕圈"的变体循环——这就是
+  agent 基础与规划.md 里"三层防护"的第二层，追问会顺到"为什么三层而非一层"。
 - **超时重试为什么指数退避而不是固定间隔？** 固定间隔遇上服务雪崩会同步打挂下游（
   thundering herd），指数退避 + 上限次数降低重试风暴。可再补一句"生产上再加 jitter"。
 - **tool 超时的线程安全 / 取消语义？** Python 侧一般用 thread pool + timeout，超时的
@@ -304,7 +304,7 @@ def compress_history(messages, budget: int, keep_recent: int = 3, summarize=None
 ### 面试官追问
 
 - **压缩后的摘要失真怎么办？** 答三层：① 摘要 prompt 里强制保留工具最终结论和数值
-  （别讲"模型会编"就完了）；② 摘要+原文双保险：摘要只当"目录"，关键 ref 可 recall
+  （别讲"模型会编"就完了）；② 摘要 + 原文双保险：摘要只当"目录"，关键 ref 可 recall
   回原文（对应题目的 offload 设计，也是最硬核的答法）；③ 实务上加"压缩前把关键
   中间结论落入 scratchpad / 记忆模块"，让关键事实不依赖单一摘要文本，参考
   [记忆与上下文工程](../../interview-questions/agent/记忆与上下文工程.md)。
@@ -317,6 +317,6 @@ def compress_history(messages, budget: int, keep_recent: int = 3, summarize=None
 
 ---
 
-*配套阅读：[agent基础与规划](../../interview-questions/agent/agent基础与规划.md)（TAO 循环与三层防护口径）、
+*配套阅读：[agent 基础与规划](../../interview-questions/agent/agent基础与规划.md)（TAO 循环与三层防护口径）、
 [记忆与上下文工程](../../interview-questions/agent/记忆与上下文工程.md)、
 [学习资源清单 · Tiny-Universe（Tiny Agent 参考实现）](../../resources/学习资源清单.md)*

@@ -245,7 +245,7 @@ __global__ void swiglu_kernel(const float* __restrict__ h,
 - **SwiGLU 为什么是三个矩阵？** 对比 GELU FFN（两个 $d\times \frac{8}{3}d$ 上下），
   SwiGLU 是 $W_g, W_u, W_d$ 三个矩阵、总参数约 $8d^2$（LLaMA 中间维约 $\frac{8}{3}d$），
   门控单元比 GELU 更稳，代价是多一次 GEMM。
-- **fusion 省什么？** 省 silu(h) 单独落显存的写+读两次（bf16 向量长度 n，
+- **fusion 省什么？** 省 silu(h) 单独落显存的写 + 读两次（bf16 向量长度 n，
   省 4n bytes 的 HBM 流量），elementwise 融合收益直接、代码便宜。
 - **matmul 部分要不要自己写？** 一般不考（GEMM 交给 cuBLAS/CUTLASS），
   但说话要懂：SwiGLU 的 h/u 可以并成一次 $[xW_g, xW_u] = x\cdot [W_g | W_u]$，
@@ -304,6 +304,6 @@ kernel，去掉了 eager 模式下每个算子一次 kernel launch + 中间张�
 
 ---
 
-*配套阅读：模型侧口径看 [transformer与attention](../../interview-questions/llm基础/transformer与attention.md)
+*配套阅读：模型侧口径看 [transformer 与 attention](../../interview-questions/llm基础/transformer与attention.md)
 第四节 KV Cache 与第五节 FlashAttention（online softmax 出处）；资源指路
 [学习资源清单 · nano-vllm / flash-attention / llm.c](../../resources/学习资源清单.md)。*

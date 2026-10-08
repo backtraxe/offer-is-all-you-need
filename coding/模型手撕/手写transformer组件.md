@@ -1,9 +1,9 @@
 # 手写 Transformer 组件（live coding 真题 · 默写版）
 
-> 上一篇 [手写attention](./手写attention.md) 拆了注意力本身，这一篇把
+> 上一篇 [手写 attention](./手写attention.md) 拆了注意力本身，这一篇把
 > 注意力之外的组件凑齐：Pre-Norm Block、SwiGLU FFN、MoE、BPE、参数量/
 > 显存手算。美团/滴滴的爱考区。同样按「默写版代码 → 易错点 → 追问」组织。
-> 题源见 [高频面试真题汇总-手写代码题](../../interview-questions/高频面试真题汇总.md)。
+> 题源见 [高频面试真题汇总 - 手写代码题](../../interview-questions/高频面试真题汇总.md)。
 
 ## 一、Pre-Norm Transformer Block（SwiGLU 版 FFN）
 
@@ -44,7 +44,7 @@ class TransformerBlock(nn.Module):
         return x
 ```
 
-（`MultiHeadAttention` 与 `RMSNorm` 从 [手写attention](./手写attention.md)
+（`MultiHeadAttention` 与 `RMSNorm` 从 [手写 attention](./手写attention.md)
 第一、第五节原样搬过来即可。）
 
 骨架必须记住的结构：
@@ -137,7 +137,7 @@ class SparseMoE(nn.Module):
 
 - top-k 权重要**重新归一**（softmax 是按全体算的，截断后不归一会让
   输出幅度漂移）。
-- 负载均衡 loss 里 f 是**不可导**的路由统计、 p 是**可导**的平均概率，
+- 负载均衡 loss 里 f 是**不可导**的路由统计、p 是**可导**的平均概率，
   乘起来梯度只走 p——把两者都写成可导就失去设计意义。
 - 按专家遍历（expert-loop）而不是按 token 遍历，否则白板写不完、工程
   上也慢。
@@ -154,7 +154,7 @@ class SparseMoE(nn.Module):
   折中，DeepSeek/Qwen 的 MoE 常见 k=8/64 里的 8。
 - **「推理时 MoE 为什么省算力不省显存？」** 每次前向只激活 k 个专家（FLOPs
   按稀疏算），但全部专家参数都得在显存里放着——显存按总参数算。
-- **「MoE 和 MMoE 一回事吗？」** 不是。MMoE 是多任务的共享专家+任务塔结构，
+- **「MoE 和 MMoE 一回事吗？」** 不是。MMoE 是多任务的共享专家 + 任务塔结构，
   和 Transformer 里的稀疏 MoE FFN 只是名字像。
 - **「aux loss 和 expert capacity 的关系？」** 工程版还有容量因子（每个专家
   最多收多少 token，超出直接走残差丢掉或 overflow 重路由），白板能提
@@ -238,7 +238,7 @@ def bpe_encode(word: str, merges) -> list:
 - **「现代 LLM 用什么？」** GPT-2/LLaMA 系是字节级 BPE（base alphabet 是
   256 个字节，天然无 OOV、多语言友好）；SentencePiece 是不依赖空格预
   分词的变体（Unigram/BPE 两种训练模式）。
-- **「BPE 时间复杂度？」** 每轮全语料扫一遍统计+替换，O(轮数 × 语料长)，
+- **「BPE 时间复杂度？」** 每轮全语料扫一遍统计 + 替换，O(轮数 × 语料长)，
   工程上用增量统计加速。
 
 ## 四、参数量 / 显存手算演练
@@ -247,7 +247,7 @@ def bpe_encode(word: str, merges) -> list:
 不是默写代码而是白板速算，按四步法走。
 
 **第 1 步 · 参数量**（每层约 $12d^2$，详细推导见
-[transformer与attention](../../interview-questions/llm基础/transformer与attention.md)）：
+[transformer 与 attention](../../interview-questions/llm基础/transformer与attention.md)）：
 
 ```text
 N ≈ L · 12d² + V · d          # SwiGLU FFN 时；GELU FFN 也是 12d²（4d×2 矩阵）
@@ -310,5 +310,5 @@ LoRA: 主干 2N 字节冻结，优化器状态只按 ~0.5% 的低秩参数算
 
 ---
 
-*同目录：[手写attention](./手写attention.md) ·
+*同目录：[手写 attention](./手写attention.md) ·
 [对齐与并行代码](./对齐与并行代码.md) · [coding/ 目录](../)*

@@ -42,7 +42,7 @@ $$PE_{(pos, 2i)} = \sin\left(\frac{pos}{10000^{2i/d}}\right), \qquad PE_{(pos, 2
 直觉上：词语之间的关系本来就主要由相对距离决定（两个挨着的动词主语大概率属于同一短语）。
 相对编码有很多实现，RoPE 和 ALiBi 是其中最成功的两条路线。
 
-### RoPE（Rotary Position Embedding）
+### RoPE (Rotary Position Embedding)
 
 ▶ 面试题：RoPE 原理？为什么比绝对位置编码好？—**高频，手撕也常考**
 
@@ -63,7 +63,7 @@ k_n' = R(nθ) · k_n
 
 $$\langle R_m q, R_n k \rangle = q^\top R_{m-n} k$$
 
-也就是说attention score 只依赖**相对位置差 m−n**，跟绝对偏移无关。这正是相对编码想要的性质，而且这性质是**从结构上**天然得到的，不是学出来的。
+也就是说 attention score 只依赖**相对位置差 m−n**，跟绝对偏移无关。这正是相对编码想要的性质，而且这性质是**从结构上**天然得到的，不是学出来的。
 
 **工程上的加分点**：
 - 位置信息以"乘"的形式注入 QK，不改 V，不污染 token 表征本身；
@@ -142,7 +142,7 @@ $$\text{RMSNorm}(x) = \frac{x}{\sqrt{\frac{1}{d}\sum_i x_i^2 + \epsilon}} \odot 
 - **效果几乎不掉**：论文实测 RMSNorm ≈ LayerNorm，均值中心化那一项的贡献
   远没有 scale 重要；
 - 对 CUDA 友好：一个 elementwise 归一化 + 一个 RMS 归约，比 LN 的两次归约
-  更好融合——Infra 岗的手撕 RMSNorm CUDA 题就考这个（见 [高频面试真题汇总-手写代码题](../高频面试真题汇总.md#七手写代码题live-coding-真题)）。
+  更好融合——Infra 岗的手撕 RMSNorm CUDA 题就考这个（见 [高频面试真题汇总 - 手写代码题](../高频面试真题汇总.md#七手写代码题live-coding-真题)）。
 
 ### Pre-Norm vs Post-Norm
 

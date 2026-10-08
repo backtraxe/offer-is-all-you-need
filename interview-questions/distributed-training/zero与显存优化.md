@@ -73,7 +73,7 @@ flowchart LR
 | **ZeRO-2** | 2Ψ（BF16 w）+ 14Ψ/N | 梯度再省 N 倍，≈ 8× | 2Ψ（梯度 ReduceScatter） | **≈ 1×** |
 | **ZeRO-3** | **16Ψ / N** | 全部分片，理论 N 倍 | 3Ψ（fwd 参数 AllGather Ψ + bwd 参数 AllGather Ψ + 梯度 ReduceScatter Ψ） | **≈ 1.5×** |
 
-> 口径说明：ring AllReduce 一次 ≈ 2Ψ（发送+接收合计），ReduceScatter 本身
+> 口径说明：ring AllReduce 一次 ≈ 2Ψ（发送 + 接收合计），ReduceScatter 本身
 > 只有 Ψ（每个 rank 只发出自己那 1/N 份）。表里 ZeRO-3 的 3Ψ 就是这么来的。
 
 **答法要点**：先按"优化器状态 → 梯度 → 参数"的递进讲三代各分片了什么（这一定
@@ -82,7 +82,7 @@ flowchart LR
 
 ## 三、完整计算题示例（把上面的表用起来）
 
-### 示例 1：7B + AdamW 混合精度单卡显存
+### 示例 1:7B + AdamW 混合精度单卡显存
 
 ```text
 模型状态 16Ψ = 7e9 × 16 B = 112 GB
@@ -90,7 +90,7 @@ flowchart LR
 → 总需求 > 128 GB，单卡 80G 放不下。结论：必须上 ZeRO 或 3D。
 ```
 
-### 示例 2：7B，ZeRO-3 + DP=8
+### 示例 2:7B，ZeRO-3 + DP=8
 
 ```text
 每卡模型状态 = 16Ψ / N = 112 GB / 8 = 14 GB
@@ -102,7 +102,7 @@ flowchart LR
 问题，瓶颈转移到通信和激活。
 ```
 
-### 示例 3：70B，ZeRO-3 + DP=64，够不够？
+### 示例 3:70B，ZeRO-3 + DP=64，够不够？
 
 ```text
 70B × 16 B / 64 = 17.5 GB/卡 ≈ 20 GB
@@ -163,7 +163,7 @@ parameter，更细粒度、通信更好重叠，可作为加分项提一句。
    动态复制（专家恒等复制）。
    → 详见 [三维并行的 EP 节](./三维并行.md)。
 2. **激活显存**：MoE 中间 FFN 维度 × top-k 放大，**激活比同参数稠密模型大
-   k 倍量级**；加上 EP 通信是 AllToAll ×top-k，长 batch 时激活+通信双杀。
+   k 倍量级**；加上 EP 通信是 AllToAll ×top-k，长 batch 时激活 + 通信双杀。
    估算时记住：**只用激活参数算「等效 FFN 宽度」，再按 dense 的激活公式乘 k**。
 
 ## 七、Offload：把数据从 HBM 请出去

@@ -6,6 +6,13 @@
   - [JD 分析 · AI Infra 岗](resources/jd分析-ai-infra岗.md)
   - [学习资源清单](resources/学习资源清单.md)
 
+- **面经复盘**
+  - [面经目录与机制观察](interview-experiences/README.md)
+  - [英伟达 · AI Infra 五面](interview-experiences/英伟达-ai-infra五面.md)
+  - [字节 · AI Infra 二面](interview-experiences/字节-ai-infra二面.md)
+  - [摩尔线程 · AI Infra 三轮](interview-experiences/摩尔线程-ai-infra三轮.md)
+  - [百度 · AI Infra 一面](interview-experiences/百度-ai-infra一面.md)
+
 - **高频考点**
   - [考点地图（README）](interview-questions/README.md)
   - [高频面试真题汇总](interview-questions/高频面试真题汇总.md)
@@ -28,6 +35,7 @@
     - [多 Agent 与评测](interview-questions/agent/多agent与评测.md)
   - 推理部署（Inference）
     - [vLLM 与推理加速核心](interview-questions/inference/vllm与推理加速核心.md)
+    - [Infra 面试计算题专项](interview-questions/inference/infra面试计算题专项.md)
     - [量化与压缩](interview-questions/inference/量化与压缩.md)
     - [推理引擎选型与源码路线](interview-questions/inference/推理引擎选型与源码路线.md)
     - 源码解读专题

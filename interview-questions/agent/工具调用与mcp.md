@@ -173,7 +173,7 @@ MCP 深度追问的分水岭。
 | **本质** | 模型输出格式约定（特性） | 应用↔工具的**接入协议** | Agent↔Agent 的**协作协议** | 可复用的**能力包/知识包** |
 | **解决什么** | 让模型能表达"我要调 X" | 解耦 N×M 集成，即插即用 | 多 Agent 间任务分派与消息 | 把领域 know-how 封装成可加载单元 |
 | **谁定的** | 各家模型厂商（OpenAI/Anthropic…） | Anthropic 2024 开源 | Google 2025 开源 | Anthropic（Claude Skills 生态） |
-| **通信** | 无协议，宿主解析 JSON 后自行调用 | JSON-RPC 2.0（stdio/HTTP+SSE） | HTTP + Agent Card 发现机制 | 无协议，本质是文件+元数据 |
+| **通信** | 无协议，宿主解析 JSON 后自行调用 | JSON-RPC 2.0（stdio/HTTP+SSE） | HTTP + Agent Card 发现机制 | 无协议，本质是文件 + 元数据 |
 | **互补关系** | MCP 的 Tools 原语**最终通过 FC 暴露给模型** | 是 FC 工具的标准化"供货侧" | 与 MCP 正交：MCP 管"工具接入"，A2A 管"Agent 协作" | 可被 Agent 按需加载，不占常驻上下文 |
 | **典型追问** | "FC 是协议吗？"——不是 | "MCP 替代 FC 吗？"——不，是供应链与最后一公里的关系 | "A2A 和 MCP 冲突吗？"——不，互补 | "和 MCP 区别？"——Skill 是知识/流程包，MCP 是工具接口 |
 
@@ -214,7 +214,7 @@ Agent 读到后把攻击者指令当成了新任务。MCP/RAG/联网场景全是
 
 1. 口述 FC 完整链路（schema 入 prompt → 结构化输出 → runtime 执行 → observation 回填）。
 2. 备一个自己项目的 Schema：说出 description 怎么写、枚举怎么收窄、幂等怎么做的。
-3. 徒手画 MCP 三角（Host/Client/Server）并说出三原语+三种控制权。
+3. 徒手画 MCP 三角（Host/Client/Server）并说出三原语 + 三种控制权。
 4. 背 FC/MCP/A2A/Skill 对比表的"一句话"版。
 5. 间接注入：能举一个具体攻击例子（邮件/网页藏指令）+ 四件套防护。
 
