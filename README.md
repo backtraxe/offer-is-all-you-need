@@ -16,8 +16,8 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 ## 仓库结构
 
 ```
-├── mianjing/          # 面经复盘：按公司/日期组织，含流程、题目、复盘
-├── bagu/              # 八股文：LLM、Agent、推理部署、分布式训练等
+├── interview-experiences/  # 面经复盘：按公司/日期组织，含流程、题目、复盘
+├── interview-questions/    # 高频考点：LLM、Agent、推理部署、分布式训练等
 ├── system-design/     # 系统设计：RLHF 平台、Agent 网关、推理服务等
 ├── coding/            # 手写题：transformer、attention、LRU 及各种 live coding
 └── resources/         # 参考资料、书单、博客链接
