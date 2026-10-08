@@ -25,9 +25,13 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 使用说明
 
-1. 直接按目录翻，每篇文档自成一体
-2. 面经部分已脱敏，不保证 100% 还原现场
-3. 八股不保证全对，以我拿到 offer 为准（验证方法：给我发 offer）
+1. 不知道从哪开始 → 先读 [resources/学习路线图.md](resources/学习路线图.md)
+   （基于真实招聘 JD 调研的分层备战路线，附两份岗位 JD 分析和学习资源清单）
+2. 高频考点入口 → [interview-questions/README.md](interview-questions/README.md)
+   （考点地图 + 出现率 Top 20 + 各公司面试风格差异）
+3. 其余按目录翻，每篇文档自成一体
+4. 面经部分已脱敏，不保证 100% 还原现场
+5. 八股不保证全对，以我拿到 offer 为准（验证方法：给我发 offer）
 
 ## Contribution
 
