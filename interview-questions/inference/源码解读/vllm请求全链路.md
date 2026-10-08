@@ -93,9 +93,9 @@ flowchart TB
     ASYNC -- "ZMQ（msgpack 序列化）<br/>EngineCoreRequest ↓ / EngineCoreOutputs ↑" --> P2
     P2 -- "executor 层：共享内存广播 + NCCL 集合通信" --> P3
 
-    style P1 fill:#e8f1fd
-    style P2 fill:#fdf3d7
-    style P3 fill:#fde2e2
+    style P1 fill:#f6f8fa,stroke:#cdd7e4
+    style P2 fill:#f6f8fa,stroke:#cdd7e4
+    style P3 fill:#f6f8fa,stroke:#cdd7e4
 ```
 
 ### 为什么拆进程：一句话——躲 GIL

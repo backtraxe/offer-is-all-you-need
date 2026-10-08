@@ -31,8 +31,8 @@ flowchart LR
     E --> F["增量解码<br/>detokenizer + ZMQ 回传"]
     F --> A
 
-    style C fill:#fff4e6
-    style D fill:#fff4e6
+    style C fill:#faf6ef
+    style D fill:#faf6ef
 ```
 
 一句话版：**一个请求 = 被 tokenize → 排队 → 被 schedule 成 batch 的一员 →

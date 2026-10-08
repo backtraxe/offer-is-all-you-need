@@ -44,7 +44,7 @@ flowchart TB
         GOLD["历史 MR 评测集<br/>人工意见 vs 机器意见"]
     end
     OUT -.->|"采纳反馈回流"| EVAL
-    style TOOLS fill:#ffe4e1,stroke:#d9534f
+    style TOOLS fill:#fbefee,stroke:#cf8583
 ```
 
 一句话：**输入是 diff + 按需取回来的 repo 上下文，输出是过了置信度闸门的
@@ -165,7 +165,7 @@ flowchart TB
     ACT -->|"白名单内<br/>（重启/扩容）"| HITL1["HITL 审批<br/>人确认后执行"]
     ACT -->|"高危/超白名单<br/>（切流量/回滚生产/改数据）"| HITL2["强制人工<br/>双人确认或仅出建议"]
     HITL1 & HITL2 --> DONE["执行 + 复盘回流<br/>案例入 SOP 库"]
-    style HITL2 fill:#ffe4e1,stroke:#d9534f
+    style HITL2 fill:#fbefee,stroke:#cf8583
 ```
 
 ### 假设树怎么收敛（情景题的答题主线）

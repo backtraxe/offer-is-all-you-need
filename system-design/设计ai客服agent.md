@@ -53,8 +53,8 @@ flowchart TB
     CHECK -->|"不通过"| FALLBACK["兜底链路<br/>澄清反问 → 降级回复 → 转人工"]
     FALLBACK --> HUMAN["人工坐席<br/>（带完整会话摘要与已查结果）"]
     GEN -.->|"会话摘要沉淀"| MEM["记忆层<br/>会话状态 / 用户偏好"]
-    style HUMAN fill:#ffe4e1,stroke:#d9534f
-    style TOOL fill:#fff4e6,stroke:#e8912d
+    style HUMAN fill:#fbefee,stroke:#cf8583
+    style TOOL fill:#faf6ef,stroke:#d3a674
 ```
 
 三层结构一句话：**NLU 路由层决定"这是哪类事"，workflow/检索层负责"把事办成"，

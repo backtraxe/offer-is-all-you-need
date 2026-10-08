@@ -54,8 +54,8 @@ flowchart TB
 
     IDX --> RET
     POST -.->|"二次校验"| IDX
-    style AUTH fill:#ffe4e1,stroke:#d9534f
-    style POST fill:#ffe4e1,stroke:#d9534f
+    style AUTH fill:#fbefee,stroke:#cf8583
+    style POST fill:#fbefee,stroke:#cf8583
 ```
 
 面试讲法：30 秒把两条流水线过一遍，然后说"我想重点展开权限和增量更新两块，

@@ -128,7 +128,7 @@ flowchart TB
     D -->|"否：conclusion"| FIN["输出最终答案<br/>或触发终止条件"]
     FIN -.- LOOP["外层防护：<br/>最大步数 · 重复检测 · 反思退出"]
     LOOP -.->|"超限强制中断"| FIN
-    style LOOP fill:#fff4e6,stroke:#e8912d
+    style LOOP fill:#faf6ef,stroke:#d3a674
 ```
 
 三个要点，答题时务必覆盖：
