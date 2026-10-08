@@ -6,6 +6,10 @@
 based solely on 面试经验，dispensing with 运气 and 玄学 entirely.
 Experiments show that it achieves SOTA performance on the "拿 offer" benchmark.
 
+📖 **在线文档站**：[backtraxe.github.io/offer-is-all-you-need](https://backtraxe.github.io/offer-is-all-you-need/)
+（GitHub Pages + docsify 渲染，含侧边栏导航、全文搜索、mermaid 图；
+仓库根目录 `index.html` + `_sidebar.md` 即站点配置）
+
 ---
 
 ## 这是什么

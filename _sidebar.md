@@ -1,0 +1,63 @@
+- [首页](README.md)
+
+- **🧭 学习地图**
+  - [学习路线图](resources/学习路线图.md)
+  - [JD 分析 · Agent 开发岗](resources/jd分析-agent开发岗.md)
+  - [JD 分析 · AI Infra 岗](resources/jd分析-ai-infra岗.md)
+  - [学习资源清单](resources/学习资源清单.md)
+
+- **📚 高频考点**
+  - [考点地图（README）](interview-questions/README.md)
+  - [高频面试真题汇总](interview-questions/高频面试真题汇总.md)
+  - LLM 基础
+    - [模块导读](interview-questions/llm基础/README.md)
+    - [Transformer 与 Attention](interview-questions/llm基础/transformer与attention.md)
+    - [位置编码与 Norm](interview-questions/llm基础/位置编码与norm.md)
+  - 训练与对齐
+    - [预训练与 SFT](interview-questions/训练与对齐/预训练与sft.md)
+    - [LoRA 与参数高效微调](interview-questions/训练与对齐/lora与参数高效微调.md)
+    - [RLHF 与对齐](interview-questions/训练与对齐/rlhf与对齐.md)
+  - RAG
+    - [RAG 全链路](interview-questions/rag/rag全链路.md)
+    - [检索与混合召回](interview-questions/rag/检索与混合召回.md)
+    - [评测与建库工程](interview-questions/rag/评测与建库工程.md)
+  - Agent
+    - [Agent 基础与规划](interview-questions/agent/agent基础与规划.md)
+    - [工具调用与 MCP](interview-questions/agent/工具调用与mcp.md)
+    - [记忆与上下文工程](interview-questions/agent/记忆与上下文工程.md)
+    - [多 Agent 与评测](interview-questions/agent/多agent与评测.md)
+  - 推理部署（Inference）
+    - [vLLM 与推理加速核心](interview-questions/inference/vllm与推理加速核心.md)
+    - [量化与压缩](interview-questions/inference/量化与压缩.md)
+    - [推理引擎选型与源码路线](interview-questions/inference/推理引擎选型与源码路线.md)
+    - 源码解读专题
+      - [专题导读](interview-questions/inference/源码解读/README.md)
+      - [源码学习路线图](interview-questions/inference/源码解读/源码学习路线图.md)
+      - [vLLM 请求全链路](interview-questions/inference/源码解读/vllm请求全链路.md)
+      - [SGLang 请求全链路](interview-questions/inference/源码解读/sglang请求全链路.md)
+  - 分布式训练
+    - [三维并行](interview-questions/distributed-training/三维并行.md)
+    - [ZeRO 与显存优化](interview-questions/distributed-training/zero与显存优化.md)
+    - [训练框架与稳定性](interview-questions/distributed-training/训练框架与稳定性.md)
+
+- **⌨️ 手撕题（Coding）**
+  - [题库导读](coding/README.md)
+  - 模型手撕
+    - [手写 Attention](coding/模型手撕/手写attention.md)
+    - [手写 Transformer 组件](coding/模型手撕/手写transformer组件.md)
+    - [对齐与并行代码](coding/模型手撕/对齐与并行代码.md)
+  - 工程手撕
+    - [手写最小 Agent](coding/工程手撕/手写最小agent.md)
+    - [CUDA 算子手撕](coding/工程手撕/cuda算子手撕.md)
+    - [通用手撕清单](coding/工程手撕/通用手撕清单.md)
+
+- **🏗️ 系统设计**
+  - [题库导读](system-design/README.md)
+  - [设计企业知识库 Agent](system-design/设计企业知识库agent.md)
+  - [设计 AI 客服 Agent](system-design/设计ai客服agent.md)
+  - [设计代码 Review 与运维 Agent](system-design/设计代码review与运维agent.md)
+  - [设计大模型统一接入网关](system-design/设计大模型统一接入网关.md)
+  - [设计分布式推理服务](system-design/设计分布式推理服务.md)
+  - [设计 AI 开发平台](system-design/设计ai开发平台.md)
+
+- [GitHub 仓库](https://github.com/backtraxe/offer-is-all-you-need)
