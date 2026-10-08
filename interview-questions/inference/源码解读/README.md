@@ -6,8 +6,9 @@
 
 ## 目录
 
-| 文档 | 引擎 | 关键看点 |
+| 文档 | 内容 | 关键看点 |
 |---|---|---|
+| [源码学习路线图.md](源码学习路线图.md) | 怎么学 | **从原理框架 → nano-vllm → vLLM 主线 → SGLang 对照 → 专题深挖，4-5 周渐进路径，每级带验收标准与 3 天冲刺版** |
 | [vllm请求全链路.md](vllm请求全链路.md) | vLLM（V1 架构，V0 已移除） | AsyncLLM → EngineCore 主循环（continuous batching 落点）→ Scheduler + KVCacheManager（prefix cache、chunked prefill、抢占）→ ModelRunner → 增量解码输出 |
 | [sglang请求全链路.md](sglang请求全链路.md) | SGLang（main，v0.5.21 口径） | 三进程流水线（tokenizer/scheduler/detokenizer）→ event loop 与 batch 调度 → **RadixCache 深挖**（SGLang 杀手特性落点）→ PD 分离入口 |
 
