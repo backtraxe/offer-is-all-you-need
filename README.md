@@ -1,2 +1,44 @@
 # offer-is-all-you-need
-面经、八股、系统设计，一个都不能少。Offer 是我的，也是你的。
+
+> Attention 买不到 offer，但这个 repo 可以。
+
+**摘要**：We propose a simple but effective repository, `offer-is-all-you-need`,
+based solely on 面试经验，dispensing with 运气 and 玄学 entirely.
+Experiments show that it achieves SOTA performance on the "拿 offer" benchmark.
+
+---
+
+## 这是什么
+
+Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的面经、八股整理、
+系统设计笔记和 coding 真题。持续更新，直到上岸为止（上岸之后看心情更不更）。
+
+## 仓库结构
+
+```
+├── mianjing/          # 面经复盘：按公司/日期组织，含流程、题目、复盘
+├── bagu/              # 八股文：LLM、Agent、推理部署、分布式训练等
+├── system-design/     # 系统设计：RLHF 平台、Agent 网关、推理服务等
+├── coding/            # 手写题：transformer、attention、LRU 及各种 live coding
+└── resources/         # 参考资料、书单、博客链接
+```
+
+## 使用说明
+
+1. 直接按目录翻，每篇文档自成一体
+2. 面经部分已脱敏，不保证 100% 还原现场
+3. 八股不保证全对，以我拿到 offer 为准（验证方法：给我发 offer）
+
+## Contribution
+
+- 发现错误欢迎提 issue / PR
+- 想分享你的面经也欢迎 PR，记得脱敏
+- 想看某个方向的整理，开 issue 许愿
+
+## License
+
+MIT，拿走不谢。如果你能拿到 offer 回来告诉我一声，就是最好的回报。
+
+---
+
+*"Self-attention is all you need. 走错片场了。"*
