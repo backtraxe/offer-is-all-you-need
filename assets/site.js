@@ -14,30 +14,27 @@
 
   function mermaidConfig() {
     var dark = document.body.classList.contains('dark');
+    // 白板风：默认节点全白（暗色统一深阶），内容层自定义语义色保留（亮色）
     var vars = dark ? {
-      background: 'transparent',
-      primaryColor: '#1e293b',
-      primaryTextColor: '#e2e8f0',
-      primaryBorderColor: '#475569',
-      secondaryColor: '#334155',
-      tertiaryColor: '#0f172a',
-      lineColor: '#94a3b8',
-      textColor: '#e2e8f0',
-      clusterBkg: '#16213a',
-      clusterBorder: '#334155',
-      edgeLabelBackground: '#0f172a'
+      background: 'transparent', primaryColor: '#1a2436', primaryTextColor: '#e2e8f0',
+      primaryBorderColor: '#3b475c', secondaryColor: '#141c2b', tertiaryColor: '#141c2b',
+      mainBkg: '#1a2436', titleColor: '#f1f5f9', lineColor: '#64748b', textColor: '#b6c1d0',
+      clusterBkg: '#141c2b', clusterBorder: '#2a364d', edgeLabelBackground: '#141c2b',
+      actorBkg: '#1a2436', actorBorder: '#3b475c', actorTextColor: '#e2e8f0', actorLineColor: '#3b475c',
+      signalColor: '#94a3b8', signalTextColor: '#b6c1d0', labelBoxBkgColor: '#1a2436',
+      labelBoxBorderColor: '#3b475c', labelTextColor: '#e2e8f0', loopTextColor: '#8b99ad',
+      noteBkgColor: '#1a2436', noteBorderColor: '#3b475c', noteTextColor: '#b6c1d0',
+      activationBkgColor: '#2a364d', activationBorderColor: '#3b475c'
     } : {
-      background: 'transparent',
-      primaryColor: '#f1f5f9',
-      primaryTextColor: '#0f172a',
-      primaryBorderColor: '#cbd5e1',
-      secondaryColor: '#e2e8f0',
-      tertiaryColor: '#f8fafc',
-      lineColor: '#64748b',
-      textColor: '#0f172a',
-      clusterBkg: '#f8fafc',
-      clusterBorder: '#e2e8f0',
-      edgeLabelBackground: '#ffffff'
+      background: 'transparent', primaryColor: '#ffffff', primaryTextColor: '#0f172a',
+      primaryBorderColor: '#dbe3ec', secondaryColor: '#f6f8fa', tertiaryColor: '#f6f8fa',
+      mainBkg: '#ffffff', titleColor: '#0f172a', lineColor: '#94a3b8', textColor: '#334155',
+      clusterBkg: '#f6f8fa', clusterBorder: '#e2e8f0', edgeLabelBackground: '#ffffff',
+      actorBkg: '#ffffff', actorBorder: '#dbe3ec', actorTextColor: '#0f172a', actorLineColor: '#dbe3ec',
+      signalColor: '#64748b', signalTextColor: '#334155', labelBoxBkgColor: '#ffffff',
+      labelBoxBorderColor: '#dbe3ec', labelTextColor: '#0f172a', loopTextColor: '#64748b',
+      noteBkgColor: '#f6f8fa', noteBorderColor: '#e2e8f0', noteTextColor: '#334155',
+      activationBkgColor: '#eef2f7', activationBorderColor: '#dbe3ec'
     };
     return {
       startOnLoad: false,

@@ -20,13 +20,14 @@
   --quote-bg: #f8fafc;
   --page-bg: #fdfdfd;
   --mono: "JetBrains Mono", "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  --sans: -apple-system, BlinkMacSystemFont, "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", Helvetica, Arial, sans-serif;
 }
 
 /* ============ 基础排版 ============ */
 body {
   background: var(--page-bg);
-  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC",
-    "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", Helvetica, Arial, sans-serif;
+  font-family: var(--sans);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -144,7 +145,7 @@ blockquote p { margin: 0.35em 0; }
 pre:hover .docsify-copy-code-button { opacity: 1; }
 .docsify-copy-code-button:active { transform: translateY(1px); }
 
-/* ============ Mermaid 图表：卡片承载 + 点击放大 ============ */
+/* ============ Mermaid 图表：白板风（画布 + 白底圆角节点 + 细边线） ============ */
 .markdown-section .mermaid {
   position: relative;
   display: flex;
@@ -163,6 +164,19 @@ pre:hover .docsify-copy-code-button { opacity: 1; }
   box-shadow: 0 6px 22px rgba(37, 99, 235, 0.14);
 }
 .markdown-section .mermaid svg { max-width: 100%; height: auto; }
+.markdown-section .mermaid svg text { font-family: var(--sans); }
+
+/* 节点本体：圆角统一、轻投影，去掉 mermaid 默认的硬朗直角感 */
+.markdown-section .mermaid svg rect { rx: 8px; ry: 8px; }
+.markdown-section .mermaid svg .cluster rect { rx: 10px; ry: 10px; }
+.markdown-section .mermaid svg .node { filter: drop-shadow(0 1px 2px rgba(15, 23, 42, 0.05)); }
+.markdown-section .mermaid svg .edgePaths .path { stroke-width: 1.25px; }
+
+/* 边标签：低调的小灰芯片 */
+.markdown-section .mermaid svg .edgeLabel,
+.markdown-section .mermaid svg .labelBkg {
+  border-radius: 6px;
+}
 
 .mermaid-zoom-hint {
   position: absolute;
@@ -348,6 +362,15 @@ body.dark .sidebar a { color: #b6c1d0; }
 body.dark #theme-toggle { background: #1a2436; border-color: var(--border); }
 body.dark .search input { background: #101828; color: var(--text); }
 body.dark .mermaid-modal .mz-canvas { background: #fff; } /* SVG 文字可读性优先 */
+
+/* 暗色下的图表：统一深阶回填，浅色语义底色（pastel）暗屏下不可读，一律压暗 */
+body.dark .markdown-section .mermaid svg .node { filter: none; }
+body.dark .markdown-section .mermaid svg .node rect,
+body.dark .markdown-section .mermaid svg .cluster rect {
+  fill: #1a2436;
+  stroke: #3b475c;
+}
+body.dark .markdown-section .mermaid svg .cluster rect { fill: #141c2b; }
 
 /* ============ 移动端 ============ */
 @media (max-width: 768px) {
