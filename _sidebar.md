@@ -28,6 +28,7 @@
   - [高频面试真题汇总](interview-questions/高频面试真题汇总.md)
   - [负载均衡专题](interview-questions/负载均衡专题.md)
   - [显存计算专题](interview-questions/显存计算专题.md)
+  - [知识串联与 Why 链](interview-questions/知识串联与why链.md)
   - LLM 基础
     - [模块导读](interview-questions/llm基础/README.md)
     - [Transformer 与 Attention](interview-questions/llm基础/transformer与attention.md)
@@ -36,6 +37,8 @@
     - [多模态架构基础](interview-questions/llm基础/多模态架构基础.md)
   - 训练与对齐
     - [预训练与 SFT](interview-questions/训练与对齐/预训练与sft.md)
+    - [数据工程专题](interview-questions/训练与对齐/数据工程专题.md)
+    - [Scaling Law 与范式迁移](interview-questions/训练与对齐/scaling-law与范式迁移.md)
     - [LoRA 与参数高效微调](interview-questions/训练与对齐/lora与参数高效微调.md)
     - [RLHF 与对齐](interview-questions/训练与对齐/rlhf与对齐.md)
     - [Muon 与新优化器](interview-questions/训练与对齐/muon与优化器.md)
@@ -59,6 +62,7 @@
     - [Harness 工程实战](interview-questions/agent/harness工程实战.md)
     - [决策模型与 Jev](interview-questions/agent/决策模型与jev.md)
     - [多 Agent 与评测](interview-questions/agent/多agent与评测.md)
+    - [Agent 安全与防护](interview-questions/agent/agent安全与防护.md)
     - [AI 编程与 Claude Code 内幕](interview-questions/agent/ai编程与claudecode内幕.md)
     - [Pi Agent 源码分析](interview-questions/agent/pi-agent源码分析.md)
     - [DeepSeek Harness 分析](interview-questions/agent/deepseek-harness分析.md)

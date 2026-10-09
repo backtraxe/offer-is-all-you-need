@@ -202,6 +202,31 @@ $$\text{tokens} \approx \text{汉字数} \times 1.5 \;+\; \text{英文词数} \t
 或者更简单：**宁可多留 20% 余量**——因为 prompt template、工具结果、JSON 标记都
 会额外占 token，预算不够会在 decode 阶段截断。
 
+### tokenizer 的深层影响：成本、边界与安全（why 层）
+
+面试官把 BPE 追问到深处，真正考的是这四条传导链：
+
+1. **成本传导链**：tokenizer 效率 → 同样的字变成更多 token → prefill FLOPs、
+   KV Cache、账单同比例放大。**案例**：同一篇 1000 汉字文档，LLaMA 系
+   tokenizer 约 1800 token，Qwen 系约 800——同样的模型同样的任务，推理成本
+   直接差一倍多。所以"选模型先看 tokenizer 的中文/代码覆盖率"是应用岗的
+   直觉题，也是 Infra 优化的起点（见
+   [显存计算专题](../显存计算专题.md) 的 KV 三旋钮）。
+2. **特殊 token 是攻击面**：`<|im_start|>`、`<s>` 这类特殊 token 若 API 层
+   不过滤，用户就能在文本里"伪造角色边界"——等于在 system prompt 的位置
+   写字。这与 [Agent 安全](../agent/agent安全与防护.md) 的注入防御 L1 同源：
+   输入侧必须做 token 级 sanitize，不能只做字符串级。
+3. **训练/推理完全一致**：tokenizer 是模型的一部分，错一个合并顺序、换一个
+   版本，输出立刻乱码；蒸馏/私有化部署换 tokenizer 约等于换模型，要重新评估。
+4. **glitch token 与"数草莓"**："SolidGoldMagikarp" 这类怪词能触发异常输出，
+   根因是合并规则来自语料频率，部分词表 token 的 embedding 几乎没被训练过；
+   同理"strawberry 有几个 r"难住模型，是因为模型看见的是 token 边界而非
+   字母——**不是推理缺陷，是表征粒度缺陷**。
+
+手撕加餐：① 手写 byte-level BPE 的 encode/decode（30 行）；② 用
+`tiktoken` 与 `Qwen tokenizer` 分别统计同一段中英混排文本，解释 token 数
+差异来自哪几条合并规则——面试官要的就是"说得出的那种解释"。
+
 ## 六、高频追问清单（本主题）
 
 | 追问 | 答题要点 |
