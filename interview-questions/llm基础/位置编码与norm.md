@@ -8,15 +8,10 @@
 
 Self-Attention 本身是**排列不变的**——把句子打乱，attention 的输出只是跟着换顺序，内容完全一样（数学上叫 permutation equivariant）。但语言显然有顺序："我打你"和"你打我"意思完全不同。所以得人为把位置信息注入进去。这就是位置编码要解决的问题。
 
-```mermaid
-flowchart LR
-    A["位置编码怎么选？"] --> B["绝对位置编码<br/>sinusoidal / learned"]
-    A --> C["相对位置编码<br/>RoPE（旋转）"]
-    A --> D["线性bias<br/>ALiBi"]
-    B -->|"历史方案<br/>BERT/GPT-2"| B1["简单好懂<br/>外推差"]
-    C -->|"当前主流<br/>LLaMA/Qwen/GLM"| C1["相对性质+可推长度"]
-    D -->|"BLOOM/Falcon"| D1["外推最好<br/>主流模型用得少"]
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/pos-encoding-choice.html" width="100%" height="640" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/pos-encoding-choice.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 ## 二、绝对位置编码
 
@@ -85,19 +80,10 @@ $$\langle R_m q, R_n k \rangle = q^\top R_{m-n} k$$
 一句话：**RoPE 天然自带相对性质，但本身不超训练长度的保险；现代长上下文是
 "RoPE + NTK/YaRN"组合出来。**
 
-```mermaid
-flowchart TB
-    subgraph 绝对位置编码
-        A1["位置 7<br/>PE(7) 加进 embedding<br/>离 3 个位置的信息是间接学的"]
-    end
-    subgraph 相对位置编码-RoPE
-        B1["位置 m 的 Q<br/>乘旋转矩阵 R(mθ)"] --> B2["attention score<br/>只依赖 m−n"]
-        B3["位置 n 的 K<br/>乘旋转矩阵 R(nθ)"] --> B2
-    end
-    subgraph ALiBi
-        C1["attention score<br/>减去 m·|i−j| 的线性惩罚"] --> C2["距离越远惩罚越大<br/>外推极强"]
-    end
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/pos-encoding-mechanism.html" width="100%" height="640" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/pos-encoding-mechanism.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 ### ALiBi
 
@@ -163,16 +149,10 @@ $$\text{out} = x + F(\text{Norm}(x))$$
   稳定性，所以 Pre-Norm 赢了。各家对应变体：DeepNorm、Sandwich-Norm 是
   试图两头占的折中。
 
-```mermaid
-flowchart LR
-    subgraph PostNorm["Post-Norm（难训）"]
-        A["x"] --> B["F(x) + x"] --> C["LN"]
-    end
-    subgraph PreNorm["Pre-Norm（主流）"]
-        D["x"] --> E["LN"] --> F["F(·)"] --> G["+ x 直接残差"]
-    end
-    PostNorm -.->|"层数 >50 易发散"| PreNorm
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/pre-vs-post-norm.html" width="100%" height="640" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/pre-vs-post-norm.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 一句话答法：**"Pre-Norm 是因为深网络训练稳定——残差通路保持恒等，梯度能直通；
 RMSNorm 是因为省钱——LN 的均值中心化对效果贡献小，砍掉它改 RMS 既快又没掉点。"**
@@ -196,12 +176,10 @@ RMSNorm 是因为省钱——LN 的均值中心化对效果贡献小，砍掉它
 
 训练出来的是一张**合并规则表**；推理时按同一张表的顺序去贪婪合并就是 encode。
 
-```mermaid
-flowchart LR
-    A["low,<br/>low,<br/>lower,<br/>newest"] -->|"统计相邻对<br/>l-o 出现 5 次<br/>l-o-w 3 次"| B["合并 l+o=lo"]
-    B -->|"低再次出现最多<br/>lo+w=low"| C["合并"]
-    C --> D["最终词表<br/>l, o, w, e, r, n, s, t, lo, low, er, est, low, est"]
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/bpe-merge.html" width="100%" height="640" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/bpe-merge.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 应用岗常问的同行词汇：
 - **BPE**（GPT 系）、**WordPiece**（BERT）、**Unigram**（T5/LLaMa 里 SentencePiece 常用）；

@@ -11,16 +11,10 @@
 | [Transformer 与 Attention](./transformer与attention.md) | Self-Attention 公式与 √d 缩放、MHA 结构、MHA→MQA→GQA→MLA 演进、KV Cache 显存估算（7B/13B/70B 数字）、FlashAttention | "Transformer 架构讲一遍" "**为什么除以 √d**" "MHA→MLA 每一步省什么" "KV Cache 显存怎么算" |
 | [位置编码、Norm 与 Tokenizer](./位置编码与norm.md) | 绝对/相对位置编码、RoPE 原理与长上下文扩展（NTK/YaRN）、ALiBi、Pre-Norm vs Post-Norm、LayerNorm vs RMSNorm、BPE 与 token 估算 | "RoPE 原理" "为什么大模型用 RMSNorm" "BPE 是怎么训练的" |
 
-```mermaid
-flowchart LR
-    A["Self-Attention<br/>公式 + √d + O(n²)"] --> B["MHA 结构<br/>12d² 参数/层"]
-    B --> C["MHA→MQA→GQA→MLA<br/>都在省 KV Cache"]
-    C --> D["FlashAttention<br/>分块 + 在线 softmax"]
-    E["位置编码<br/>sinusoidal → RoPE → ALiBi<br/>+ NTK/YaRN 扩长"] --> A
-    F["Norm<br/>Pre-Norm + RMSNorm"] --> A
-    G["Tokenizer<br/>BPE / token 估算"] --> A
-    A --> H["手撕 MHA / numpy attention<br/>RoPE / RMSNorm"]
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/llm-map.html" width="100%" height="820" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/llm-map.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 ## 必考计算题速查（背下来直接口算）
 

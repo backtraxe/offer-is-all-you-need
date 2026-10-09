@@ -64,32 +64,17 @@ softmax 饱和导致梯度消失。"**
   MHA(X) = Concat(head_1..head_h) W_O
 ```
 
-```mermaid
-flowchart LR
-    X["输入 X<br/>[n, d_model]"] --> S["分成 h 个头<br/>每头 d_k = d_model / h"]
-    S --> H1["head 1<br/>QK^T/√d → softmax → ×V"]
-    S --> H2["head 2"]
-    S --> H3["……"]
-    S --> Hh["head h"]
-    H1 --> C["Concat"]
-    H2 --> C
-    H3 --> C
-    Hh --> C
-    C --> O["W_O 输出投影<br/>[n, d_model]"]
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/mha-structure.html" width="100%" height="780" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/mha-structure.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 一个标准 LLM block 的完整结构（Decoder-only / Pre-Norm 风格）：
 
-```mermaid
-flowchart TB
-    A["输入 x"] --> B["RMSNorm"]
-    B --> C["MHA（含 RoPE、加因果 mask）"]
-    C --> D["残差相加：x + MHA(x)"]
-    D --> E["RMSNorm"]
-    E --> F["FFN（SwiGLU，约 8d² 参数）"]
-    F --> G["残差相加"]
-    G -->|"×L 层后"| H["final RMSNorm → LM Head → softmax → 下一个 token"]
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/transformer-block.html" width="100%" height="700" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/transformer-block.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 参数量估算（忽略 bias）：每层 attention 有 $W_Q,W_K,W_V,W_O$ 四个 $d \times d$
 矩阵 = $4d^2$；SwiGLU FFN 三个矩阵（gate、up、down），中间维约 $\frac{8}{3}d$，合计
@@ -114,24 +99,10 @@ $$N \approx L \cdot 12d^2 + V \cdot d$$
 | GQA | h | g（1 < g < h，g 组共享） | $2 \cdot L \cdot d \cdot g/h$ | LLaMA-2-70B、Qwen |
 | MLA | h | 低秩压缩 latent 向量 | 只存压缩向量 $c_t$，维度远小于 d | DeepSeek-V2/V3 |
 
-```mermaid
-flowchart LR
-    subgraph MHA["MHA：每个 Q 头配自己的 K/V"]
-        Q1["Q1"] --> K1["K1/V1"]
-        Q2["Q2"] --> K2["K2/V2"]
-        Q3["Q3"] --> K3["K3/V3"]
-    end
-    subgraph GQA["GQA：g 组共享一对 K/V"]
-        Q4["Q1 Q2<br/>（共享）"] --> K4["K1/V1"]
-        Q5["Q3 Q4<br/>（共享）"] --> K5["K2/V2"]
-    end
-    subgraph MQA["MQA：所有头共享一对 K/V"]
-        Q6["Q1..Qh<br/>（全部共享）"] --> K6["K/V"]
-    end
-    subgraph MLA["MLA：KV 压成低维 latent 再缓存"]
-        Q7["Q1..Qh"] --> K7["c_t（低维压缩向量）<br/>用时再上投影还原 K/V"]
-    end
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/kv-evolution.html" width="100%" height="1000" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/kv-evolution.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 各步答法要点：
 
@@ -225,16 +196,10 @@ FlashAttention 两招：
    新块来了就先把之前的结果按 $e^{m_{old} - m_{new}}$ 缩放、再并入新块，最后一步
    才做真正的归一化。数学上等价于一次性 softmax。
 
-```mermaid
-flowchart TB
-    subgraph 标准Attention["标准 attention"]
-        A1["Q·K^T 一次性算完<br/>n×n score 写进 HBM"] --> A2["整行 softmax<br/>读回来再写回去"] --> A3["× V<br/>显存 O(n²)"]
-    end
-    subgraph FA["FlashAttention"]
-        B1["按块加载 Q/K/V 到 SRAM"] --> B2["块内算 score<br/>在线更新 max 和分母"] --> B3["累加输出块"] --> B4["分母最后统一除<br/>显存 O(n)"]
-    end
-    标准Attention -.->|"伪影 n² score 从不落盘"| FA
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/flash-attention.html" width="100%" height="700" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/flash-attention.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 效果：显存从 O(n²) 降到 O(n)，实测 2-4 倍端到端加速；反向传播不重读中间矩阵，
 而是**用保存的输出和 softmax 归一化统计量重算 attention**（重算比读 HBM 便宜）。
