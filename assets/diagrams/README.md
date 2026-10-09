@@ -88,5 +88,6 @@ candidate 目录可参照任一 `.archify/*/candidate.json`（该目录已 gitig
 - 批次 10（1 张）：muon-update 一步 Muon 更新全流程（训练与对齐 muon与优化器.md）
 - 批次 11（1 张）：slo-capacity 业务 SLO → 引擎预算拆解树（inference 推理服务slo与运营.md）
 - 批次 12（1 张）：hallucination-map 幻觉来源四件套 → 缓解三板斧（rag 幻觉与事实性.md）
+- 批次 13（1 张）：personal-assistant-arch 个人助理 Agent 分层架构（system-design 设计个人助理agent.md，通道/调度面/Runtime/本地四泳道）
 
-合计 **70 张**，全仓库 mermaid 清零。
+合计 **71 张**，全仓库 mermaid 清零。

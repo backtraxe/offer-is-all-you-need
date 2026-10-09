@@ -12,6 +12,7 @@
 | [设计企业知识库 agent.md](设计企业知识库agent.md) | 字节/Shopee（高频） | 权限隔离四层混合方案、增量更新双索引切换、离线 + 在线双轨指标 |
 | [设计 ai 客服 agent.md](设计ai客服agent.md) | 阿里/快手/京东/通义（高频） | 意图路由、"商品召不回"分流兜底、8 项核心指标、灰度与降级 |
 | [设计代码 review 与运维 agent.md](设计代码review与运维agent.md) | 字节/唯品会（中高） | 误报控制四件套、"只提意见不改代码"三层保证、运维假设树 + HITL |
+| [设计个人助理 agent.md](设计个人助理agent.md) | 2026 新形态题（OpenClaw/Claude Code 类） | 个人助理 vs 企业客服差异表、Gateway+Node 分离、自驱层与失控防护三件套 |
 
 ## Infra / 平台类
 

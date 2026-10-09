@@ -68,6 +68,7 @@
   - [设计企业知识库 Agent](system-design/设计企业知识库agent.md)
   - [设计 AI 客服 Agent](system-design/设计ai客服agent.md)
   - [设计代码 Review 与运维 Agent](system-design/设计代码review与运维agent.md)
+  - [设计个人助理 Agent](system-design/设计个人助理agent.md)
   - [设计大模型统一接入网关](system-design/设计大模型统一接入网关.md)
   - [设计分布式推理服务](system-design/设计分布式推理服务.md)
   - [设计 AI 开发平台](system-design/设计ai开发平台.md)
