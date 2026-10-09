@@ -86,5 +86,6 @@ candidate 目录可参照任一 `.archify/*/candidate.json`（该目录已 gitig
 - 批次 8（6 张）：resources 学习路线图 ×2、iq README ×2、源码解读 README + 源码学习路线图（be24f4a）
 - 批次 9（1 张）：rl-evolution RL 算法演化线（训练与对齐 rlhf与对齐.md 第十五章）
 - 批次 10（1 张）：muon-update 一步 Muon 更新全流程（训练与对齐 muon与优化器.md）
+- 批次 11（1 张）：slo-capacity 业务 SLO → 引擎预算拆解树（inference 推理服务slo与运营.md）
 
-合计 **68 张**，全仓库 mermaid 清零。
+合计 **69 张**，全仓库 mermaid 清零。
