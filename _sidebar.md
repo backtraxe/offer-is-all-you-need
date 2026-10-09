@@ -45,6 +45,7 @@
     - [评测与建库工程](interview-questions/rag/评测与建库工程.md)
     - [幻觉与事实性](interview-questions/rag/幻觉与事实性.md)
     - [Agentic RAG](interview-questions/rag/agentic-rag.md)
+    - [RAG 权限控制](interview-questions/rag/rag权限控制.md)
   - Agent
     - [Agent 由浅入深路线图](interview-questions/agent/agent由浅入深路线图.md)
     - [场景全链路 Trace](interview-questions/agent/场景全链路trace.md)
@@ -52,6 +53,7 @@
     - [Agent 基础与规划](interview-questions/agent/agent基础与规划.md)
     - [工具调用与 MCP](interview-questions/agent/工具调用与mcp.md)
     - [MCP vs 工具调用深度对比](interview-questions/agent/mcp与工具调用深度对比.md)
+    - [LangChain 与编排框架](interview-questions/agent/langchain与编排框架.md)
     - [记忆与上下文工程](interview-questions/agent/记忆与上下文工程.md)
     - [Agent Skills 详解](interview-questions/agent/agent-skills详解.md)
     - [Harness 工程实战](interview-questions/agent/harness工程实战.md)

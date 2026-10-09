@@ -178,7 +178,69 @@ codex 的 granular 审批里甚至单列了 MCP elicitation 开关。
 MCP 本身没解决这个问题——它管发现，不管上下文预算，预算归宿主
 的 transformContext/compaction 管。」
 
-## 七、延伸阅读（仓内）
+## 七、MCP 权限：三段链路各管一段
+
+> ▶ 面试题：MCP 怎么做权限控制？——**中高，2026 升温**
+
+信任链是三方：**用户 ↔ 宿主 ↔ Server（+下游系统）**，混管即事故。
+
+**第一段 用户↔宿主**：工具白名单（不在白名单的 server 无加载资格）；
+作用域收窄（`toolFilter`——50 个工具只露 5 个，子 agent 最便宜的
+权限手段）；读写分档（查询放行、写入强制审批；codex granular
+审批把 `mcp_elicitation` 单列）。
+
+**第二段 宿主↔Server（协议层认证）**：远程 HTTP 走 **OAuth 2.1**
+（2025 转正：Protected Resource Metadata + PKCE + token audience
+绑定，防 token 串用）；本地 stdio 无协议级认证，权限重点在
+**安装来源**（fork 即授权）；密钥不落子进程——mcode 的 lease
+broker 发短时令牌是范式。
+
+**第三段 Server↔下游**：**on-behalf-of 透传用户身份**（OAuth Token
+Exchange）取代「服务账号超权跑全部」；scope 按工具最小化；
+server 侧本地权限表 + 调用审计（谁/哪个工具/动了什么）。
+
+**两个反向流量**（MCP 特有攻击面）：elicitation（server 向用户
+索要输入——必须显式披露可拒绝）；sampling（server 借你的 quota
+代调 LLM——默认关闭或限流审批）。
+
+**供应链兜底**：内部 server 仓库评审、版本 pinning/签名、OS 沙箱
+（mcode sandbox-runtime deny-first 网络）、调用统一走宿主管线
+（dsh：MCP 进同一条 pre-execute 管线，MCP 不是权限旁路）。
+**口诀：用户侧白名单+收窄，协议层 OAuth+audience，下游 OBO+最小
+scope+审计；反向流量默认收敛，供应链兜底。**
+
+## 八、工具爆炸：上下文治理六板斧
+
+> ▶ 面试题：接入几百个工具/MCP server，schema 占满上下文怎么办？——**高**
+
+先算账：单 schema ≈100~300 token，50 个工具 ~10K（稀释注意力），
+200 个 ~40-60K（窗口吃掉三分之一），且**选择过载让幻觉非线性
+增长**。按落地成本排序六板斧：
+
+1. **分组路由**：规则/小模型先判意图，只注入该组 schema
+   （db 组 12 个 ≠ 全量 200 个）；
+2. **Tool RAG**：工具 description 向量化，query 先检索 Top-K 注入——
+   代价是召回不到的工具「等于不存在」；
+3. **元工具**：只暴露 `search_tools(query)` + `invoke_tool(name,args)`，
+   模型先查目录再取 schema——常驻成本从 N 降为 3
+   （Claude Tool Search / dsh tool-search 的生产形态）；
+4. **PTC / Code Mode**：只给 `run_code`，模型写程序
+   `await tools.x()` 程序化调用（子调用仍走权限管线）——
+   Cloudflare Code Mode、Anthropic code execution with MCP、
+   dsh PTC 的 2026 收敛方向，工具目录变文档不进 prompt；
+5. **Skill 化包装**：一簇工具封一个 skill 索引，命中才加载该域
+   schema——白嫖渐进式披露；
+6. **源头瘦身**：schema 白名单投影，把单工具 prompt 成本从 300
+   压到 80——本身就是 4 倍自由（dsh 纪律：execute/UI/outputSchema
+   永不泄漏给模型）。
+
+**量级口诀**：~20 全塞；20-100 分组；100-500 Tool RAG/元工具；
+500+/开放生态一律 Code Mode。**加分配方**：工具爆炸是 MCP 把接入
+边际成本降到「装个 server」逼出来的——Anthropic 紧接着推
+Tool Search 和 code execution 就是自我救赎，这条因果链说出来
+就是「在跟演进而非背八股」。
+
+## 九、延伸阅读（仓内）
 
 - 基础与防护：[工具调用与 MCP](./工具调用与mcp.md)（FC 原理、
   Schema 设计纪律、大规模工具集降幻觉、注入防护）、
