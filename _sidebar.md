@@ -58,6 +58,7 @@
     - [Infra 面试计算题专项](interview-questions/inference/infra面试计算题专项.md)
     - [量化与压缩](interview-questions/inference/量化与压缩.md)
     - [推理引擎选型与源码路线](interview-questions/inference/推理引擎选型与源码路线.md)
+    - [vLLM vs SGLang 深度对比](interview-questions/inference/vllm与sglang深度对比.md)
     - [推理服务 SLO 与运营](interview-questions/inference/推理服务slo与运营.md)
     - 源码解读专题
       - [专题导读](interview-questions/inference/源码解读/README.md)
