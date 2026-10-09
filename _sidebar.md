@@ -26,6 +26,7 @@
 - **高频考点**
   - [考点地图（README）](interview-questions/README.md)
   - [高频面试真题汇总](interview-questions/高频面试真题汇总.md)
+  - [负载均衡专题](interview-questions/负载均衡专题.md)
   - LLM 基础
     - [模块导读](interview-questions/llm基础/README.md)
     - [Transformer 与 Attention](interview-questions/llm基础/transformer与attention.md)
