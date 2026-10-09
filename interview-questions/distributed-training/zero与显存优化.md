@@ -50,19 +50,10 @@ DP 的浪费在于：N 张卡**每张都存一份完整的模型状态**，但�
 价，冗余是白白浪费的。ZeRO 的思路：**把模型状态分片到 DP 各卡上，每个人只
 持有 1/N，用时靠通信临时拼出来**。按分片对象分三代：
 
-```mermaid
-flowchart LR
-    subgraph Z1["ZeRO-1：分片优化器状态"]
-        A1["12 字节那部分（FP32 主权重+m+v）<br/>各卡只存 1/N"] --> B1["更新后把新权重<br/>Broadcast 给所有 DP 卡"]
-    end
-    subgraph Z2["ZeRO-2：+ 分片梯度"]
-        A2["梯度算完做 ReduceScatter<br/>各卡只留自己负责的那 1/N 份"] --> B2["省掉梯度冗余<br/>通信原语从 AllReduce 换成 ReduceScatter"]
-    end
-    subgraph Z3["ZeRO-3：+ 分片参数"]
-        A3["BF16 参数也每卡只存 1/N<br/>计算到谁时 AllGather 临时拼出完整层"] --> B3["前向 AllGather 一次<br/>反向再 AllGather 一次<br/>梯度 ReduceScatter 一次"]
-    end
-    Z1 --> Z2 --> Z3
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/zero-stages.html" width="100%" height="880" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/zero-stages.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 ### 对照表（Ψ = 参数量，N = DP 度，通信量以 DeepSpeed 论文口径记）
 
@@ -182,20 +173,10 @@ offload 本质上是用**带宽换显存**：每次都为计算准备好数据�
 
 ## 八、组合拳决策树（显存不够怎么办）
 
-```mermaid
-flowchart TB
-    Q["显存不够？先算：模型状态 16Ψ vs 激活，谁是瓶颈"] --> A{"模型状态装不下？"}
-    A -- 是 --> B["ZeRO 升级：1 → 2 → 3<br/>或 FSDP FULL_SHARD / TP 再切"]
-    A -- 否 --> C{"激活装不下？"}
-    C -- 是 --> D["先开 gradient checkpointing<br/>（selective recompute 优先）"]
-    D --> E{"还不够？"}
-    E -- 是 --> F["TP / SP / CP：<br/>切中间激活或长序列"]
-    B --> G{"通信掉速严重？"}
-    G -- 是 --> H["HYBRID_SHARD：<br/>节点内分片、跨节点复制"]
-    G -- 否 --> I["升级 offload：<br/>优化器/参数/激活逐档搬到 CPU、NVMe"]
-    E -- 否 --> J["降 micro-batch 或换分割策略"]
-    J --> K["最终选择：吞吐 × 显存的平衡<br/>（每个项目用自己的 FLOPs/带宽比说话）"]
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/vram-decision.html" width="100%" height="940" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/vram-decision.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 答法要点（面试一句话版）：**"先拆账（16Ψ vs 激活）→ 模型状态靠 ZeRO/分片 →
 激活靠 checkpoint/TP/SP → 再不够 offload → 全程记住通信开销换显存是每一档的
