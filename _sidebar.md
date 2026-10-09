@@ -22,6 +22,7 @@
   - [字节 · AI Infra 二面](interview-experiences/字节-ai-infra二面.md)
   - [摩尔线程 · AI Infra 三轮](interview-experiences/摩尔线程-ai-infra三轮.md)
   - [百度 · AI Infra 一面](interview-experiences/百度-ai-infra一面.md)
+  - [小红书社招面经合集](interview-experiences/小红书社招面经合集-2026h2.md)
 
 - **高频考点**
   - [考点地图（README）](interview-questions/README.md)
@@ -41,6 +42,7 @@
     - [Scaling Law 与范式迁移](interview-questions/训练与对齐/scaling-law与范式迁移.md)
     - [LoRA 与参数高效微调](interview-questions/训练与对齐/lora与参数高效微调.md)
     - [RLHF 与对齐](interview-questions/训练与对齐/rlhf与对齐.md)
+    - [RL 训练工程实战](interview-questions/训练与对齐/rl训练工程实战.md)
     - [Muon 与新优化器](interview-questions/训练与对齐/muon与优化器.md)
   - RAG
     - [RAG 全链路](interview-questions/rag/rag全链路.md)
@@ -77,6 +79,7 @@
     - [推理引擎选型与源码路线](interview-questions/inference/推理引擎选型与源码路线.md)
     - [vLLM vs SGLang 深度对比](interview-questions/inference/vllm与sglang深度对比.md)
     - [推理服务 SLO 与运营](interview-questions/inference/推理服务slo与运营.md)
+    - [推理 Infra 社招面经与备战](interview-questions/inference/推理infra社招面经与备战.md)
     - 源码解读专题
       - [专题导读](interview-questions/inference/源码解读/README.md)
       - [源码学习路线图](interview-questions/inference/源码解读/源码学习路线图.md)

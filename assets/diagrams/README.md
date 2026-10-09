@@ -106,4 +106,6 @@ candidate 目录可参照任一 `.archify/*/candidate.json`（该目录已 gitig
 - 批次 28（1 张）：lcc-map 双泳道（lcc 课程/本仓生产对照）——learn-claude-code 六组 17 节动线 + 三节的生产级深挖锚点（agent/learn-claude-code导读.md 第二节）
 - 批次 29（4 张）：agent-security-layers 双泳道（攻击链五环 × 防御五层跨泳道拦截，agent/agent安全与防护.md 第三节）；scaling-paradigms 双泳道（范式轴 × 工程含义，训练与对齐/scaling-law与范式迁移.md 第二节）；data-pipeline 双泳道（六步流水线 × 做法与 why，训练与对齐/数据工程专题.md 第四节）；why-chains 五泳道 × 3 列（五条因果链 现象→机制→工程解，interview-questions/知识串联与why链.md 第〇节后）。教训：① 5 泳道高图会触发 composition/viewport-height——画布 w/h 比须 ≥1.55 才进宽屏契约（<1.55 时页面必溢出），把每列最大节点加宽到 viewBox ≈1210（上限 1240）即可，本图迭代 4 轮才命中，下次 5 泳道直接按 265-280 单列宽度起做；② `queue` 等 lifecycle 专有 node type 在 workflow schema 直接报 enum error，workflow 可用类型见 finalize 报错白名单（frontend/backend/database/cloud/security/messagebus/external 等）。
 
-合计 **91 张**，全仓库 mermaid 清零。
+- 批次 30（2 张）：rl-four-pitfalls 四泳道×3 列（RL 训练四个坑 现象→机制→对策与监控，训练与对齐/rl训练工程实战.md 第一节后）；infra-interview-map 三泳道×3 列（项目追问/技术栈纵向/工程手撕三主线，inference/推理infra社招面经与备战.md 3.4 后）。教训：4 泳道当列宽>265 时 viewBox 限~1240 需每列最大节点 ≤290 且 sublabel 要压字数，首批过宽（1313→两轮压缩才过门）；用 python 批量改 width 比逐次 Edit 快。
+
+合计 **93 张**，全仓库 mermaid 清零。
