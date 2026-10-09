@@ -99,5 +99,6 @@ candidate 目录可参照任一 `.archify/*/candidate.json`（该目录已 gitig
 - 批次 21（1 张）：fc-vs-mcp-paths 三泳道（宿主/工具供给/模型侧）——一次 tool_call 的两条路：内置工具进程内 execute vs MCP Client 转发 JSON-RPC，observation 总回流（agent/mcp与工具调用深度对比.md 第一节）。教训：分组回程边（结果回传）与去程边共用走廊必撞 arrowhead/ambiguous-corridor，只留一条总回流边即可过门
 - 批次 22（1 张）：skill-triple-disclosure 双泳道（上下文预算/磁盘）——Skills 三层渐进式披露：索引常驻→命中才 read 正文→脚本只消费输出（agent/agent-skills详解.md 第二节）
 - 批次 23（1 张）：lb-layers 双泳道（流量侧/算力侧）——负载均衡六层地图 L1 网关→L6 运行时→L3 路由亲和→L2 引擎调度→L4 MoE 专家→L5 并行切分（interview-questions/负载均衡专题.md 总表后）。教训记录：mainPath 必须与边链一致（l1→l6→l3→l2 实际边链），6 节点两列并行时单列宽度 ≲140
+- 批次 24（1 张）：vram-anatomy 三泳道（固定/动态/开关变量）——显存五笔账：权重→框架→KV→激活→draft，Mamba 让 KV 不存在（interview-questions/显存计算专题.md 第二节前）
 
-合计 **82 张**，全仓库 mermaid 清零。
+合计 **83 张**，全仓库 mermaid 清零。
