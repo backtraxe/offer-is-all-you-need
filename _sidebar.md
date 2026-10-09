@@ -4,6 +4,8 @@
   - [入门导读](basics/README.md)
   - [01 什么是大模型](basics/01-什么是大模型.md)
   - [02 Transformer 直观入门](basics/02-transformer直观入门.md)
+  - [03 深度学习与数学速通](basics/03-深度学习与数学速通.md)
+  - [04 GPU 与算力入门](basics/04-gpu与算力入门.md)
 
 - **学习地图**
   - [学习路线图](resources/学习路线图.md)
