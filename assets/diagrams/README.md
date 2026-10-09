@@ -114,4 +114,6 @@ candidate 目录可参照任一 `.archify/*/candidate.json`（该目录已 gitig
 
 - 批次 33（1 张）：backend-core-map 双泳道×4 列（Redis/MySQL/MQ/网络/K8s+护栏 经典三句 → Agent 场景联动，interview-questions/工程基础八股专题.md 第一节后）。教训：① 4 列图推荐单列宽 ≤250 起做，285 起步会两轮压缩（1266→1243→1235）；② mainPath 只能填实际边链上的连续子序列（首轮 mainPath 写了无边的假主链，报 layout/constraint）。
 
-合计 **96 张**，全仓库 mermaid 清零。
+- 批次 34（1 张）：softskills-map 双泳道×4 列（自我介绍/离职·gap/反问/谈薪 面试官测什么 → 你的动作，interview-questions/沟通与hr面专题.md 第二节前）。
+
+合计 **97 张**，全仓库 mermaid 清零。
