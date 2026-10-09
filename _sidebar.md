@@ -42,6 +42,7 @@
   - [显存计算专题](interview-questions/显存计算专题.md)
   - [工程基础八股专题](interview-questions/工程基础八股专题.md)
   - [沟通与 HR 面专题](interview-questions/沟通与hr面专题.md)
+  - [面试四周冲刺自检清单](interview-questions/面试四周冲刺自检清单.md)
   - [知识串联与 Why 链](interview-questions/知识串联与why链.md)
   - LLM 基础
     - [模块导读](interview-questions/llm基础/README.md)
