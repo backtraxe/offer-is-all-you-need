@@ -94,5 +94,6 @@ candidate 目录可参照任一 `.archify/*/candidate.json`（该目录已 gitig
 - 批次 16（1 张）：pi-agent-loop 三泳道（应用层/运行时/模型层）——一次请求经过 Pi agent loop 全过程：上下文装配→streamFn 流式→toolCall 判定→工具批次→toolResult 回写/下轮 turn 或 agent_end（agent/pi-agent源码分析.md 第二节）
 - 批次 17（1 张）：dsh-turn-flow 三泳道（能力缝/agent loop/session log）——DeepSeek Harness step/turn 双层循环 + 事件溯源 + 工具管线/compaction 两个能力缝（agent/deepseek-harness分析.md 第三节）。教训记录：5 列 + 跨泳道对角边（prestep→sesslog 型）会显著推高 viewBox，节点宽度预算要比普通 5 列图再紧一档（单列最大节点 ≲190）
 - 批次 18（1 张）：codex-safety-layers 三泳道（策略层/命令生命周期/OS 内核层）——Codex 三层安全纵深：execpolicy 规则 → AskForApproval 审批 → Seatbelt/Landlock 沙箱，含 forbidden/用户拒绝两条回模型支路（agent/codex源码分析.md 第三节）
+- 批次 19（1 张）：mcode-vendor-arch 三泳道（自研外壳/vendor 底座/云服务）——MiniMax Code 商业化结构：packages 外壳 + third_party/pi-mono 原样 vendor + MINIMAX_CHANGES 补丁台账 + 云端分类器/BYOK（agent/minimax-code分析.md 第〇节）
 
-合计 **77 张**，全仓库 mermaid 清零。
+合计 **78 张**，全仓库 mermaid 清零。

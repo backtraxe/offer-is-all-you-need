@@ -51,6 +51,7 @@
     - [Pi Agent 源码分析](interview-questions/agent/pi-agent源码分析.md)
     - [DeepSeek Harness 分析](interview-questions/agent/deepseek-harness分析.md)
     - [Codex 源码分析](interview-questions/agent/codex源码分析.md)
+    - [MiniMax Code 分析](interview-questions/agent/minimax-code分析.md)
   - 推理部署（Inference）
     - [vLLM 与推理加速核心](interview-questions/inference/vllm与推理加速核心.md)
     - [长上下文推理与 KV 多级体系](interview-questions/inference/长上下文推理与kv体系.md)
