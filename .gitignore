@@ -10,3 +10,6 @@
 # 临时文件
 *.tmp
 ~$*
+
+# Archify 作图工作目录（产物已拷入 assets/diagrams/）
+.archify/

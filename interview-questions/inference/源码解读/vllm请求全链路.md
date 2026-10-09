@@ -26,35 +26,10 @@
 **API server 进程**（asyncio）、**EngineCore 进程**（busy loop）、
 **Worker 进程**（GPU，TP 时每 rank 一个）。
 
-```mermaid
-sequenceDiagram
-    autonumber
-    participant C as 客户端
-    participant API as API server 进程<br/>FastAPI / asyncio
-    participant ACL as AsyncLLM<br/>v1/engine/async_llm.py
-    participant CORE as EngineCore 进程<br/>v1/engine/core.py
-    participant SCH as Scheduler<br/>v1/core/sched/scheduler.py
-    participant MR as GPUModelRunner<br/>v1/worker/gpu_model_runner.py
-
-    C->>API: POST /v1/chat/completions
-    API->>API: OpenAIServingChat.create_chat_completion<br/>chat template + tokenize → prompt ids
-    API->>ACL: generate(EngineInput, SamplingParams)
-    ACL->>ACL: InputProcessor → EngineCoreRequest<br/>OutputProcessor.add_request(建好增量 detokenizer)
-    ACL-->>CORE: ZMQ PUSH：EngineCoreRequest
-    CORE->>CORE: process_input_sockets →<br/>Request 入 waiting 队列
-    loop run_busy_loop：每个 iteration
-        CORE->>SCH: schedule()
-        SCH->>SCH: prefix cache 查询 +<br/>allocate_slots + chunked prefill 预算<br/>→ SchedulerOutput
-        CORE->>MR: execute_model(SchedulerOutput)
-        MR->>MR: 组 input（block_table / positions）<br/>attention backend 前向 → logits<br/>Sampler 采样 → ModelRunnerOutput
-        MR-->>CORE: ModelRunnerOutput（sampled_token_ids）
-        SCH->>SCH: update_from_output<br/>前进 num_computed / 完成判停
-    end
-    CORE-->>ACL: ZMQ PUSH：EngineCoreOutputs
-    ACL->>ACL: OutputProcessor.process_outputs<br/>增量 detokenize → RequestOutput delta
-    ACL-->>API: async generator yield RequestOutput
-    API-->>C: SSE data: {...delta...}（直至 [DONE]）
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/vllm-request.html" width="100%" height="1000" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/vllm-request.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 一句话总结全链路：**tokenize 和 HTTP 住在 API server 进程，调度和
 "每一步组什么 batch"住在 EngineCore 进程，真正算矩阵住在 Worker 进程**，
@@ -64,39 +39,10 @@ sequenceDiagram
 
 ▶ 面试题：vLLM V1 为什么把 engine 拆成单独进程？——**中高**（架构题常客）
 
-```mermaid
-flowchart TB
-    subgraph P1["进程 1：API server（可多开）"]
-        direction TB
-        HTTP["uvicorn + FastAPI<br/>entrypoints/launchers/api_server/"]
-        SERVING["OpenAIServingChat<br/>chat template + tokenizer"]
-        ASYNC["AsyncLLM<br/>InputProcessor + OutputProcessor<br/>（含增量 detokenizer）"]
-        HTTP --> SERVING --> ASYNC
-    end
-
-    subgraph P2["进程 2：EngineCore（每 DP rank 一个）"]
-        direction TB
-        BUSY["EngineCoreProc.run_busy_loop<br/>step(): schedule → execute"]
-        SCHED["Scheduler<br/>waiting / running 队列"]
-        KVM["KVCacheManager<br/>block pool + prefix cache"]
-        BUSY --> SCHED --> KVM
-    end
-
-    subgraph P3["进程 3..N：Worker（TP 时每 rank 一个）"]
-        direction TB
-        W0["GPUWorker rank0<br/>GPUModelRunner"]
-        W1["GPUWorker rank1<br/>GPUModelRunner"]
-        W2["..."]
-        W0 ~~~ W1 ~~~ W2
-    end
-
-    ASYNC -- "ZMQ（msgpack 序列化）<br/>EngineCoreRequest ↓ / EngineCoreOutputs ↑" --> P2
-    P2 -- "executor 层：共享内存广播 + NCCL 集合通信" --> P3
-
-    style P1 fill:#f6f8fa,stroke:#cdd7e4
-    style P2 fill:#f6f8fa,stroke:#cdd7e4
-    style P3 fill:#f6f8fa,stroke:#cdd7e4
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/vllm-processes.html" width="100%" height="1000" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/vllm-processes.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 ### 为什么拆进程：一句话——躲 GIL
 
@@ -238,15 +184,10 @@ def step(self):
 
 `schedule()` 的主干逻辑（真实顺序）：
 
-```mermaid
-flowchart TB
-    A["schedule() 开始"] --> B["token 预算 = max_num_batched_tokens<br/>（chunked prefill 的闸门）"]
-    B --> C["第一遍：遍历 running<br/>每条申请 allocate_slots：decode 1 token<br/>或续算未完成 prefill 的下一 chunk"]
-    C -->|slot 不够| D["_preempt_request()：<br/>抢占队尾请求，释放它的 blocks"]
-    C --> E["第二遍：遍历 waiting<br/>1. get_computed_blocks：prefix cache 命中查询<br/>2. 本轮能塞多少 token（受预算砍成 chunk）<br/>3. allocate_slots 够就迁入 running"]
-    D --> C
-    E --> F["产出 SchedulerOutput：<br/>新请求 NewRequestData<br/>老请求 CachedRequestData（diff）<br/>每请求 num_scheduled_tokens"]
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/vllm-schedule.html" width="100%" height="860" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/vllm-schedule.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 四个必考点逐个落位：
 

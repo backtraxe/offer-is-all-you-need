@@ -16,40 +16,10 @@ DetokenizerManager → SSE 流回客户端。每一段都给"文件路径 + 类/
 ▶ 面试追问：一个推理请求从 HTTP 到流出 token 经过哪些组件？——这是推理岗最常用的开场图，
 SGLang 答法的特色是**三进程流水线 + RadixAttention 命中点**。
 
-```mermaid
-sequenceDiagram
-    autonumber
-    participant C as 客户端
-    participant H as HTTP 进程<br/>(FastAPI 主进程)
-    participant T as TokenizerManager<br/>(同一进程, asyncio)
-    participant S as Scheduler 进程<br/>(event loop)
-    participant W as ModelWorker<br/>(TpModelWorker / ModelRunner)
-    participant D as Detokenizer 进程
-
-    C->>H: POST /generate 或 /v1/chat/completions
-    H->>T: GenerateReqInput (io_struct.py)
-    Note over T: 注册 ReqState 到 rid_to_state<br/>分配 rid, tokenize
-    T->>S: TokenizedGenerateReqInput<br/>(ZMQ PUSH)
-    Note over S: process_input_requests()<br/>放入 waiting_queue
-    S->>S: get_next_batch_to_run()<br/>prefill 准入: RadixCache.match_prefix<br/>命中前缀 → 免去重算
-    S->>W: run_batch(): prepare_for_extend<br/>→ forward_batch_generation()
-    W-->>S: 第 1 个 token logits → sample
-    S->>D: BatchTokenIDOutput (ZMQ PUSH)
-    D->>T: BatchStrOutput (增量解码, ZMQ PUSH)
-    T--)C: SSE chunk: 第一个 token (TTFT)
-    loop decode 每 iteration 一轮
-        S->>W: run_batch(): prepare_for_decode<br/>→ CUDA Graph replay
-        W-->>S: 新 token
-        S->>D: BatchTokenIDOutput
-        D->>T: BatchStrOutput (sent_offset 增量切片)
-        T--)C: SSE chunk 持续流出 (TPOT)
-        Note over S: 显存不够? retract_decode()<br/>把请求踢回 waiting 队首
-    end
-    S->>D: finished_reason 到达
-    D->>T: BatchStrOutput (finished)
-    T--)C: SSE [DONE] / finish_reason
-    Note over S: RadixCache.insert()<br/>把本次 KV 前缀留在树上等复用
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/sglang-request.html" width="100%" height="1000" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/sglang-request.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 一句话背下来：**HTTP 层只管协议，TokenizerManager 管"请求生命周期状态"，
 Scheduler 管"每个 iteration 谁上 GPU"，DetokenizerManager 管"token ids 怎么变回增量文本"，
@@ -59,22 +29,10 @@ Scheduler 管"每个 iteration 谁上 GPU"，DetokenizerManager 管"token ids �
 
 ▶ 面试追问：SGLang 为什么要拆成多个进程？直接在 HTTP 进程里跑模型不行吗？
 
-```mermaid
-flowchart LR
-    subgraph P1["进程 1：HTTP + Tokenizer"]
-        FA["FastAPI /openai 路由<br/>http_server.py"] --> TM["TokenizerManager<br/>(asyncio, tokenize,<br/>rid 状态机, SSE 输出)"]
-    end
-    subgraph P2["进程 2：Scheduler"]
-        SCH["Scheduler event loop<br/>waiting_queue / running_batch<br/>RadixCache / retract"] --> MW["TpModelWorker + ModelRunner<br/>= GPU 占用者"]
-    end
-    subgraph P3["进程 3：Detokenizer"]
-        DM["DetokenizerManager<br/>增量 detokenize"]
-    end
-    TM -- "ZMQ PUSH<br/>TokenizedGenerateReqInput" --> SCH
-    MW -- "BatchTokenIDOutput" --> DM
-    DM -- "ZMQ PUSH<br/>BatchStrOutput" --> TM
-    TM -- "SSE" --> C["客户端"]
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/sglang-processes.html" width="100%" height="1000" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/sglang-processes.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 拆分理由，按重要性排：
 
@@ -139,16 +97,10 @@ retraction（请求回退）是什么？
 主循环：`python/sglang/srt/managers/scheduler.py::Scheduler.event_loop_normal()`，
 一轮 iteration 五步，结构非常干净：
 
-```mermaid
-flowchart TB
-    A["ingest_requests()<br/>ZMQ 收 TokenizedGenerateReqInput"] --> B["process_input_requests()<br/>构造 Req, 入 waiting_queue"]
-    B --> C["get_next_batch_to_run()<br/>本 iteration 跑 prefill 还是 decode?"]
-    C --> D["run_batch(batch)<br/>组 ForwardBatch, 调 ModelWorker"]
-    D --> E["process_batch_result()<br/>判 finish / 缓存 / 发输出"]
-    E --> A
-    C -.->|"新请求准入时"| F["RadixCache.match_prefix()<br/>前缀命中 → 跳过已缓存部分"]
-    E -.->|"显存不足"| G["ScheduleBatch.retract_decode()<br/>踢回 waiting 队首"]
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/sglang-loop.html" width="100%" height="900" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/sglang-loop.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 分步看：
 
@@ -250,23 +202,10 @@ flowchart TB
   `last_access_time` 和 lock 引用计数。
 - `RadixCache`（继承 `BasePrefixCache`）三件套：
 
-```mermaid
-flowchart LR
-    subgraph MATCH["match_prefix()：最长前缀匹配"]
-        M1["root"] --> M2["共享 system prompt"]
-        M2 --> M3["轮 1..N 历史<br/>✓ 命中"]
-        M3 -.-> M4["新提问<br/>✗ 需要 prefill"]
-        M4 -.- M5["若匹配停在段中间<br/>→ 当场 split 出精确边界"]
-    end
-    subgraph INSERT["insert()：写回新前缀"]
-        I1["已命中段不动"] --> I2["新生成部分按段挂新节点<br/>→ 下一条同前缀请求白嫖"]
-    end
-    subgraph EVICT["evict()：LRU 驱逐"]
-        E1["按 last_access_time<br/>挑最老的叶子"] --> E2{"lock_ref &gt; 0?"}
-        E2 -->|"被 running 请求锁定"| E3["跳过, 看下一个"]
-        E2 -->|"可驱逐"| E4["释放 KV slot<br/>回收进 pool"]
-    end
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/sglang-radix.html" width="100%" height="980" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/sglang-radix.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 - `match_prefix()`：对新请求做最长前缀匹配；命中停在树中段的内部时**当场分裂节点**，
   让命中边界精确到 token（而不是 block 对齐——对比 vLLM APC 的
