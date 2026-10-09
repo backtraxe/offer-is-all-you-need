@@ -27,29 +27,10 @@
 
 ## 二、分层架构
 
-```mermaid
-flowchart TB
-    subgraph L5["产品层 / 应用层"]
-        APP["业务部门、应用方<br/>Notebook / Web 控制台 / OpenAPI"]
-    end
-    subgraph L4["推理与在线服务层"]
-        SERV["模型部署中心<br/>· 一键部署 vLLM/SGLang<br/>· 网关/灰度/弹性伸缩"]
-    end
-    subgraph L3["评测层"]
-        EVAL["评测中心<br/>· 基准/业务评测集<br/>· 自动回归 + 人工盲评"]
-    end
-    subgraph L2["训练层"]
-        TRAIN["训练引擎接入<br/>· Megatron / DeepSpeed / FSDP / LLaMA-Factory<br/>· Pipeline 编排（数据→SFT→RLHF→评测→注册）"]
-    end
-    subgraph L1["数据层"]
-        DATA["数据集管理 + 标注平台<br/>· 版本化数据集<br/>· RM/人偏标注流水线"]
-    end
-    subgraph L0["底座层（贯穿）"]
-        BASE["K8s GPU 调度 · 存储 · 模型仓库 · 租户与配额 · 可观测"]
-    end
-    DATA --> TRAIN --> EVAL --> SERV --> APP
-    SERV -. "在线日志回流" .-> DATA
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/dev-platform-arch.html" width="100%" height="780" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/dev-platform-arch.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 讲图动线自底向上：底座层解决"卡归谁、数据放哪、版本怎么管"，上面四层各管一个
 生命周期阶段，最后由在线服务的日志**回流**到数据层形成闭环——闭环这一笔是
@@ -135,15 +116,10 @@ LoRA (QLoRA 级) 单任务 4~8 卡 × 70 = 560 卡
 ▶ 面试追问："RM 数据怎么来的？标注平台怎么设计？"——低频延伸题（在汇总表
 [§八](../interview-questions/高频面试真题汇总.md#八系统设计题) 里占一行）。
 
-```mermaid
-flowchart LR
-    GEN["模型多采样输出<br/>（同一 prompt 采 K 个回答）"] --> LB["标注工作台<br/>· 双盲 pairwise 偏好标<br/>· 一致性抽检<br/>· 标注者画像与质量分"]
-    LB --> DS["偏好数据集<br/>版本化入仓"]
-    DS --> RM["RM 训练管线<br/>（PPO/DPO 端数据）"]
-    RM --> EV["RM/策略模型评测<br/>· 准确率<br/>· reward hacking 回归"]
-    EV --> REG["模型仓库注册<br/>+ 血缘"]
-    REG -. "新 ckpt 出样" .-> GEN
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/rm-pipeline.html" width="100%" height="540" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/rm-pipeline.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 设计要点：
 

@@ -32,20 +32,10 @@
 
 ## 二、整体架构
 
-```mermaid
-flowchart TB
-    MR["MR webhook<br/>（opened / updated）"] --> PRE["预处理<br/>diff 解析 · 过滤生成物/lock 文件<br/>按文件聚类分批"]
-    PRE --> CTX["上下文增强<br/>被改函数的调用方/被调用方<br/>相关测试 · 仓库规范文档检索"]
-    CTX --> RVW["Reviewer Agent<br/>（ReAct 循环：按需再取上下文）"]
-    RVW --> POST["后处理闸门<br/>去重 · 合并 · 置信度过滤<br/>严重度分级"]
-    POST --> OUT["落回 MR 评论<br/>行级 comment + 总结 comment"]
-    RVW -.->|"工具：只读"| TOOLS["工具白名单<br/>读文件 / 搜代码 / 查历史 MR<br/>（无任何写工具）"]
-    subgraph EVAL["离线评测环"]
-        GOLD["历史 MR 评测集<br/>人工意见 vs 机器意见"]
-    end
-    OUT -.->|"采纳反馈回流"| EVAL
-    style TOOLS fill:#fbefee,stroke:#cf8583
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/review-agent-pipeline.html" width="100%" height="640" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/review-agent-pipeline.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 一句话：**输入是 diff + 按需取回来的 repo 上下文，输出是过了置信度闸门的
 分级评论；整个系统对仓库只有"读"一种能力。**
@@ -153,20 +143,10 @@ Agent。**误报控制的设计优先级高于召回率**：
 [Agent 基础与规划 §四](../interview-questions/agent/agent基础与规划.md)
 混合式架构的落地。
 
-```mermaid
-flowchart TB
-    ALERT["告警接入<br/>（指标异常/日志告警/业务拨测）"] --> TRIAGE["分诊<br/>告警聚合去重 · 影响面评估<br/>（多少实例/什么业务/是否级联）"]
-    TRIAGE --> SOP{"匹配排查 SOP<br/>（按告警类型选剧本）"}
-    SOP --> STEP["SOP 步骤循环<br/>每步 = 引导 ReAct：<br/>该查什么 → 选工具 → 看结果 → 决定深挖或下一步"]
-    STEP --> TOOLS["工具层<br/>查监控 / 查日志 / 查 Trace / 查变更<br/>（只读为主）"]
-    STEP --> HYPO["假设树收敛<br/>排除法：变更？容量？依赖？数据？"]
-    HYPO -->|"定位完成"| REPORT["根因报告<br/>证据链 + 处置建议"]
-    REPORT --> ACT{"处置动作"}
-    ACT -->|"白名单内<br/>（重启/扩容）"| HITL1["HITL 审批<br/>人确认后执行"]
-    ACT -->|"高危/超白名单<br/>（切流量/回滚生产/改数据）"| HITL2["强制人工<br/>双人确认或仅出建议"]
-    HITL1 & HITL2 --> DONE["执行 + 复盘回流<br/>案例入 SOP 库"]
-    style HITL2 fill:#fbefee,stroke:#cf8583
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/ops-agent-sop.html" width="100%" height="760" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/ops-agent-sop.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 ### 假设树怎么收敛（情景题的答题主线）
 
@@ -197,18 +177,10 @@ SOP）、评测可对齐（离线回放历史告警，对比 Agent 路径和当�
 直接复用 [多 Agent 与评测 §四](../interview-questions/agent/多agent与评测.md)
 的 HITL 设计，在本题的落地：
 
-```mermaid
-stateDiagram-v2
-    [*] --> Running: Agent 排查中
-    Running --> Proposed: 产出处置建议<br/>（含证据链）
-    Proposed --> Paused: 命中审批规则<br/>（写操作/高危清单）
-    Paused --> Approved: 值班同学批准<br/>（checkpoint 恢复续跑）
-    Paused --> Rejected: 拒绝，回退排查<br/>或转人工接管
-    Approved --> Executing: 执行（带幂等键 + 审计日志）
-    Executing --> Verifying: 执行后自动验证<br/>（指标是否恢复）
-    Verifying --> Done: 恢复
-    Verifying --> Proposed: 未恢复，继续排查
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/ops-hitl-lifecycle.html" width="100%" height="690" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/ops-hitl-lifecycle.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 要点四条（面试按此背）：
 

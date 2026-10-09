@@ -38,24 +38,10 @@ ReAct。这正是 [Agent 基础与规划](../interview-questions/agent/agent基�
 
 ## 二、整体架构
 
-```mermaid
-flowchart TB
-    U["用户消息（多轮会话）"] --> GW["会话网关<br/>会话状态/身份/上下文组装"]
-    GW --> NLU["意图识别 + 槽位抽取<br/>（小模型分类 + LLM 兜底）"]
-    NLU --> ROUTE{"路由"}
-    ROUTE -->|"售前/知识问答"| KB["知识检索链路<br/>商品库 + 政策知识库<br/>（RAG：混合召回+rerank+引用）"]
-    ROUTE -->|"售后/催办"| WF["任务型 workflow<br/>slot filling 多轮澄清"]
-    WF --> TOOL["工具层<br/>查订单/查物流/建工单/发券<br/>（Function Calling，写操作分级管控）"]
-    KB --> GEN["生成：话术风格 + 仅依据材料"]
-    TOOL --> GEN
-    GEN --> CHECK{"置信度与风险检查<br/>材料不足？高敏操作？情绪激烈？"}
-    CHECK -->|"通过"| OUT["回复用户"]
-    CHECK -->|"不通过"| FALLBACK["兜底链路<br/>澄清反问 → 降级回复 → 转人工"]
-    FALLBACK --> HUMAN["人工坐席<br/>（带完整会话摘要与已查结果）"]
-    GEN -.->|"会话摘要沉淀"| MEM["记忆层<br/>会话状态 / 用户偏好"]
-    style HUMAN fill:#fbefee,stroke:#cf8583
-    style TOOL fill:#faf6ef,stroke:#d3a674
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/cs-agent-arch.html" width="100%" height="760" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/cs-agent-arch.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 三层结构一句话：**NLU 路由层决定"这是哪类事"，workflow/检索层负责"把事办成"，
 兜底层决定"办不成时怎么体面退出"。** 工具的 schema 设计、失败分类重试、写操作
@@ -105,16 +91,10 @@ scratchpad 模式在本题的标准落法就是"槽位表"。
 "用户问的商品/政策查不到"分两种失败，处置完全不同——这一步的框架和
 [RAG 幻觉定位](../interview-questions/rag/评测与建库工程.md) 同源：
 
-```mermaid
-flowchart TD
-    A["检索结果为空或不相关<br/>（rerank 分数整体低于阈值）"] --> B{"分流：是知识缺口<br/>还是检索失败？"}
-    B -->|"查商品库：商品存在<br/>但知识没召回"| C["检索侧补救<br/>Query 改写重查一次 →<br/>换召回路（BM25↔向量）→<br/>仍失败：承认'没查到' + 提供人工入口"]
-    B -->|"商品/政策确实不存在<br/>或已下架"| D["事实性回复<br/>'该商品已下架/政策未覆盖' + 替代推荐<br/>绝不编造规格与承诺"]
-    B -->|"查询工具异常"| E["降级话术 + 异步补偿<br/>'系统繁忙，已为您记录，稍后短信同步结果'"]
-    C --> F["失败 case 回流<br/>进评测集 + 知识库缺口工单"]
-    D --> F
-    E --> F
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/cs-agent-fallback.html" width="100%" height="760" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/cs-agent-fallback.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 三个铁律：
 

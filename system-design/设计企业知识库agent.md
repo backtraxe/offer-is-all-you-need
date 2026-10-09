@@ -32,31 +32,10 @@ rag 三篇里的每一块八股**安置到一个真实系统的正确位置**。
 [RAG 全链路](../interview-questions/rag/rag全链路.md) 那张图在"企业知识库"语境下的
 实例化，差异在三处：文档接入源更多、权限贯穿全程、索引要有版本。
 
-```mermaid
-flowchart TB
-    subgraph OFFLINE["离线建库（文档侧）"]
-        SRC["文档源<br/>飞书 wiki / 网盘 / 网页 / PDF 上传"] --> PARSE["解析与正文抽取<br/>版式分析/OCR/表格还原"]
-        PARSE --> CHUNK["切分 + metadata<br/>结构切分为主<br/>挂载 doc_id/标题路径/ACL 标签/版本号"]
-        CHUNK --> EMB["Embedding 批量编码"]
-        EMB --> IDX["索引层<br/>向量索引(HNSW) + BM25 倒排<br/>+ 原文库(source of truth) + 版本表"]
-        CDC["变更流 CDC<br/>新增/修改/删除/权限变更事件"] -.->|"增量更新"| CHUNK
-    end
-
-    subgraph ONLINE["在线问答（查询侧）"]
-        Q["用户提问"] --> AUTH["身份解析<br/>用户 → ACL 权限视图"]
-        AUTH --> RW["Query 改写<br/>多轮消歧/扩写"]
-        RW --> RET["多路召回（带权限过滤下推）<br/>向量 top-30 + BM25 top-30"]
-        RET --> RRF["融合 RRF → Rerank 精排 top-6"]
-        RRF --> POST["后置权限校验<br/>（防 metadata 滞后）"]
-        POST --> GEN["LLM 生成<br/>仅依据材料 + 引用编号 + 可拒答"]
-        GEN --> LOG["日志/Trace 回流评测"]
-    end
-
-    IDX --> RET
-    POST -.->|"二次校验"| IDX
-    style AUTH fill:#fbefee,stroke:#cf8583
-    style POST fill:#fbefee,stroke:#cf8583
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/kb-agent.html" width="100%" height="780" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/kb-agent.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 面试讲法：30 秒把两条流水线过一遍，然后说"我想重点展开权限和增量更新两块，
 这是企业场景和普通 RAG demo 的核心差别"——**主动选主场**，别等面试官挑。
