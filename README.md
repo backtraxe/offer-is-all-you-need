@@ -20,7 +20,7 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 ## 仓库结构
 
 ```
-├── basics/                 # 零基础入门：什么是大模型、Transformer 直观入门、数学/GPU 速通、术语词典
+├── basics/                 # 零基础入门：什么是大模型、Transformer、数学/GPU 速通、术语词典、训练与推理第一印象
 ├── interview-experiences/  # 面经复盘：按公司/日期组织，含流程、题目、复盘
 ├── interview-questions/    # 高频考点：LLM、Agent、推理部署、分布式训练等
 ├── system-design/     # 系统设计：Agent/网关/推理服务/个人助理等场景设计题
@@ -31,7 +31,7 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 ## 使用说明
 
 1. 零基础转行/刚接触大模型 → 先读 [basics/](basics/README.md)
-   （什么是大模型 → Transformer 直观入门 → 数学/GPU 速通 → 术语词典，每篇附进阶指针）
+   （7 篇连读：概念 → Transformer → 数学/GPU → 术语 → 训练三段 → 推理部署，每篇附进阶指针）
 2. 备战冲刺不知道从哪开始 → 再读 [resources/学习路线图.md](resources/学习路线图.md)
    （基于真实招聘 JD 调研的分层备战路线，附两份岗位 JD 分析和学习资源清单）
 3. 高频考点入口 → [interview-questions/README.md](interview-questions/README.md)
