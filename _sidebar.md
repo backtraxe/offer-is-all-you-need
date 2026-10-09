@@ -45,6 +45,7 @@
   - Agent
     - [Agent 基础与规划](interview-questions/agent/agent基础与规划.md)
     - [工具调用与 MCP](interview-questions/agent/工具调用与mcp.md)
+    - [MCP vs 工具调用深度对比](interview-questions/agent/mcp与工具调用深度对比.md)
     - [记忆与上下文工程](interview-questions/agent/记忆与上下文工程.md)
     - [多 Agent 与评测](interview-questions/agent/多agent与评测.md)
     - [AI 编程与 Claude Code 内幕](interview-questions/agent/ai编程与claudecode内幕.md)

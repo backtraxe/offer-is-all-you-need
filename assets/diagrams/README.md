@@ -96,5 +96,6 @@ candidate 目录可参照任一 `.archify/*/candidate.json`（该目录已 gitig
 - 批次 18（1 张）：codex-safety-layers 三泳道（策略层/命令生命周期/OS 内核层）——Codex 三层安全纵深：execpolicy 规则 → AskForApproval 审批 → Seatbelt/Landlock 沙箱，含 forbidden/用户拒绝两条回模型支路（agent/codex源码分析.md 第三节）
 - 批次 19（1 张）：mcode-vendor-arch 三泳道（自研外壳/vendor 底座/云服务）——MiniMax Code 商业化结构：packages 外壳 + third_party/pi-mono 原样 vendor + MINIMAX_CHANGES 补丁台账 + 云端分类器/BYOK（agent/minimax-code分析.md 第〇节）
 - 批次 20（1 张）：vllm-vs-sglang 双泳道对照——vLLM V1 两刀进程（API/EngineCore/Worker+APC 块哈希）vs SGLang 三刀流水线（Tokenizer/Scheduler/Detokenizer+Radix Tree）（inference/vllm与sglang深度对比.md 第二节）。教训：mainPath 相邻 id 必须有边——跨 lane 的 sched→radix 边不能进 mainPath
+- 批次 21（1 张）：fc-vs-mcp-paths 三泳道（宿主/工具供给/模型侧）——一次 tool_call 的两条路：内置工具进程内 execute vs MCP Client 转发 JSON-RPC，observation 总回流（agent/mcp与工具调用深度对比.md 第一节）。教训：分组回程边（结果回传）与去程边共用走廊必撞 arrowhead/ambiguous-corridor，只留一条总回流边即可过门
 
-合计 **79 张**，全仓库 mermaid 清零。
+合计 **80 张**，全仓库 mermaid 清零。
