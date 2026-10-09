@@ -304,6 +304,191 @@ RM 只是人类偏好的**代理**，对代理优化过头就是对真正目标�
 SFT/DPO/PPO/GRPO trainer）与 **OpenRLHF** 是手撕 loss 的最佳对照。写完对着本文公式自查
 符号方向（chosen 在前、rejected 在后，别写反——这是面挂高发点）。
 
+## 十五、GRPO 之后：2025 RL 变体演化
+
+▶ 面试题：GRPO 之后有哪些变体？DAPO/GSPO/Dr.GRPO/CISPO 各解决什么问题？
+——**新兴热点**（2025 校招起被点名）
+
+演化脉络一句话：**PPO（critic 重）→ GRPO（去 critic，组内归一当
+baseline）→ 但 GRPO 不是免费午餐——熵崩塌、奖励噪声、长链训练不稳——
+2025 各厂打补丁形成变体家族**。这些变体都没有推翻 GRPO 的"组内归一"核心，
+而是分别瞄准它在大规模、长链路 RL 上暴露的四个病灶：
+
+1. **熵崩塌**：reward 上涨的同时策略熵掉得太快，探索枯竭、输出模式坍缩。
+2. **无效样本**：组内全对/全错时 advantage 全零，这批 sample 不产生梯度
+   却白白占掉 batch 位。
+3. **长度偏差**：按样本先平均的损失让长 CoT 的每个 token 梯度被 $1/|y|$
+   稀释，长推理链的贡献被压掉。
+4. **token 级重要性采样方差**：reward 是序列级给出的，重要性比率却按
+   token 算——粒度不匹配，长链和 MoE 上尤甚。
+
+<div class="diagram-embed">
+<iframe src="assets/diagrams/rl-evolution.html" width="100%" height="1140" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/rl-evolution.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
+
+### DAPO：字节的大规模 RL 实用配方
+
+▶ 面试题：DAPO 的五件套分别解决什么？——**中高频**（字节系）
+
+DAPO（Decoupled Alignment via PPO，字节 Seed，2025.03）把内部跑推理 RL
+的工程经验公开成一套开源配方，基座仍是 GRPO 骨架，五个改动逐条对应病灶：
+
+1. **Clip-Higher（非对称裁剪）**：clip 区间从对称的 $1\pm\epsilon$ 拆成
+   $\epsilon_{low}=0.2$ 与 $\epsilon_{high}=0.28$ 非对称。**动机**：对称
+   clip 会把"概率要涨的低概率 token"卡在下限——而这类 token 往往正是稀有
+   但关键的发散性选择，涨不上去就是熵崩塌。上调上限让低概率 token 有更大
+   的上升通道，保住探索。
+2. **Dynamic Sampling（动态采样）**：组内全对或全错的 prompt 直接过滤
+   （advantage 全零、无梯度），持续补采直到凑满有梯度的 batch——把 GRPO
+   "自动跳过无效样本"的机制从"浪费 batch"变成"保证 batch 有效率"。
+3. **Token-level Policy Gradient Loss**：损失改按 **token** 归一（所有
+   token 的 loss 加总后除以 token 总数），而不是 GRPO 原本的"样本内先按
+   $1/|y_i|$ 平均、样本间再平均"。**动机**：样本级归一让长 CoT 的 token
+   权重随长度缩水，会做题的长回答优化不过短回答——token 级归一让每个
+   token 的梯度权重一致，长链不被稀释。
+4. **Overlong Reward Shaping（超长奖励塑形）**：超出上下文预算被截断的
+   响应不再直接判 0 硬罚（截断 ≠ 错误），改为按超长长度线性软罚或豁免。
+   **动机**：硬罚会误伤"想法对但太长"的回答，逼得模型为了保命提前结束
+   思路——这是"奖励黑客式长度膨胀"的反面病灶：长度恐慌。
+5. **去掉 KL 散度项**：长 CoT 推理 RL 中策略分布本来就要大幅偏离 SFT
+   起点，KL 约束反而拴住推理能力的进化，DAPO 把它从 loss 中移除，仅靠
+   clip 控制更新幅度。
+
+一句话总结：DAPO 给 GRPO 配了**熵急救包（Clip-Higher）+ 样本过滤器
+（Dynamic Sampling）+ 长链公平待遇（Token-level Loss）+ 截断宽容
+（Overlong Shaping）+ 解开 KL**。
+
+### GSPO：序列级重要性采样（Qwen）
+
+▶ 面试题：GSPO 为什么比 GRPO 稳？为什么对 MoE 是质变？——**中高频**
+（阿里系）
+
+GRPO 的重要性采样是 **token 级**的：
+$\rho_{i,t} = \pi_\theta(y_{i,t}|x,y_{i,<t}) / \pi_{old}(y_{i,t}|x,y_{i,<t})$。
+但奖励是**整条 response 打完一次分**——粒度不匹配：序列级的反馈被按
+token 加权，长链下单个 token 的 ratio 波动会被逐个放大，训练方差大；
+在 MoE 上更致命——新旧策略的 expert 路由一旦切换，同一 token 的 logprob
+差异极大，token 级 ratio 天然高方差，只能配很小的 $\epsilon$，结果梯度
+被裁得所剩无几。
+
+GSPO（Group Sequence Policy Optimization，Qwen 团队，2025.07）把重要性
+比率直接提升到**序列级**：
+
+$$s_i(\theta) = \Big(\frac{\pi_\theta(y_i|x)}{\pi_{old}(y_i|x)}\Big)^{1/|y_i|}$$
+
+- 每条 response **只有一个 ratio**（开 $|y_i|$ 次方做长度归一，消除长短
+  链权重不跟长度的无关因子）；
+- clip 在序列级执行——一条 response 要么整段保留、要么整段裁掉，不再被
+  个别离群 token 的 ratio 搅乱梯度方向；
+- 对 **MoE** 是质变：路由切换的噪声在整条链上归一平均后，序列级 ratio
+  方差大幅下降，允许更大更新步长，长链 MoE RL 从"能跑"变成"能放大"——
+  这也是 Qwen 官方把 Qwen3 系列 RL 从 GRPO 切到 GSPO 的核心理由。
+
+一句话：**奖励粒度到哪一级，重要性采样就做到哪一级**——GRPO 按 token
+分权重，GSPO 按 response 分权重。
+
+### Dr.GRPO：把组内归一的偏差清掉
+
+Dr.GRPO（Sea AI Lab，2025.03，来自对 R1-Zero 类训练的反思性分析）指出
+GRPO 的组内归一化引入了系统性偏差：
+
+1. **难度偏差**：advantage 除以组内 std，等于给"组内奖励方差小"的 prompt
+   加权——方差小的往往是全对/全错的边缘 prompt，难度分布被扭曲。
+2. **长度偏差**：样本内按 $1/|y_i|$ 平均后，**短错答案**每个 token 吃到的
+   负梯度被放大，**长对答案**的正梯度被稀释——系统性偏爱短回答，"长但
+   正确"的推理链成长受限，推理 rollout 长度被反向压制或诱发病态膨胀。
+
+修正版很朴素：去掉 std 归一与长度分母，回到无偏的策略梯度估计。它不是
+发明新算法，而是**纠偏 GRPO 的工程简化**。
+
+### CISPO：clip 权重而非目标（MiniMax）
+
+CISPO（Clipped Importance Sampling Policy Optimization，MiniMax，
+MiniMax-M1，2025.06）改的是 clip 的位置：PPO/GRPO clip 的是 **surrogate
+目标**（ratio 超出区间的 token 梯度整体置零），CISPO clip 的是**重要性
+采样权重本身**——把 $\tilde\rho_t = \text{clip}(\rho_t,\ 1-\epsilon,\ 1+\epsilon)$
+照乘进 loss。
+
+差别在于极端 ratio 的 token 还有没有梯度：
+
+- **clip 目标**：ratio 越界 → 该 token 梯度被完全扣掉。长 CoT 里大量
+  "很冷"的低概率 token 批量失明。
+- **clip 权重**：ratio 越界只是权重被卡在边界，**所有 token 都保留梯度**
+  ——长链路 RL 的有效 token 密度显著更高，MiniMax-M1 的 ablation 里训练
+  效率有明显增益。
+
+### RLVR：可验证奖励——RLHF 的另一条腿
+
+▶ 面试题：RLVR 和 RLHF 什么关系？为什么 2025 是 RLVR 大年？——**高频**
+
+RLVR（RL with Verifiable Rewards）：在数学/代码/格式等**有客观对错**的
+域，用规则判分替代 reward model——数学题对最终答案 exact match 或等价
+判定，代码跑单测，格式题做 schema 校验。优化机器（GRPO/DAPO/GSPO）照用，
+换的只是奖励来源：
+
+| 维度 | RLHF | RLVR |
+|---|---|---|
+| 奖励来源 | 人标偏好 → 训练 RM 打分 | 规则/测试/校验器直接判对错 |
+| 数据依赖 | 大量成对偏好标注 | prompt + 参考答案/测试用例 |
+| hacking 空间 | RM 是代理，可被刷分 | 规则无代理空间，刷不动 |
+| 适用域 | 开放、主观偏好域（闲聊/写作） | 可验证域（数学/代码/逻辑/格式） |
+
+2025 是 RLVR 大年，是因为 **DeepSeek-R1（2025.01）证明了**：强基模 +
+规则判分 + GRPO，不堆人标偏好也能自举出长链推理能力——RL 的战场直接从
+"讨好 RM"切到"对着标准答案刷推理"。随后 Qwen3、GLM、MiniMax-M1、Kimi
+全线跟进，RL 算法变体（本节前面五位）和 RL infra 同步爆发——这就是
+"R1 效应"。
+
+### 六算法对比总表
+
+| 维度 | PPO | GRPO | DAPO | Dr.GRPO | GSPO | CISPO |
+|---|---|---|---|---|---|---|
+| Critic | 有（价值网络） | 无（组内均值） | 无 | 无 | 无 | 无 |
+| 重要性采样粒度 | token 级 | token 级 | token 级 | token 级 | **序列级** | token 级 |
+| Clip 对象 | surrogate 比率 | surrogate 比率 | 比率（非对称 ε_low/ε_high） | 比率（去 std/长度归一） | **序列级比率** | **重要性权重本身** |
+| KL 项 | 折进 reward | 在 loss 里 | **移除**（长 CoT 放开） | 在 loss 里 | 在 loss 里 | 在 loss 里 |
+| 关键修补 | （基线） | 去 critic | 熵崩塌/无效样本/长链稀释/截断误伤 | 难度与长度偏差 | token 级方差、MoE 不稳 | 极端 ratio 梯度被扣 |
+| 适用场景 | 通用 RLHF | 可验证奖励的推理 RL | 大规模长 CoT RL | R1-Zero 类训练纠偏 | MoE/长链推理 RL | 长链推理 RL |
+| 代表出处 | InstructGPT | DeepSeekMath / R1 | 字节 Seed | Sea AI Lab | Qwen 团队 | MiniMax-M1 |
+
+### ▶ 面试追问
+
+1. **GRPO 是 on-policy 还是 off-policy？**——名义上 on-policy（样本来自
+   正被训练的策略），但工程上一个 batch 要复用更新多步、且多 rollout
+   实例的采样策略可能落后参数若干小版本，严格说是 **near on-policy /
+   部分 off-policy**，靠重要性比率 + clip 把偏差关回信任域；DAPO 的非
+   对称 clip、GSPO 的序列级 clip 都是在放宽这个近似的许用范围。
+2. **DPO 的初始 loss 是多少？**——$\pi_\theta=\pi_{ref}$ 时两项 log-ratio
+   全为 0（β=1），$L=-\log\sigma(0)=\log 2\approx 0.693$。用于 sanity
+   check：DPO 起跑 loss 明显偏离 0.69 说明实现或初始化有问题。
+3. **为什么 GSPO 能稳住 MoE 训练？**——MoE 下新旧策略的 expert 路由
+   切换让 token 级 ratio 天然高方差，只能配极小 clip，梯度被扣光；序列
+   级 ratio 把路由噪声沿整条链归一平均，方差显著下降，允许更大更新步长，
+   长链训练才能收敛放大。
+4. **RLVR 的 reward 从哪来？**——纯规则：数学看 final answer 的等价
+   判定，代码过单测/沙箱执行，格式题做 schema 校验，全程不经过任何可
+   学习模型——这正是它没有 reward hacking 空间的根本原因。
+5. **熵崩塌怎么防？**——按手段报：① Clip-Higher 非对称裁剪放宽上限
+   （DAPO）；② entropy bonus 直接进 loss；③ Dynamic Sampling 保证
+   batch 样本都有梯度贡献；④ 长 CoT 场景减小或移除 KL、必要时重置 ref；
+   ⑤ 过程监控：策略熵、KL、reward 斜率三曲线联合诊断，熵单边下坠即干预。
+6. **为什么 GRPO 组内归一会偏爱短答案？**——样本内 $1/|y|$ 平均把"长对"
+   的正梯度稀释、把"短错"的负梯度放大，系统性给短回答加权；修正方案：
+   token 级归一（DAPO）或干脆去长度/难度归一（Dr.GRPO）。
+
+### 延伸阅读
+
+- DAPO：*DAPO: An Open-Source LLM Reinforcement Learning System at Scale*
+  （字节 Seed，2025.03）
+- GSPO：Qwen 官方博客 *Group Sequence Policy Optimization*
+  （qwenlm.github.io/blog/gspo/，2025.07）
+- Dr.GRPO：*Understanding R1-Zero-Like Training: A Critical Perspective*
+  （Sea AI Lab，2025.03）
+- CISPO：*MiniMax-M1 技术报告*（MiniMax，2025.06）
+- 源头配方：DeepSeekMath（2024.02）GRPO 原始论文 + DeepSeek-R1 技术
+  报告（2025.01，RLVR 自举长链推理的分水岭）
+
 ---
 
 *相关阅读：[预训练与 sft](./预训练与sft.md) ·

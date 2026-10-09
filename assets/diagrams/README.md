@@ -84,5 +84,6 @@ candidate 目录可参照任一 `.archify/*/candidate.json`（该目录已 gitig
 - 批次 1–6（49 张）：llm 基础 / agent / rag / 训练对齐 / 分布式训练 / inference（至 e30ecc6）
 - 批次 7（10 张）：system-design 六大设计题（b091361）
 - 批次 8（6 张）：resources 学习路线图 ×2、iq README ×2、源码解读 README + 源码学习路线图（be24f4a）
+- 批次 9（1 张）：rl-evolution RL 算法演化线（训练与对齐 rlhf与对齐.md 第十五章）
 
-合计 **65 张**，全仓库 mermaid 清零。
+合计 **66 张**，全仓库 mermaid 清零。
