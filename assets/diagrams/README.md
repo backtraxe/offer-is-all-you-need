@@ -103,5 +103,6 @@ candidate 目录可参照任一 `.archify/*/candidate.json`（该目录已 gitig
 - 批次 25（1 张）：kv-knobs 双泳道（通用公式链/70B GQA 实例）——KV 显存三旋钮：每 token 单价 × 并发 × 上下文 − 前缀去重，实例泳道给出 320 KB→10 GB/条→1M 时 320 GB→APC 省 83 GB 的完整代入（interview-questions/显存计算专题.md 第四节）
 - 批次 26（1 张）：agent-ladder 双泳道（阶梯/终点形态锚点）——Agent 进阶阶梯 L0 最小循环→L1 prompt 工程→L2 上下文→L3 可靠性→L4 trace/eval→L5 四框架形态（agent/agent由浅入深路线图.md 总表后）。教训：同泳道同列节点报 node-overlap，终点节点挪独立泳道即过
 - 批次 27（1 张）：agent-turn-trace（sequence）——「修复登录超时」六轮四角色消息流（agent/场景全链路trace.md 第七节）。教训：sequence 的 message 必须有 y（≥160）、自消息不支持 span=0 要改 note、participant sublabel ≤ 8 字符级防 layout/constraint
+- 批次 28（1 张）：lcc-map 双泳道（lcc 课程/本仓生产对照）——learn-claude-code 六组 17 节动线 + 三节的生产级深挖锚点（agent/learn-claude-code导读.md 第二节）
 
-合计 **86 张**，全仓库 mermaid 清零。
+合计 **87 张**，全仓库 mermaid 清零。
