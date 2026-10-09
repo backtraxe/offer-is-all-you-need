@@ -40,6 +40,7 @@
   - [高频面试真题汇总](interview-questions/高频面试真题汇总.md)
   - [负载均衡专题](interview-questions/负载均衡专题.md)
   - [显存计算专题](interview-questions/显存计算专题.md)
+  - [工程基础八股专题](interview-questions/工程基础八股专题.md)
   - [知识串联与 Why 链](interview-questions/知识串联与why链.md)
   - LLM 基础
     - [模块导读](interview-questions/llm基础/README.md)

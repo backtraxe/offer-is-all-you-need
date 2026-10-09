@@ -112,4 +112,6 @@ candidate 目录可参照任一 `.archify/*/candidate.json`（该目录已 gitig
 
 - 批次 32（1 张）：resume-jd-map 三泳道×3 列（JD 关键词 → 简历承接模块 → 面试追问落点，三方向 resume/README.md 篇首）。首轮过门无迭代：参照批次 31 经验直接把单列宽压到 265-270。
 
-合计 **95 张**，全仓库 mermaid 清零。
+- 批次 33（1 张）：backend-core-map 双泳道×4 列（Redis/MySQL/MQ/网络/K8s+护栏 经典三句 → Agent 场景联动，interview-questions/工程基础八股专题.md 第一节后）。教训：① 4 列图推荐单列宽 ≤250 起做，285 起步会两轮压缩（1266→1243→1235）；② mainPath 只能填实际边链上的连续子序列（首轮 mainPath 写了无边的假主链，报 layout/constraint）。
+
+合计 **96 张**，全仓库 mermaid 清零。
