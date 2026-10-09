@@ -100,5 +100,6 @@ candidate 目录可参照任一 `.archify/*/candidate.json`（该目录已 gitig
 - 批次 22（1 张）：skill-triple-disclosure 双泳道（上下文预算/磁盘）——Skills 三层渐进式披露：索引常驻→命中才 read 正文→脚本只消费输出（agent/agent-skills详解.md 第二节）
 - 批次 23（1 张）：lb-layers 双泳道（流量侧/算力侧）——负载均衡六层地图 L1 网关→L6 运行时→L3 路由亲和→L2 引擎调度→L4 MoE 专家→L5 并行切分（interview-questions/负载均衡专题.md 总表后）。教训记录：mainPath 必须与边链一致（l1→l6→l3→l2 实际边链），6 节点两列并行时单列宽度 ≲140
 - 批次 24（1 张）：vram-anatomy 三泳道（固定/动态/开关变量）——显存五笔账：权重→框架→KV→激活→draft，Mamba 让 KV 不存在（interview-questions/显存计算专题.md 第二节前）
+- 批次 25（1 张）：kv-knobs 双泳道（通用公式链/70B GQA 实例）——KV 显存三旋钮：每 token 单价 × 并发 × 上下文 − 前缀去重，实例泳道给出 320 KB→10 GB/条→1M 时 320 GB→APC 省 83 GB 的完整代入（interview-questions/显存计算专题.md 第四节）
 
-合计 **83 张**，全仓库 mermaid 清零。
+合计 **84 张**，全仓库 mermaid 清零。
