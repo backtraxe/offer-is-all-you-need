@@ -93,5 +93,6 @@ candidate 目录可参照任一 `.archify/*/candidate.json`（该目录已 gitig
 - 批次 15（2 张）：basics 入门篇——next-token-loop 完形填空闭环四步+回环（basics/01 什么是大模型.md 第一节）；attention-intuition 全班传小抄双泳道（「买苹果手机了」Q/K 打分→加权求和→新表示，k2 手机走右侧入 score 化解箭头碰撞）（basics/02 transformer直观入门.md Q/K/V 一节）
 - 批次 16（1 张）：pi-agent-loop 三泳道（应用层/运行时/模型层）——一次请求经过 Pi agent loop 全过程：上下文装配→streamFn 流式→toolCall 判定→工具批次→toolResult 回写/下轮 turn 或 agent_end（agent/pi-agent源码分析.md 第二节）
 - 批次 17（1 张）：dsh-turn-flow 三泳道（能力缝/agent loop/session log）——DeepSeek Harness step/turn 双层循环 + 事件溯源 + 工具管线/compaction 两个能力缝（agent/deepseek-harness分析.md 第三节）。教训记录：5 列 + 跨泳道对角边（prestep→sesslog 型）会显著推高 viewBox，节点宽度预算要比普通 5 列图再紧一档（单列最大节点 ≲190）
+- 批次 18（1 张）：codex-safety-layers 三泳道（策略层/命令生命周期/OS 内核层）——Codex 三层安全纵深：execpolicy 规则 → AskForApproval 审批 → Seatbelt/Landlock 沙箱，含 forbidden/用户拒绝两条回模型支路（agent/codex源码分析.md 第三节）
 
-合计 **76 张**，全仓库 mermaid 清零。
+合计 **77 张**，全仓库 mermaid 清零。
