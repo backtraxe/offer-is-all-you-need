@@ -91,5 +91,6 @@ candidate 目录可参照任一 `.archify/*/candidate.json`（该目录已 gitig
 - 批次 13（1 张）：personal-assistant-arch 个人助理 Agent 分层架构（system-design 设计个人助理agent.md，通道/调度面/Runtime/本地四泳道）
 - 批次 14（1 张）：kv-tiering KV 多级体系四泳道（GPU→host→SSD→对象存储，驱逐下行与 miss 换入/重算两条路）（inference 长上下文推理与kv体系.md）
 - 批次 15（2 张）：basics 入门篇——next-token-loop 完形填空闭环四步+回环（basics/01 什么是大模型.md 第一节）；attention-intuition 全班传小抄双泳道（「买苹果手机了」Q/K 打分→加权求和→新表示，k2 手机走右侧入 score 化解箭头碰撞）（basics/02 transformer直观入门.md Q/K/V 一节）
+- 批次 16（1 张）：pi-agent-loop 三泳道（应用层/运行时/模型层）——一次请求经过 Pi agent loop 全过程：上下文装配→streamFn 流式→toolCall 判定→工具批次→toolResult 回写/下轮 turn 或 agent_end（agent/pi-agent源码分析.md 第二节）
 
-合计 **74 张**，全仓库 mermaid 清零。
+合计 **75 张**，全仓库 mermaid 清零。
