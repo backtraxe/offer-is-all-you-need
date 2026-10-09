@@ -30,6 +30,7 @@
     - [RAG 全链路](interview-questions/rag/rag全链路.md)
     - [检索与混合召回](interview-questions/rag/检索与混合召回.md)
     - [评测与建库工程](interview-questions/rag/评测与建库工程.md)
+    - [幻觉与事实性](interview-questions/rag/幻觉与事实性.md)
   - Agent
     - [Agent 基础与规划](interview-questions/agent/agent基础与规划.md)
     - [工具调用与 MCP](interview-questions/agent/工具调用与mcp.md)
