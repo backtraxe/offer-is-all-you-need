@@ -248,6 +248,32 @@ draft 小模块的自回归前向也要花一步时间；各论文加速比口�
 | 为什么 tree 草稿比 chain 好？ | 同样一次验证预算，tree 能覆盖 K·w 个 token 位置而不是一条 k 链：多分支共享公共前缀，**第一个拐点之外的路径全部被验死或采纳都免费**，期望接受长度显著拉高；配 tree attention mask，验证仍然只是一次前向。 |
 | 接受率怎么估？ | 三种口径先声明用哪个：① token 级接受率（draft top-1 与 target top-1 一致率，离线小批量统计）；② 每轮期望接受长度（验证日志 Σ p_accept·len）；③ 端到端加速比（已含 draft/verify 时间分摊）。线上汇报用 ③ + 分场景追 ①。 |
 
+### 2026 并行 draft 新形态：P-EAGLE / DFlash / 自适应 verify
+
+▶ 面试题：2026 年 speculative decoding 有什么新变化？——**中高**（前沿追新考点）
+
+谱系主线不变（draft 来源决定成本与接受率天花板），2026 的分歧点是
+**draft 并行化 + verify 预算化**：
+
+- **P-EAGLE**：EAGLE 谱系的并行化升级——draft 不再逐 token 串行迭代，
+  **单次前向并行产出多个 draft token**（形态上回到 Medusa 式的并行多
+  位置猜想，但仍吃主干隐藏特征），draft 阶段的 wall time 从 O(k) 步压到
+  接近 1 步。代价是越靠后的并行位次置信度越低，靠树验证把不确定的分支
+  提前验死来吸收。
+- **DFlash**：用 **block-diffusion 思路做 draft**——草稿不再自回归，
+  而是整段并行"扩散"生成再精修，把 draft 的串行步数进一步消灭；扩散
+  精修的轮数可控，天然与树验证/多轮验证兼容。
+- **DSpark / 自适应 verify**：不再固定"每轮验 k 个"——按请求的当前
+  置信度**动态分配验证预算**（高置信段多 draft 多验，低置信段退回逐
+  token），batch 1–256 用同一条配置守住吞吐/延迟前沿，直接打在 spec
+  decode"低负载专武"的老短板（见本章上文"不适用场景"）上。
+
+一句定位：**draft 不再串行、verify 不再定长**，目标是把 spec decode
+从低负载特化武器升级为全 batch 区间的通用武器。
+
+延伸阅读：vLLM 官方博客 *Parallel All the Way Down* 有并行 draft +
+adaptive verify 的工程落地解读，面试前扫一遍标题级结论即可引用。
+
 ## 七、PD 分离：Prefill 和 Decode 为什么要拆成两套集群
 
 ▶ 面试题：PD 分离（Prefill/Decode Disaggregation）是什么？为什么提升整体吞吐？——**中高，2026 升温考点**

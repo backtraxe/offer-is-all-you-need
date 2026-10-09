@@ -21,6 +21,7 @@
     - [Transformer 与 Attention](interview-questions/llm基础/transformer与attention.md)
     - [位置编码与 Norm](interview-questions/llm基础/位置编码与norm.md)
     - [MoE 架构与专家并行](interview-questions/llm基础/moe架构.md)
+    - [多模态架构基础](interview-questions/llm基础/多模态架构基础.md)
   - 训练与对齐
     - [预训练与 SFT](interview-questions/训练与对齐/预训练与sft.md)
     - [LoRA 与参数高效微调](interview-questions/训练与对齐/lora与参数高效微调.md)
