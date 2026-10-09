@@ -183,7 +183,59 @@ token 速率、上下文水位、事件序列完整性、工具失败率、steps
 **质量层**是 agent 特有：采样评估、决策轨迹、Esc 率。
 告警面向任务 SLO 并按模型/任务/租户分解，突变优于阈值。」
 
-## 八、延伸阅读（仓内）
+## 八、附一：system prompt 组织方式——四家对照
+
+一份完整上下文 = **分节的 system 区（选择索引，求前缀稳定）+
+append-only 历史区（经历，求可压缩）+ 最新用户消息（本轮任务）**。
+四家在同一骨架下各守一极（分节细节见各自分析文）：
+
+- **pi：prompt 是消息**。分节 sections（preamble/tools/rules/docs/
+  project_context/skills/cwd），`diffSystemPromptSections()` 只重发
+  变化节；工具增删编码成 `toolsAdded/Removed` 系统消息通报模型——
+  回放时能精确还原「当时模型以为自己有哪些工具」；
+- **dsh：prompt 是日志**。`system/message` 直接落 session log
+  （model-visible means logged）；空渲染 = 清空所有活跃 prompt 节点；
+  capable 路由走增量追加， incapable 才合并重写；
+- **codex：prompt 是快照**。step_context 每 step 捕获一份
+  （模型设置/环境/必需 MCP·skills），历史截断时「被截走的内容和
+  它依赖的状态一起消失」（reasoning override 与所属输入同时截）；
+- **mcode：prompt 是产品**。pi 分节 + 账号/配额状态只读注入
+  （headless 重检不改全局配置）；skill 三目录兼容抢生态位。
+
+两条共同铁律：**前缀稳定 = 缓存命中率**（不变内容全往前放，
+动态信息绝不插 system 中间）；**白名单投影**（工具的 execute/
+UI/超时配置永不泄漏给模型，模型只拿选择所需的最小子集）。
+
+## 九、附二：生产故障两则
+
+### 9.1 第三方工具超时
+
+按层处置，别只设一个总超时：
+
+1. **分层超时**：连接（秒级）/首字节（可放宽，codex SSE 头从
+   10s→30s 的真实补丁）/流式静默（mcode 300s）/总时限分开；
+   工具上限必须短于 turn 预算，给「超时后模型重试一轮」留空间；
+2. **重试语义**：只对幂等调用（查询类指数退避）；写操作先查状态
+   或带幂等键；第二次尝试把第一次失败喂给模型让它换参数/降级——
+   **重试是模型的决策，不是代码的反射**；
+3. **数据化+降级**：超时 = `isError: true` 的 toolResult，文案写成
+   可行动（「建议缩小窗口或换 grep」而非 `TimeoutError`）；
+   同工具连续熔断 → 切备用通道，半开探测恢复；
+4. **用户侧**：长任务转后台（task_output 模式），别静默卡死。
+
+### 9.2 模型输出 JSON 错乱（三病型分型）
+
+| 病型 | 特征 | 处置 |
+|---|---|---|
+| A. 截断 | `stopReason=length`，JSON 不完整 | **绝不执行**（pi 整批熔断，让模型带完整参数重发）；预防：分片写或调大 max_tokens |
+| B. Schema 偏移 | 完整但字段/类型不符 | JSON Schema 硬校验 → 错误原文喂回自愈（1 轮内通常修好）→ `prepareArguments` shim 兼容常见错；根治派用 constrained decoding 让非法 JSON 无法生成 |
+| C. 语义幻觉 | 格式合法但工具名/参数是编的 | 工具名白名单拦截 + 喂回可用列表；mcode `unexpectedToolCallFallback` 处理「宿主没声明工具模型硬要调」的变体 |
+
+通用兜底：**拦截（校验/截断检测）→ 数据化回喂（不抛异常）→
+给修复所需信息（可用列表/schema 原文/错误位置）→ 限自愈轮数 →
+全进 trace**。评估标准一句话：好的错误处理让模型一步修好。
+
+## 十、延伸阅读（仓内）
 
 - 四个框架的对应章节：[pi](./pi-agent源码分析.md)、
   [dsh](./deepseek-harness分析.md)、[codex](./codex源码分析.md)、

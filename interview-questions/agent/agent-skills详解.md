@@ -131,7 +131,76 @@ Markdown）；模型无关（不绑定厂商私有协议）。
 多个 skill 职责重叠时会互相干扰（和工具选择过载同病）；编写质量
 参差——「能写 prompt 就会写 skill，但写好同样需要把它当产品做」。
 
-## 七、▶ 面试挂钩
+## 七、经典 Skill 精读清单（2026-10 核实）
+
+读别人的经典作品比闷写快十倍。以下均为真实仓库中可核对的样本，
+按「学什么」排序：
+
+**入门底册：[anthropics/skills](https://github.com/anthropics/skills)**
+（规范制定者的参考答案）
+
+- **`pdf`——结构完整度标杆**：SKILL.md 正文只有 Quick Start
+  （几十行 pypdf 示例），细节全推给 `reference.md` / `forms.md` /
+  `scripts/`——三层披露「用到才读」是活的；description 用穷举
+  场景动词触发（reading / merging / splitting / OCR…），
+  不是「处理 PDF」四个字；
+- **`mcp-builder`——流程型标杆**：几乎没有脚本，主体是四阶段
+  workflow + 「工具的 quality 由 LLM 能否完成真实任务衡量」这类
+  写进流程的判断标准——复杂流程类 skill 的模子；
+- **`skill-creator`——元技能标杆（必看）**：把 skill 开发做成
+  闭环：draft → 造测试 prompt → 后台跑评估 → 定量指标+定性评审 →
+  重写 → 扩大测试集。理解「skill 是要 eval 的产品」的原始出处。
+
+**企业流程类：dsh 仓库自用 `.agents/skills/`（16 个）**
+
+- **`dsh-create-upgrade-guide`——description 教科书**：
+  触发条件写成可判定技术边界（「breaks an externally perceptible
+  surface: CLI, profiles, settings keys, persisted data, wire APIs…」），
+  正文带 scope 划界、位置规范、i18n 配对要求；
+- `dsh-prose-standard` / `dsh-trim-cot-leakage`——开阔适用面想象：
+  连「文档文风」「防思维链泄漏」都能做成 skill。
+
+**极简美：pi 仓库 `.pi/skills/`**
+
+- `interactive-testing.md`（教 agent 用 tmux 测交互 TUI）与
+  `release.md`（发布 checklist）——**skill 可以小到只有一页**，
+  小而准 > 大而全的活样本。
+
+**本机就有：`~/.kimi-code/skills/`**
+
+- `archify`（本仓库 86 张图的生父）——工具管线型：
+  四道门验收（validate→deliver→check→browser-check）写成 skill，
+  质量门禁不依赖人肉记忆；
+- `taste-skill` vs 官方 `frontend-design` 对比读——
+  「品味也能写成 checklist」：反例清单 + 判定规则，避免写得空洞；
+- `superpowers` 系列（brainstorming/tdd/systematic-debugging，
+  在 `~/.kimi-code/plugins/managed/superpowers/skills/`）——
+  流程纪律类大全集：反模式红旗表格 + 强制执行顺序 + 适用边界。
+
+**读法**：每个 skill 带四个问题解剖——触发条件可判定吗？
+正文哪些该挪 references？哪些判断固化成了脚本？有没有写
+「怎么验证它有效」？读完挑一个每周重复 3 次以上的流程，
+按 pdf 的结构 + dsh 的 description 标准写一个，并用
+skill-creator 的闭环评估触发率。
+
+## 八、意外情况排错手册（实战 95% 覆盖）
+
+| 症状 | 根因（按概率排） | 处置 |
+|---|---|---|
+| 装了没触发 | description 太抽象/和其他技能撞车/索引未重载 | 加触发场景关键词（「当用户说 X 时」）；写边界；`/skills` 查索引 |
+| 触发了但不按流程走 | 正文像文档不像指令；步骤无 done 标准 | 砍成「每步一动作+验收条件」；长解释挪 references；祈使句 |
+| 不该触发时乱触发 | description 写太宽 | 加负向条件（「不要用于：…」） |
+| 触发错 skill | 多技能职责重叠（同工具选择过载） | 合并或重切边界 |
+| 脚本执行失败 | 环境依赖/路径错 | 脚本自带依赖守护；相对路径一律相对 skill 目录解析 |
+| 内容过期 | 无版本意识 | 项目 skill 进 git 跟着代码走；references 写快照日期 |
+| 多 skill 指令冲突 | 无优先级声明 | 项目 > 全局；正文写「服从 system prompt 全局纪律」 |
+| 反直觉步骤被跳过 | 与模型训练习惯冲突 | 步骤前加「⚠️ 不要跳过」；反模式用「不要做 X（因为 Y）」 |
+| skill 即注入 | 供应链 | 只装可信源；敏感 skill 设 `disable-model-invocation` |
+
+**兜底心法**：90% 是 description 问题，5% 是正文长度，5% 是脚本
+环境——排错永远先改 description，再裁正文，最后查脚本。
+
+## 九、▶ 面试挂钩
 
 **问题 1：Skills 是什么？和工具/MCP 什么区别？**
 「Skill 是给模型的任务说明书：一个 SKILL.md 目录，frontmatter
@@ -160,7 +229,7 @@ progressive disclosure，本质和 RAG 的『检索代替全量塞入』
 生效——skill 只是文本，它触发的**工具调用**仍走权限管线，
 这是最后一道闸。」
 
-## 八、延伸阅读（仓内）
+## 十、延伸阅读（仓内）
 
 - 源码实现：[Pi 源码分析 · Skills 一节](./pi-agent源码分析.md)。
 - 产品视角：[AI 编程与 Claude Code 内幕](./ai编程与claudecode内幕.md)。
