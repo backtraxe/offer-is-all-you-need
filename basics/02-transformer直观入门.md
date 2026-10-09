@@ -56,6 +56,11 @@
 你的草稿 = Σ( 你和别人的相关度分数 ) × 别人的干货内容
 ```
 
+<div class="diagram-embed">
+<iframe src="assets/diagrams/attention-intuition.html" width="100%" height="510" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/attention-intuition.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
+
 拿开头的例子走一遍：「苹果发布了新手机」里，苹果的 Query 是「我想找讲
 我身份的伙伴」，它的 Query 碰到 Key「手机」时得分爆表，于是它狠狠吸收了
 「手机」的 Value——苹果的向量被拽向了「公司」这个方向。
