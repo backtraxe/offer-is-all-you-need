@@ -25,6 +25,7 @@
     - [预训练与 SFT](interview-questions/训练与对齐/预训练与sft.md)
     - [LoRA 与参数高效微调](interview-questions/训练与对齐/lora与参数高效微调.md)
     - [RLHF 与对齐](interview-questions/训练与对齐/rlhf与对齐.md)
+    - [Muon 与新优化器](interview-questions/训练与对齐/muon与优化器.md)
   - RAG
     - [RAG 全链路](interview-questions/rag/rag全链路.md)
     - [检索与混合召回](interview-questions/rag/检索与混合召回.md)
