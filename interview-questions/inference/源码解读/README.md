@@ -22,18 +22,10 @@
 
 ## 面试速记：一个请求的关键落点
 
-```mermaid
-flowchart LR
-    A["HTTP 层<br/>chat template + tokenize"] --> B["Engine 客户端<br/>asyncio + ZMQ 入队"]
-    B --> C["主循环 step<br/>schedule → execute_model<br/>= continuous batching"]
-    C --> D["KV 管理<br/>prefix cache 命中<br/>chunked prefill 预算"]
-    D --> E["ModelRunner<br/>block table + PagedAttention<br/>+ Sampling"]
-    E --> F["增量解码<br/>detokenizer + ZMQ 回传"]
-    F --> A
-
-    style C fill:#faf6ef
-    style D fill:#faf6ef
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/source-loop.html" width="100%" height="510" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/source-loop.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 一句话版：**一个请求 = 被 tokenize → 排队 → 被 schedule 成 batch 的一员 →
 在 GPU 上和其他几十个请求共享一次 forward → 采出一个 token → 增量解码流回；

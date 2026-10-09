@@ -7,17 +7,10 @@
 
 ## 一、模块划分（由浅入深）
 
-```mermaid
-flowchart LR
-    A["① LLM 基础<br/>Transformer/Attention/RoPE/Norm/Tokenizer"] --> B["② 训练与对齐<br/>预训练/SFT/LoRA/RLHF/DPO/GRPO"]
-    A --> C["③ RAG<br/>切分/Embedding/混合检索/Rerank/评测"]
-    B --> D["④ Agent<br/>ReAct/FC/MCP/记忆/多Agent/上下文工程"]
-    C --> D
-    D --> E["⑤ 推理部署<br/>KV Cache/vLLM/Continuous Batching/量化/PD分离"]
-    B --> F["⑥ 分布式训练<br/>3D并行/ZeRO/Megatron/DeepSpeed/NCCL"]
-    E --> G["⑦ 手写代码<br/>MHA/CUDA算子/最小Agent/经典算法"]
-    F --> G
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/interview-map.html" width="100%" height="640" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/interview-map.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 各模块目录（持续更新）：
 
@@ -32,22 +25,10 @@ flowchart LR
 
 ## 二、三类岗位的答题区
 
-```mermaid
-flowchart TB
-    subgraph 公共["公共必答区（Top 20 中 1-11）"]
-        P1["RAG 流程+chunk · KV Cache · LoRA<br/>Transformer · RAG vs 微调 · 幻觉<br/>FC/MCP · ReAct · PPO/DPO/GRPO<br/>混合检索 · 手撕 MHA（后两者按岗）"]
-    end
-    subgraph 算法["算法岗加试"]
-        S1["RoPE 推导 · RL 公式推导<br/>手撕模型（MHA/MoE）"]
-    end
-    subgraph 应用["应用开发岗加试"]
-        S2["记忆设计 · 指标量化<br/>上下文工程 · Rerank/混合检索深挖<br/>场景系统设计（客服/知识库/代码Review）"]
-    end
-    subgraph 工程["AI Infra 岗加试"]
-        S3["vLLM/PagedAttention<br/>DP/TP/PP + ZeRO 计算题<br/>CUDA 手撕（RMSNorm/Online Softmax/SwiGLU）"]
-    end
-    公共 --> 算法 & 应用 & 工程
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/interview-prep-map.html" width="100%" height="630" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/interview-prep-map.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 ## 三、出现率 Top 20（合并 10+ 篇面经去重）
 
