@@ -332,6 +332,25 @@ pass^1 衡量“运气好时多强”，pass^k 衡量“稳定性够不够上生
    金标 + BadCase 回流三段式（呼应第七节第 9 条），纯合成的集只能做
    冒烟，不能做门禁。
 
+### 8.6 平台化：把评测做成服务
+
+> ▶ 备问：如果需要把评测开放给全公司/多团队用呢？——低频，但属于
+> 「设计 Agent Eval 平台」的收口答法
+
+单点 Harness 解决「自己这一个 Agent 怎么评」；当评测要服务多个 Agent、
+多个团队时，问题变成平台工程，四件事随之改变：
+
+| 维度 | 单点 Harness | 平台化 Eval |
+|---|---|---|
+| 任务定义 | 写死在 repo | 声明式注册（YAML/SDK 上报任务、环境、判分器） |
+| 环境供给 | 手工沙箱 | 环境池化：沙箱模板 + 版本固化 + 按量分配 |
+| 判分与报告 | 一份报告 | 横向对比视图：跨 Agent/跨版本/跨 model 配置的同任务榜 |
+| 准入门禁 | 单流水线 Gate | 统一 Gate 服务：任何发版都可订阅同一份红线集 |
+
+答题要点：平台的本质是把第八节的「七组件」里的 Tasks/Environment/Grader
+抽象成可注册的接口，Runner/Trace/Gate 变成共享基础设施——**评测从工程
+变成产品，接口设计与数据契约才是难点，判分算法反而没变**。
+
 延伸阅读：公开 Benchmark 榜单（GAIA / τ-bench / WebArena 官方页）、
 [WeThinkIn/AIGC-Interview-Book](https://github.com/WeThinkIn/AIGC-Interview-Book)、
 [adongwanai/AgentGuide](https://github.com/adongwanai/AgentGuide)。
