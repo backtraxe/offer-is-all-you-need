@@ -102,17 +102,10 @@ Agent 多轮/工具调用场景典型特征：system prompt + 工具定义 + 历
 
 先立一张心智图：一次 decode 前向，HBM 上要搬三类数据——
 
-```mermaid
-flowchart TB
-    subgraph HBM["显存里的三类流量（每 decode step 读出一次）"]
-        W["权重：MoE 只读激活专家的参数<br/>dense 读全部；BF16 = 参数量 × 2 B"]
-        KV["KV Cache：历史全部 KV<br/>= 512 KB ~ 几 KB/token × context 长度"]
-        ACT["激活：bs × d 量级<br/>decode 时通常可忽略"]
-    end
-    SM["SM 计算单元"] --> W
-    SM --> KV
-    SM --> ACT
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/hbm-traffic.html" width="100%" height="640" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/hbm-traffic.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 ### 实例：DeepSeek V3（671B 总量 / 37B 激活）一次 decode 的访存量
 

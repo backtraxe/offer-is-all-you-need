@@ -31,16 +31,10 @@ Roofline 模型一句话：**一个 kernel 的快慢，取 min(算力上限，�
   卡在带宽斜坡上——A100 的 HBM 带宽约 2 TB/s，7B 模型 BF16 权重 14 GB，
   理论上限就是 ~140 tokens/s，再强的算力也没用。
 
-```mermaid
-flowchart LR
-    subgraph Prefill["Prefill：compute-bound"]
-        A["输入 [seq_len, d]<br/>大方阵"] --> B["所有位置并行算<br/>填满 KV Cache"] --> C["产出第 1 个 token"]
-    end
-    subgraph Decode["Decode：memory-bound"]
-        D["输入 [1, d]<br/>瘦条"] --> E["每步读全部权重<br/>+ 全部 KV Cache"] --> F["产出 1 个 token<br/>→ 拼回输入循环"]
-    end
-    C --> D
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/pd-roofline.html" width="100%" height="720" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/pd-roofline.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 **答题要点**：这个二分是所有推理优化的出发点——prefill 拼算力（换更强的卡、并行
 加卡），decode 拼带宽和复用（量化省字节、KV Cache 管理、batch 摊权重读）。
@@ -82,22 +76,10 @@ PagedAttention 的灵感直接来自操作系统的**虚拟内存与分页**—�
 | 按需分页 | KV Cache 按需分配，生成多少占多少 |
 | 写时复制（COW） | beam search / 并行采样时前缀块共享引用 |
 
-```mermaid
-flowchart LR
-    subgraph 逻辑视角["请求视角：token 逻辑连续"]
-        L1["token 0-15<br/>逻辑块 0"] --> L2["token 16-31<br/>逻辑块 1"] --> L3["token 32-38<br/>逻辑块 2"]
-    end
-    subgraph BlockTable["Block Table（页表）"]
-        T["块0 → 物理块 7<br/>块1 → 物理块 1<br/>块2 → 物理块 5"]
-    end
-    subgraph 物理显存["物理显存池（固定大小 block 自由分配）"]
-        P0["块0 空闲"]
-        P1["块1：token 16-31"]
-        P5["块5：token 32-38<br/>（只用了一半）"]
-        P7["块7：token 0-15"]
-    end
-    逻辑视角 --> BlockTable --> 物理显存
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/paged-attention.html" width="100%" height="860" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/paged-attention.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 attention 计算时，kernel 拿着 block table 去**物理上不连续**的块里取 K/V，
 逻辑上拼成完整序列——所以 attention 本身要改写（这正是"PagedAttention"作为
@@ -137,20 +119,10 @@ Continuous batching（Orca 论文提出，2022）把调度粒度从"**请求级*
 - 有新请求到达、显存放得下 → **立刻插进 batch** 接着跑下一步。
 - batch 组成一直在变，GPU 的卡槽始终装着实实在在干活的请求。
 
-```mermaid
-sequenceDiagram
-    participant S as 调度器
-    participant B as GPU Batch
-    Note over S,B: Static Batching：批内最短的空等最长的
-    S->>B: 请求A(5步) B(50步) C(20步) 成批
-    B-->>S: A第5步结束，但卡槽保留到第50步（气泡！）
-    Note over S,B: Continuous Batching：iteration 级进出
-    S->>B: 组批 A+B+C
-    B-->>S: iteration 5：A 完成 → 移除，插入新请求 D
-    B-->>S: iteration 20：C 完成 → 移除，插入新请求 E
-    B-->>S: iteration 50：B 完成
-    Note over S,B: 每个卡槽几乎无空闲，吞吐数倍提升
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/continuous-batching.html" width="100%" height="860" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/continuous-batching.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 **为什么提吞吐**：消除了"等长对齐"的气泡，decode 阶段 batch size 在大多数时刻
 都贴着显存上限跑，而 decode 是 memory-bound——batch 翻倍不增加总的权重读取
@@ -181,18 +153,10 @@ decode 怎么混在同一批？vLLM 用的是 chunked prefill（把长 prompt �
 | 多轮对话 | 每轮请求重命中历史轮的共同前缀 | 天然贴合——对话历史就是一条从根走下去的路径 |
 | 额外亮点 | 简单，工程改动小 | RadixAttention + cache-aware 调度（把命中最高的请求优先排），号称 tree 结构对 Agent 多轮/分支 rollout 尤其有利 |
 
-```mermaid
-flowchart TB
-    subgraph Radix["RadixAttention（SGLang）"]
-        R["root"] --> SP["system prompt<br/>（100% 命中）"]
-        SP --> U1["用户 A 历史<br/>轮 1..N"]
-        SP --> U2["用户 B 历史"]
-        U1 --> NB["本轮新提问<br/>（未命中，单独 prefill）"]
-    end
-    subgraph Hash["vLLM APC（块哈希）"]
-        H1["块 hash 链<br/>h0→h1→h2..."] --> H2["新请求逐块查表<br/>命中 h0..hk，从 k+1 开始 prefill"]
-    end
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/prefix-cache-compare.html" width="100%" height="700" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/prefix-cache-compare.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 **答法要点**：核心一句话——**"把 prefill 的重复计算变成一次哈希/树查询，以
 显存换 TTFT"**。命中越高，TTFT 越低；代价是额外占用 KV 显存（和可用 batch 抢
@@ -218,12 +182,10 @@ Speculative decoding 用一个小模型
 - 每一步**期望接受长度** > 1，吞吐就提升；接受率由 draft 和 target 分布的接近程度决定。
 - **输出分布不变**：验证步用的是目标模型的分布 + rejection sampling 修补，数学上和无推测完全一致——这是 answer 里必须声明的："提吞吐、不掉质量"。
 
-```mermaid
-flowchart LR
-    D["Draft 小模型<br/>猜 k 步：t1 t2 t3 t4"] --> V["Target 大模型<br/>一次前向并行验证整段"] --> A{"连续接受最长前缀<br/>t1,t2 ✓ t3 ✗"}
-    A --> B["采纳 t1 t2 + 修正 t3<br/>一步实际产出 3 个 token"]
-    B --> D
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/spec-decode.html" width="100%" height="700" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/spec-decode.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 **不适用场景**（面试高频追问）：
 
@@ -247,13 +209,10 @@ GPU 上的两个互相掐架的角色**。长 prompt 进来一次大 prefill，�
 TPOT 拉出一个毛刺（chunked prefill 缓解但不消灭）；长 context 下 KV cache 又和
 decode batch 抢显存。治理思路：**分开部署**。
 
-```mermaid
-flowchart LR
-    U["用户请求"] --> R["Router / 网关<br/>（前缀命中优先路由）"]
-    R --> P["Prefill 集群<br/>少而强的节点<br/>打满算力<br/>算完把 KV Cache 传走"]
-    P -- "KV Cache 通过<br/>RDMA/NVLink/高速网络传输" --> D["Decode 集群<br/>多而持久的节点<br/>满 batch 跑 decode<br/>KV Cache 住本地"]
-    D --> OUT["流式输出 token"]
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/pd-split.html" width="100%" height="660" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/pd-split.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 - **好处**：两类节点独立扩缩容、独立做 SLA（prefill 对 TTFT，decode 对 TPOT）、
   prefill 不再把 decode 延迟拉毛刺；还能做"prefill 用算力型卡、decode 用大显存卡"
