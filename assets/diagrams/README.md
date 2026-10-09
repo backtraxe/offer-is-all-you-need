@@ -89,5 +89,6 @@ candidate 目录可参照任一 `.archify/*/candidate.json`（该目录已 gitig
 - 批次 11（1 张）：slo-capacity 业务 SLO → 引擎预算拆解树（inference 推理服务slo与运营.md）
 - 批次 12（1 张）：hallucination-map 幻觉来源四件套 → 缓解三板斧（rag 幻觉与事实性.md）
 - 批次 13（1 张）：personal-assistant-arch 个人助理 Agent 分层架构（system-design 设计个人助理agent.md，通道/调度面/Runtime/本地四泳道）
+- 批次 14（1 张）：kv-tiering KV 多级体系四泳道（GPU→host→SSD→对象存储，驱逐下行与 miss 换入/重算两条路）（inference 长上下文推理与kv体系.md）
 
-合计 **71 张**，全仓库 mermaid 清零。
+合计 **72 张**，全仓库 mermaid 清零。

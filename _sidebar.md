@@ -36,8 +36,10 @@
     - [工具调用与 MCP](interview-questions/agent/工具调用与mcp.md)
     - [记忆与上下文工程](interview-questions/agent/记忆与上下文工程.md)
     - [多 Agent 与评测](interview-questions/agent/多agent与评测.md)
+    - [AI 编程与 Claude Code 内幕](interview-questions/agent/ai编程与claudecode内幕.md)
   - 推理部署（Inference）
     - [vLLM 与推理加速核心](interview-questions/inference/vllm与推理加速核心.md)
+    - [长上下文推理与 KV 多级体系](interview-questions/inference/长上下文推理与kv体系.md)
     - [Infra 面试计算题专项](interview-questions/inference/infra面试计算题专项.md)
     - [量化与压缩](interview-questions/inference/量化与压缩.md)
     - [推理引擎选型与源码路线](interview-questions/inference/推理引擎选型与源码路线.md)
