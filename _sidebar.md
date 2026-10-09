@@ -42,6 +42,7 @@
     - [检索与混合召回](interview-questions/rag/检索与混合召回.md)
     - [评测与建库工程](interview-questions/rag/评测与建库工程.md)
     - [幻觉与事实性](interview-questions/rag/幻觉与事实性.md)
+    - [Agentic RAG](interview-questions/rag/agentic-rag.md)
   - Agent
     - [Agent 基础与规划](interview-questions/agent/agent基础与规划.md)
     - [工具调用与 MCP](interview-questions/agent/工具调用与mcp.md)
@@ -53,6 +54,7 @@
     - [DeepSeek Harness 分析](interview-questions/agent/deepseek-harness分析.md)
     - [Codex 源码分析](interview-questions/agent/codex源码分析.md)
     - [MiniMax Code 分析](interview-questions/agent/minimax-code分析.md)
+    - [RSI 递归自我改进](interview-questions/agent/rsi自我改进.md)
   - 推理部署（Inference）
     - [vLLM 与推理加速核心](interview-questions/inference/vllm与推理加速核心.md)
     - [长上下文推理与 KV 多级体系](interview-questions/inference/长上下文推理与kv体系.md)
