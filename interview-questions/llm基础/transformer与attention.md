@@ -229,6 +229,60 @@ specialization、生产消费流水"即可，不用背 kernel 代码。
   可能要求讲清后再写。
 - 配套代码会在 [coding/](../../coding/) 目录更新，写完先对着本文公式自查 shape。
 
+## 八、高效注意力谱系：通往长上下文（2025-2026 主线）
+
+▶ 面试题：除了 FlashAttention，注意力还能怎么降成本？NSA / MoBA / 线性注意力 / hybrid 各是什么？——**中高，2026 升温线索**
+
+主线只有一句：**长上下文下注意力又贵又慢，所有方案都在回答同一个问题——
+"哪些 token pair 之间的 attention 真正值得算"。**各家刀法不同、付出的代价不同，
+背一张谱系表就能答穿：
+
+| 方案族 | 代表 | 核心思想 | 代价 / 风险 |
+|---|---|---|---|
+| 稀疏 attention | BigBird / Longformer | 固定 pattern：滑窗 + 少数全局 token + 随机连接，把 O(n²) 砍到 O(n·w) | pattern 靠人工拍，不是数据自适应 |
+| 滑动窗口（SWA） | Mistral 的 Sliding Window Attention | 每个 query 只算最近 w 个 key，KV cache 上限也随之固定为 w | 长程依赖要靠"层数接力"传递，w 小时远端信息真看不到 |
+| NSA（DeepSeek） | Native Sparse Attention，原生稀疏训练 | 三分支：compressed（分块压成代表 token 看全局摘要）+ selected（按重要性 top-k 选原始块细看）+ sliding（近邻全分辨率），门控融合 | 硬件对齐要求高，kernel 比 FA 难写；选块质量依赖打分器 |
+| MoBA（Kimi） | Mixture of Block Attention | 把 attention 类比 MoE：key 分块当 expert，轻量 router 让每个 query 选 top-k 块 | 块冷热不均要配负载均衡；选块上限受 router 质量约束 |
+| 线性 attention / SSM | Linear Attention、Mamba、RWKV、Gated DeltaNet | 核化 softmax 或状态递推：历史被压进固定大小状态，复杂度 ~O(n)、decode 状态 O(1) | 状态有界 → 记忆精度有损，长程检索/精确复制任务掉点 |
+| Hybrid（2025 收敛方向） | Qwen3-Next：75% 线性层（Gated DeltaNet）+ 25% 全注意力层 | 记忆精度 vs 容量效率的折中：线性层吃吞吐，少数全注意力层兜长程检索能力 | 配比是打磨出来的经验值，没有通用最优 |
+
+各家一句拆解：
+
+- **稀疏 attention（BigBird/Longformer）**：最早的答案——提前定好"滑窗 + 全局
+  token + 随机连边"的固定 pattern，证明了"绝大多数 pair 不重要"；但 pattern 不
+  是模型自己学出来的，被可学习稀疏（NSA 这一派）接棒。
+- **滑动窗口（Mistral SWA）**：直觉最直接的方案——每个 query 只找最近 w 个 key，
+  计算和 KV cache 双双从 O(n) 降到 O(w)；代价是长程信息只能在层与层之间"接力"
+  传播，w 小、层数不够时，十万 token 之外的内容等于不存在。
+- **NSA（DeepSeek）**：思路是"让模型自己挑要算谁"——compressed 分支把 token
+  分块、每块压成一个代表 token，给 query 提供粗粒度全局摘要；selected 分支按
+  重要性打分选 top-k 原始块精看；sliding 分支保住近邻的高分辨率信息；三路用
+  门控加权融合，且选块策略随训练端到端优化，比固定 pattern 自适应得多。
+- **MoBA（Kimi）**：attention × MoE 的混血——key 分块当 expert，query 一个轻量
+  router 打分只接 top-k 块，思想上直接复用 MoE 的"块路由 + 稀疏激活"；优点是
+  算力开关是运行时决策，缺点和 MoE 一样要治冷热不均。
+- **线性 attention / SSM（Mamba、RWKV、Gated DeltaNet）**：复杂度约 O(n)、decode
+  每步只更新 O(1) 状态，把"看全部历史"换成"压缩历史"；代价清清楚楚——状态被压
+  进固定大小，记忆精度必有损，needle-in-a-haystack 类精确检索任务上是硬伤。
+- **Hybrid 收敛趋势（2025 主流）**：前些年大家想让"更好复杂度的结构整体取代
+  softmax attention"，2025 年结论收敛到**"大部分层用线性注意力省算力，少数层
+  全注意力兜精度"**——以 Qwen3-Next 的 75% 线性层（Gated DeltaNet）+ 25% 全局
+  全注意力的配比为代表。逻辑：线性层容量已够用，但只有全注意力层能撑精确检索
+  与复制；且**只有全注意力层才产生完整 KV cache**（线性层只存 O(1) 状态，不产生
+  KV），所以 KV cache 预算只需按那 25% 的层估算——这是 hybrid 对 Infra 侧最大的
+  实际意义。
+
+**答题节奏**：一句主线（复杂度与显存一起砍）→ 按表讲谱系 → 强调 hybrid 是
+2025 收敛方向、"KV cache 只按全注意力层算" → 收尾点名代表模型/论文（NSA 出自
+DeepSeek、MoBA 出自 Kimi、hybrid 代表 Qwen3-Next）。
+
+▶ 追问答法速查表：
+
+| 追问 | 要点 |
+|---|---|
+| 为什么 hybrid 是 2025 主流方向？ | 纯线性/纯 SSM 想在所有层取代 softmax attention 的路线，在精确检索、长程复制等任务上稳定掉点；规模化实践收敛到"大部分层省算力 + 少数层兜精度"：线性层负责吞吐，全注意力层保住检索能力，KV cache 也只按全注意力层算，端到端综合成本最低。 |
+| NSA 三分支怎么配合训练？ | 端到端一起训：compressed 分支的块摘要给 query 全局视野、selected 分支的打分器靠门控等可微路径回传梯度（top-k 选块本身是离散的，要用可微近似把它"绕过去"）、sliding 分支保证近邻信息密度；三路不是各算各的，最后由门控融合成一个输出，选块策略随主 loss 一起收敛。 |
+
 ---
 
 *相关阅读：[位置编码与 Norm](./位置编码与norm.md) · 上一页 [模块导航](./README.md)*
