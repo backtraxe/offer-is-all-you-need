@@ -61,20 +61,10 @@ Agent 是应用岗面试的第一权重模块（[JD 分析](../../resources/jd�
 [学习资源清单 · 博客/Lil'Log](../../resources/学习资源清单.md)）：一个 Agent 由
 四个核心组件构成。
 
-```mermaid
-flowchart TB
-    subgraph AGENT["Agent"]
-        P["① 规划 Planning<br/>子目标拆解 · 反思与自我批判<br/>（CoT/ReAct/ToT/Plan-and-Execute）"]
-        M["② 记忆 Memory<br/>短期：上下文里的状态<br/>长期：向量库/外部存储"]
-        T["③ 工具 Tools<br/>搜索 · 代码执行 · DB/API<br/>Function Calling/MCP"]
-        A["④ 行动 Action<br/>以结构化产物驱动工具<br/>循环直到终止"]
-        P --> A
-        M --> P
-        M --> T
-        T --> A
-        A -.->|"观测结果回填"| M
-    end
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/agent-four-parts.html" width="100%" height="860" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/agent-four-parts.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 逐个说人话：
 
@@ -117,19 +107,10 @@ Action: finish("请执行 pip install pyqueryx==1.4.2")
 
 ### 3.2 完整循环图（面试可随手画）
 
-```mermaid
-flowchart TB
-    Q["用户目标 / Task"] --> LP{{"LLM 一步推理"}}
-    LP -->|"Thought: 分析现状"| D{"需要行动吗？"}
-    D -->|"是：选工具 + 参数"| ACT["Action: 调用工具"]
-    ACT --> OBS["Observation: 工具返回"]
-    OBS --> REG["结果追加进上下文<br/>（短期记忆）"]
-    REG --> LP
-    D -->|"否：conclusion"| FIN["输出最终答案<br/>或触发终止条件"]
-    FIN -.- LOOP["外层防护：<br/>最大步数 · 重复检测 · 反思退出"]
-    LOOP -.->|"超限强制中断"| FIN
-    style LOOP fill:#faf6ef,stroke:#d3a674
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/react-loop.html" width="100%" height="720" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/react-loop.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 三个要点，答题时务必覆盖：
 

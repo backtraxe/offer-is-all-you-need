@@ -25,21 +25,10 @@
 
 ### 2.1 推理链路
 
-```mermaid
-sequenceDiagram
-    participant U as 用户
-    participant H as Host（Agent Runtime）
-    participant M as LLM
-    participant T as 工具（API/DB/代码）
-    U->>H: "北京明天穿什么？"
-    H->>M: system + tools schema + user msg
-    M-->>H: 结构化输出: get_weather(city="北京", date="明天")
-    H->>T: 真实调用 get_weather
-    T-->>H: {temp: 12-18°C, 天气: 多云}
-    H->>M: 追加 Observation（tool role 消息）
-    M-->>H: "明天多云 12-18°C，建议薄外套…"
-    H-->>U: 最终回答
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/fc-sequence.html" width="100%" height="860" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/fc-sequence.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 ### 2.2 模型怎么知道调哪个工具 & 参数怎么填
 
@@ -128,20 +117,10 @@ MCP（Model Context Protocol，Anthropic 2024 底开源）是**连接 LLM 应用
 
 ### 5.1 架构（面试可随手画）
 
-```mermaid
-flowchart LR
-    subgraph HOST["Host 宿主应用<br/>（Claude Desktop / IDE / 你的 Agent）"]
-        C1["MCP Client 1"]
-        C2["MCP Client 2"]
-        C3["MCP Client 3"]
-    end
-    S1["MCP Server A<br/>本地数据库"]
-    S2["MCP Server B<br/>Git 仓库 / 文件系统"]
-    S3["MCP Server C<br/>远端 API（Slack/Linear）"]
-    C1 <-->|"JSON-RPC 2.0<br/>stdio 或 HTTP+SSE"| S1
-    C2 <-->|"JSON-RPC 2.0"| S2
-    C3 <-->|"JSON-RPC 2.0"| S3
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/mcp-arch.html" width="100%" height="720" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/mcp-arch.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 三个角色：
 

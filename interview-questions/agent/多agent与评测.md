@@ -10,24 +10,10 @@
 
 ### 1.1 三种基础模式
 
-```mermaid
-flowchart TB
-    subgraph SUP["① 主管-执行（Orchestrator-Workers）"]
-        O["主管 Agent<br/>拆任务 · 派活 · 回收结果 · 汇总"]
-        W1["执行子 Agent A"]
-        W2["执行子 Agent B"]
-        W3["执行子 Agent C"]
-        O -->|"子任务 + 上下文切片"| W1 & W2 & W3
-        W1 & W2 & W3 -->|"只回传结论（不带中间轨迹）"| O
-    end
-    subgraph DEB["② 辩论 / 多视角（Debate）"]
-        D1["提案 Agent"] <--> |互相批判| D2["反方 Agent"]
-        D1 & D2 --> J["裁决 Agent / Jury"]
-    end
-    subgraph PIPE["③ 流水线（Pipeline）"]
-        P1["检索 Agent"] --> P2["分析 Agent"] --> P3["写作 Agent"] --> P4["校对 Agent"]
-    end
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/multi-agent-patterns.html" width="100%" height="920" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/multi-agent-patterns.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 | 模式 | 控制流 | 适合场景 | 典型缺点 |
 |---|---|---|---|
@@ -106,17 +92,10 @@ Agent 评估难在**过程**而不只是结果：答案对了但走的是瞎蒙�
 
 每一段 Agent 运行都要留下完整的、可回放的 **Trace**：
 
-```mermaid
-flowchart LR
-    subgraph TRACE["一次任务的 Trace（树状 Span）"]
-        ROOT["Root: Agent 任务<br/>(task_id, 总步数, 总成本)"] --> S1["Span 1: LLM Call<br/>现prompt摘要/输出/延迟/token"]
-        ROOT --> S2["Span 2: Tool Call<br/>工具名/参数/结果/耗时/状态码"]
-        ROOT --> S3["Span 3: LLM Call<br/>..."]
-        ROOT --> S4["Span 4: Tool Call<br/>..."]
-    end
-    TRACE --> STORE["Trace 存储<br/>LangSmith / LangFuse<br/>或自建 OTel"]
-    STORE --> REP["回放与定位<br/>按 task_id 拉整轨<br/>第几步开始偏的"]
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/agent-tracing.html" width="100%" height="720" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/agent-tracing.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 工具：**LangSmith**（LangChain 全家桶）、**LangFuse**（开源、自部署友好，
 国内落地多）、底层规范走 **OpenTelemetry GenAI 语义**（自建平台时按它的
@@ -147,18 +126,10 @@ span 属性设计）。
 
 HITL（Human-in-the-Loop）的硬核部分是**状态机设计**，而不是"加个审批按钮"：
 
-```mermaid
-stateDiagram-v2
-    [*] --> Running
-    Running --> Paused: 触发审批点/用户打断<br/>(checkpoint 序列化)
-    Paused --> Running: 批准 / 继续<br/>(恢复 checkpoint)
-    Paused --> Modified: 人类修改参数/指令
-    Modified --> Running
-    Running --> Done: 任务完成
-    Paused --> Aborted: 拒绝/中止
-    Done --> [*]
-    Aborted --> [*]
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/hitl-state.html" width="100%" height="860" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/hitl-state.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 要点：
 
