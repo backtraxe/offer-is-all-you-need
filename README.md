@@ -21,6 +21,7 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ```
 ├── basics/                 # 零基础入门：什么是大模型、Transformer、数学/GPU 速通、术语词典、训练与推理第一印象
+├── projects/               # 项目篇章：可面试的 GitHub 项目选型、增量改造与 benchmark 解读
 ├── interview-experiences/  # 面经复盘：按公司/日期组织，含流程、题目、复盘
 ├── interview-questions/    # 高频考点：LLM、Agent、推理部署、分布式训练等
 ├── system-design/     # 系统设计：Agent/网关/推理服务/个人助理等场景设计题
@@ -36,9 +37,11 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
    （基于真实招聘 JD 调研的分层备战路线，附两份岗位 JD 分析和学习资源清单）
 3. 高频考点入口 → [interview-questions/README.md](interview-questions/README.md)
    （考点地图 + 出现率 Top 20 + 各公司面试风格差异）
-4. 其余按目录翻，每篇文档自成一体
-5. 面经部分已脱敏，不保证 100% 还原现场
-6. 八股不保证全对，以我拿到 offer 为准（验证方法：给我发 offer）
+4. 没项目/项目讲不深 → [projects/](projects/README.md)
+   （GitHub 项目选型总表、防烂大街法则、逐方向的增量改造与面试追问预演）
+5. 其余按目录翻，每篇文档自成一体
+6. 面经部分已脱敏，不保证 100% 还原现场
+7. 八股不保证全对，以我拿到 offer 为准（验证方法：给我发 offer）
 
 ## Contribution
 

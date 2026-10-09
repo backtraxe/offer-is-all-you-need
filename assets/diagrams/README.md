@@ -108,4 +108,6 @@ candidate 目录可参照任一 `.archify/*/candidate.json`（该目录已 gitig
 
 - 批次 30（2 张）：rl-four-pitfalls 四泳道×3 列（RL 训练四个坑 现象→机制→对策与监控，训练与对齐/rl训练工程实战.md 第一节后）；infra-interview-map 三泳道×3 列（项目追问/技术栈纵向/工程手撕三主线，inference/推理infra社招面经与备战.md 3.4 后）。教训：4 泳道当列宽>265 时 viewBox 限~1240 需每列最大节点 ≤290 且 sublabel 要压字数，首批过宽（1313→两轮压缩才过门）；用 python 批量改 width 比逐次 Edit 快。
 
-合计 **93 张**，全仓库 mermaid 清零。
+- 批次 31（1 张）：projects-landscape 三泳道×3 列（推理 infra/Agent/算法三方向的项目组合：主项目→工程副件→信号件，projects/README.md 第四节）。教训：3 泳道宽字图（label 超 18 字符）viewBox 易踩 1240 边缘（本次 1243 首轮被毙，三列各砍 7-12px 后过门）。
+
+合计 **94 张**，全仓库 mermaid 清零。

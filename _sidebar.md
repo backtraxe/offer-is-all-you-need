@@ -16,6 +16,12 @@
   - [JD 分析 · AI Infra 岗](resources/jd分析-ai-infra岗.md)
   - [学习资源清单](resources/学习资源清单.md)
 
+- **项目篇章**
+  - [项目篇章导读](projects/README.md)
+  - [推理引擎实战](projects/推理引擎实战.md)
+  - [从零造轮子：模型与训练](projects/从零造轮子.md)
+  - [Agent 与 RAG 实战](projects/agent与rag实战.md)
+
 - **面经复盘**
   - [面经目录与机制观察](interview-experiences/README.md)
   - [英伟达 · AI Infra 五面](interview-experiences/英伟达-ai-infra五面.md)
