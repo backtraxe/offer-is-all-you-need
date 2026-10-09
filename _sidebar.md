@@ -47,6 +47,7 @@
     - [Agentic RAG](interview-questions/rag/agentic-rag.md)
   - Agent
     - [Agent 由浅入深路线图](interview-questions/agent/agent由浅入深路线图.md)
+    - [场景全链路 Trace](interview-questions/agent/场景全链路trace.md)
     - [Agent 基础与规划](interview-questions/agent/agent基础与规划.md)
     - [工具调用与 MCP](interview-questions/agent/工具调用与mcp.md)
     - [MCP vs 工具调用深度对比](interview-questions/agent/mcp与工具调用深度对比.md)
