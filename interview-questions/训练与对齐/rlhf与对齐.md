@@ -15,24 +15,10 @@ SFT 教模型"会答"，但还有两个问题没解决：**答得好不好**（�
 标准答案——于是把目标从"模仿参考答案"换成"最大化人类偏好的奖励"，这就是
 RLHF（Reinforcement Learning from Human Feedback）。
 
-```mermaid
-flowchart LR
-    subgraph S1["阶段一：SFT"]
-        A1["指令数据<br/>(prompt, response)"] --> A2["监督微调<br/>π_SFT"]
-    end
-    subgraph S2["阶段二：训练 Reward Model"]
-        B1["同一 prompt 采样<br/>k 个回答"] --> B2["人工成对排序<br/>y_w ≻ y_l"]
-        B2 --> B3["BT 偏好损失训练 RM<br/>r_ϕ(x, y)"]
-    end
-    subgraph S3["阶段三：PPO 强化学习"]
-        C1["π_SFT 初始化 actor"] --> C2["采样回答<br/>RM 打分"] 
-        C2 --> C3["PPO 更新<br/>+ KL 约束防跑偏"]
-    end
-    S1 --> S2
-    S1 --> S3
-    S2 --> S3
-    S3 --> D["对齐后的模型<br/>(如 ChatGPT/InstructGPT)"]
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/rlhf-pipeline.html" width="100%" height="940" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/rlhf-pipeline.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 答这类题的节奏：**先一句话总述（"SFT 打底 → RM 学人类偏好 → PPO 用 RM
 当奖励调策略"）→ 再逐阶段展开细节**。InstructGPT 原文的三阶段就是这个
@@ -85,16 +71,10 @@ $$\max_\theta\ \mathbb{E}_{y \sim \pi_\theta}\big[r_\phi(x,y)\big] - \beta\, D_{
 
 $\pi_{ref}$ 就是冻结的 SFT 模型。整体是四件套：
 
-```mermaid
-flowchart TB
-    P["prompt x"] --> PI["Actor π_θ<br/>生成回答 y"]
-    PI --> RM["Reward Model 打分 r(x,y)"]
-    PI --> CR["Critic V<br/>预测这条轨迹的期望回报"]
-    RM --> ADV["Advantage A = r − V<br/>（实际用 GAE 平滑）"]
-    CR --> ADV
-    ADV --> CLIP["PPO clip objective<br/>+ KL 惩罚"]
-    CLIP --> PI
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/ppo-loop.html" width="100%" height="780" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/ppo-loop.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 三块必答的零件：
 
@@ -293,15 +273,10 @@ RM 只是人类偏好的**代理**，对代理优化过头就是对真正目标�
 
 ## 十二、对齐方法演进一图
 
-```mermaid
-flowchart LR
-    A["SFT<br/>模仿参考答案<br/>2022"] --> B["RLHF/PPO<br/>RM + 在线 RL<br/>InstructGPT"]
-    B --> C["DPO<br/>离线偏好直接优化<br/>2023"]
-    B --> D["GRPO<br/>组内相对 + 无需 critic<br/>DeepSeekMath 2024"]
-    C --> E["DPO 修复系<br/>IPO / KTO / SimPO<br/>2024"]
-    D --> F["Verifiable Reward RL<br/>R1 式推理 RL<br/>2025"]
-    F --> G["Agentic RL<br/>轨迹级奖励<br/>2026"]
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/align-evolution.html" width="100%" height="720" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/align-evolution.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 ## 十三、高频追问清单（本主题）
 

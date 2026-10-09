@@ -13,15 +13,10 @@
 预训练一句话：在海量无标注文本上做 next-token prediction，把所有"世界知识"
 灌进模型参数。流程拆开看：
 
-```mermaid
-flowchart LR
-    A["原始语料<br/>web/code/book/论文/<br/>多模态"] --> B["数据清洗<br/>去重/过滤/脱敏/<br/>毒性检测"]
-    B --> C["Tokenize<br/>BPE/SentencePiece"]
-    C --> D["数据配比<br/>领域配比 + 退火"]
-    D --> E["训练<br/>decoder-only<br/>next-token pred"]
-    E --> F["稳定性保障<br/>warmup/梯度裁剪<br/>loss spike 处理/断点续训"]
-    F --> G["基座模型<br/>base model"]
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/pretrain-pipeline.html" width="100%" height="780" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/pretrain-pipeline.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 面试被问"预训练流程"，能讲清的三个重点：
 

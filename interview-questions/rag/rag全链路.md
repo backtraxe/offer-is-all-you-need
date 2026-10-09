@@ -76,27 +76,10 @@ JD 调研里 RAG/知识库/向量检索被 **21/21 的 Agent 岗 JD 提及**—�
 
 RAG 分成**离线建库**和**在线问答**两条流水线，中间共享向量索引：
 
-```mermaid
-flowchart TB
-    subgraph OFFLINE["离线建库（Indexing）"]
-        A1["① 文档加载/解析<br/>PDF/Word/HTML/表格"] --> A2["② 正文抽取与清洗<br/>去页眉页脚/乱码/版面噪声"]
-        A2 --> A3["③ Chunk 切分<br/>固定/语义/结构/父子"]
-        A3 --> A4["④ Embedding<br/>文本→向量"]
-        A4 --> A5["⑤ 建索引入库<br/>HNSW/IVF + BM25 倒排<br/>+ metadata/原文"]
-        A5 -.增量更新.-> A3
-    end
-
-    subgraph ONLINE["在线问答（Retrieval + Generation）"]
-        B1["① Query 改写<br/>多轮消歧/HyDE"] --> B2["② 多路召回<br/>向量 top-k + BM25 top-k"]
-        B2 --> B3["③ 融合<br/>加权/RRF"]
-        B3 --> B4["④ Rerank<br/>cross-encoder 精排"]
-        B4 --> B5["⑤ 上下文组装<br/>截断/引用编号"]
-        B5 --> B6["⑥ LLM 生成<br/>带引用 + 拒答"]
-        B6 --> B7["⑦ 后处理与评测<br/>引用校验/日志回放"]
-    end
-
-    OFFLINE -->|"共享：向量索引 + 倒排索引 + 原文库"| ONLINE
-```
+<div class="diagram-embed">
+<iframe src="assets/diagrams/rag-pipeline.html" width="100%" height="980" style="border:none;border-radius:12px" loading="lazy"></iframe>
+<p><a href="assets/diagrams/rag-pipeline.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
+</div>
 
 面试讲法建议：**先把这张图从嘴上图解一遍（30 秒），再挑 2-3 个环节深挖**——全文
 讲完是 10 分钟的事，面试官没那个耐心，主动说"我对切分和混合检索这块踩过坑，
