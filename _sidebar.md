@@ -1,5 +1,10 @@
 - [首页](README.md)
 
+- **零基础入门**
+  - [入门导读](basics/README.md)
+  - [01 什么是大模型](basics/01-什么是大模型.md)
+  - [02 Transformer 直观入门](basics/02-transformer直观入门.md)
+
 - **学习地图**
   - [学习路线图](resources/学习路线图.md)
   - [JD 分析 · Agent 开发岗](resources/jd分析-agent开发岗.md)
