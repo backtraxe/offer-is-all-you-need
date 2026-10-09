@@ -110,4 +110,6 @@ candidate 目录可参照任一 `.archify/*/candidate.json`（该目录已 gitig
 
 - 批次 31（1 张）：projects-landscape 三泳道×3 列（推理 infra/Agent/算法三方向的项目组合：主项目→工程副件→信号件，projects/README.md 第四节）。教训：3 泳道宽字图（label 超 18 字符）viewBox 易踩 1240 边缘（本次 1243 首轮被毙，三列各砍 7-12px 后过门）。
 
-合计 **94 张**，全仓库 mermaid 清零。
+- 批次 32（1 张）：resume-jd-map 三泳道×3 列（JD 关键词 → 简历承接模块 → 面试追问落点，三方向 resume/README.md 篇首）。首轮过门无迭代：参照批次 31 经验直接把单列宽压到 265-270。
+
+合计 **95 张**，全仓库 mermaid 清零。
