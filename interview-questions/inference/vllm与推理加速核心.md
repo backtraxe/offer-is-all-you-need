@@ -228,6 +228,10 @@ decode batch 抢显存。治理思路：**分开部署**。
 拆开独立扩缩 + 异构 → 代价是 KV 传输，所以传输引擎和网络是灵魂 → 落到见闻
 （Mooncake / vLLM P2P / SGLang PD Serve）。
 
+> MoE 模型的推理有另一条通信主线——EP（专家并行）的 all-to-all，prefill
+> 高吞吐与 decode 低延迟的诉求分治是 DeepEP 双内核的动机，详见
+> [MoE 架构与专家并行](../llm基础/moe架构.md#五moe-推理与-deepepinfra-岗重点)。
+
 ## 八、吞吐 vs 延迟：TTFT / TPOT / ITL 指标必须脱口而出
 
 ▶ 面试题：吞吐 vs 延迟怎么 trade-off？线上延迟怎么优化？——**极高频**（推理岗必考）
