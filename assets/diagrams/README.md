@@ -135,4 +135,9 @@ candidate 目录可参照任一 `.archify/*/candidate.json`（该目录已 gitig
 - 批次 45（1 张）：inference-hardware-map 三泳道×3 列（Groq/LPX 线 / Cerebras 线 / SambaNova+其他，interview-questions/推理专用硬件专题.md，2 轮 1270→1240）。
 - 批次 46（1 张）：na-infra-jd-map 三泳道×3 列（三家在招实情与薪资带 / 关键词交集差集与 RL infra 溢价 / 流程对策与路径，resources/jd分析-北美infra岗.md，4 轮 1327→1236；1 条非阻塞 detour 目检可读后接受）。
 
+- 批次 47（1 张）：trtllm-map 三泳道×3 列（重构时间线 v0.17/v1.0.0/v1.3.0rc20 × 重构后架构 LLM API→PyExecutor→C++ 热路径 × 生态位 Blackwell+FP4/Disagg+Dynamo/选型，inference/tensorrt-llm专题.md，3 轮 1298→1223）。
+- 批次 48（1 张）：lora-serving-map 三泳道×3 列（kernel 层 merge/Gather-BMM→SGMV / S-LoRA 四件套 / 生产引擎落地与 prefix cache 坑，inference/多lora-serving专题.md，2 轮 1269→1239）。
+- 批次 49（1 张）：agent-observability-map 三泳道×3 列（技术栈收敛 SDK→semconv→LLM 后端 / Langfuse 三层模型 / 线上 eval 闭环，agent/观测与trace工程.md，3 轮 1253→1233）。
+- 批次 50（1 张）：recsys-llm-map 三泳道×3 列（经典级联打底 / 三段跳 TIGER→HSTU→OneRec / 三种接法×infra 共振，interview-questions/搜广推与llm融合专题.md，3 轮 1290→1236）。新 bold 坑（已并入根 README 铁律区）：全角标点（如 `：`）紧贴 `**+数字` 开头的粗体时 marked 首个 delimiter run 不解析且配对整体错位，同句后续粗体全部遭殃；安全形态=粗体以 CJK 开头、以全角标点结尾（如 `。**总观看时长 +1.68%（来源）**`）。
+
 合计张数以本目录实际 html 文件数为准，全仓库 mermaid 清零。
