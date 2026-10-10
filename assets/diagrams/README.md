@@ -140,4 +140,9 @@ candidate 目录可参照任一 `.archify/*/candidate.json`（该目录已 gitig
 - 批次 49（1 张）：agent-observability-map 三泳道×3 列（技术栈收敛 SDK→semconv→LLM 后端 / Langfuse 三层模型 / 线上 eval 闭环，agent/观测与trace工程.md，3 轮 1253→1233）。
 - 批次 50（1 张）：recsys-llm-map 三泳道×3 列（经典级联打底 / 三段跳 TIGER→HSTU→OneRec / 三种接法×infra 共振，interview-questions/搜广推与llm融合专题.md，3 轮 1290→1236）。新 bold 坑（已并入根 README 铁律区）：全角标点（如 `：`）紧贴 `**+数字` 开头的粗体时 marked 首个 delimiter run 不解析且配对整体错位，同句后续粗体全部遭殃；安全形态=粗体以 CJK 开头、以全角标点结尾（如 `。**总观看时长 +1.68%（来源）**`）。
 
+- 批次 51（1 张）：diffusion-video-map 三泳道×3 列（DiT 谱系 / 采样加速四代 / serving 解法栈 USP·offload，interview-questions/多模态生成与diffusion专题.md，4 轮 1258→1224）。
+- 批次 52（1 张）：embedding-vector-map 三泳道×3 列（模型格局换血 / 索引算法四维 / Serving 与十亿级工程，rag/embedding与向量索引工程.md，2 轮 1257→1225）。
+- 批次 53（1 张）：guardrail-map 三泳道×3 列（Llama Guard 谱系 / 管线五 rail 与延迟优化 / 红队与合规收口，agent/guardrail系统专题.md，4 轮 1306→1236）。
+- 批次 54（1 张）：rl-env-map 三泳道×3 列（Gym→Agentic 谱系与规模接力 / Verifier 咽喉 / Sandbox 与三池解耦调度，训练与对齐/rl环境工程专题.md，3 轮 1320→1236）。
+
 合计张数以本目录实际 html 文件数为准，全仓库 mermaid 清零。
