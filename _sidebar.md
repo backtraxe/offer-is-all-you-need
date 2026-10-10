@@ -42,6 +42,7 @@
   - [显存计算专题](interview-questions/显存计算专题.md)
   - [工程基础八股专题](interview-questions/工程基础八股专题.md)
   - [国产卡生态专题](interview-questions/国产卡生态专题.md)
+  - [评测题专项](interview-questions/评测题专项.md)
   - [沟通与 HR 面专题](interview-questions/沟通与hr面专题.md)
   - [面试四周冲刺自检清单](interview-questions/面试四周冲刺自检清单.md)
   - [知识串联与 Why 链](interview-questions/知识串联与why链.md)
@@ -91,6 +92,7 @@
   - 推理部署（Inference）
     - [vLLM 与推理加速核心](interview-questions/inference/vllm与推理加速核心.md)
     - [长上下文推理与 KV 多级体系](interview-questions/inference/长上下文推理与kv体系.md)
+    - [多模态推理专题](interview-questions/inference/多模态推理专题.md)
     - [Infra 面试计算题专项](interview-questions/inference/infra面试计算题专项.md)
     - [量化与压缩](interview-questions/inference/量化与压缩.md)
     - [推理引擎选型与源码路线](interview-questions/inference/推理引擎选型与源码路线.md)

@@ -122,4 +122,8 @@ candidate 目录可参照任一 `.archify/*/candidate.json`（该目录已 gitig
 
 - 批次 37（1 张）：domestic-gpu-map 三泳道×3 列（昇腾主线 910 系→CM384→路线图 × 软件与引擎 CANN/MindSpeed/vllm-ascend × 对手盘 MUSA/寒武纪/壁仞与 Pangu dense50-MoE30 收口，interview-questions/国产卡生态专题.md，2 轮 1254→1229）。新坑①：粗体若以半角直线引号 `**"..."**` 包住整句，marked 不解析（全角引号「」“”开头反而没事）——解法是把直线引号挪出粗体 `"**...**"`（2026-10 第二批全仓 23 处统一修过）；单边引号只在 span 仅 1 个引号时才可移动，粗体内本身有成对引号的（`**均衡只做"分流的调度"…"权重的梯度"**`）绝不能动。新坑②：全角引号「"」开头跨行的粗体同样不被解析（grep 查不出来，须 dump-dom 查渲染后 DOM 里的字面 `**`）；涉及"传言/宣称"的中立引语尽量别整句进粗体。
 
+- 批次 38（1 张）：multimodal-serving-map 三泳道×3 列（token 化成本面 Qwen 连续/InternVL 阶跃/LLaVA-OV 配额 × 四级省钱缓存 传输UUID→预处理+embedding→prefix hash × EPD 分离决策 聚合/colocated/异构，inference/多模态推理专题.md，3 轮 1258→1216）。教训：跨两泳道的跨列边（a2→c2 型）必经中间泳道节点，绕行 2 折弯必触发 detour advisory——跨两泳道的"决策引申"边不如直接删，三泳道各留一条链内边 + 一条相邻泳道竖边最干净。
+
+- 批次 39（1 张）：eval-benchmark-map 三泳道×3 列（口径层 pass@k/pass^k/judge × 工具层 静态集→滚动集→agent 集 × 工程层 沙箱→判分→可复现五件套，interview-questions/评测题专项.md，2 轮 1268→1235）。教训：`「` 全角引号开头的粗体 marked 同样不解析（与批次 37 的半角直线引号同类，比 grep 更难查），涉及引语的整句别进粗体；跨泳道竖边保持同列相邻泳道可零 advisory。
+
 合计张数以本目录实际 html 文件数为准，全仓库 mermaid 清零。
