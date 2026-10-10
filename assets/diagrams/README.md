@@ -118,4 +118,6 @@ candidate 目录可参照任一 `.archify/*/candidate.json`（该目录已 gitig
 
 - 批次 35（3 张，训练栈三专题）：megatron-core-map 三泳道×3 列（架构三层 / 并行源码地图 tp-cp-ep-dp-pp / 精度与容灾，distributed-training/megatron源码深度拆解.md，4 轮迭代 1294→1238）；verl-arch 三泳道（控制面 / 训练侧 / 推理侧，回流边仅留一条 checkpoint_engine→RolloutReplica，训练与对齐/verl深度拆解.md，3 轮 1419→1237）；mimo-stack 双泳道×4 列（训练栈流水线 25T→6M→130K / 配套数据与 infra，训练与对齐/mimo训练栈复盘.md，4 轮 1563→1235）。教训：① 3 泳道×3 列单列宽 250 起步，长路径 sublabel（含模块全路径）极易撑破 1240，先把最长 sublabel 压短再调宽度；② 双泳道×4 列首做务必 sublabel ≤14 字级、列宽 ≤245，否则首轮 1500+；③ 控制/训/推三泳道图的去程与回流走廊必须分离，回流只留一条总边可一轮免 corridor 冲突。
 
+- 批次 36（1 张）：comm-network-map 三泳道×3 列（硬件带宽分层 PCIe/NVLink/NIC × rail 与双平面拓扑 × Ring/Tree/分层集合通信，distributed-training/通信与网络专题.md，4 轮 1258→1223）。教训：① 首轮超限时别逐列 −5px 试，直接全列一次性 −10~15px 收敛更快；② 同列垂直跨泳道边（上层列↔下层同列）天然避开 corridor 冲突，布局上可以把"分层支撑关系"摆成同列。另：本站 md 写作铁律已沉淀根 README——粗体以 `%` `)` `/` 结尾且闭合 `**` 后随 CJK 标点会被 docsify@4 marked 漏渲染，写完正文必须 grep 自查。
+
 合计 **97 张**，全仓库 mermaid 清零。

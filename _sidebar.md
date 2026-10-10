@@ -106,6 +106,7 @@
     - [ZeRO 与显存优化](interview-questions/distributed-training/zero与显存优化.md)
     - [训练框架与稳定性](interview-questions/distributed-training/训练框架与稳定性.md)
     - [Megatron 源码深度拆解](interview-questions/distributed-training/megatron源码深度拆解.md)
+    - [通信与网络专题](interview-questions/distributed-training/通信与网络专题.md)
 
 - **手撕题**
   - [题库导读](coding/README.md)
