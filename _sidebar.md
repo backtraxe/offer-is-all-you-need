@@ -45,6 +45,9 @@
   - [推理专用硬件专题](interview-questions/推理专用硬件专题.md)
   - [搜广推与 LLM 融合专题](interview-questions/搜广推与llm融合专题.md)
   - [多模态生成与 Diffusion 专题](interview-questions/多模态生成与diffusion专题.md)
+  - [语音与 Voice Agent 专题](interview-questions/语音与voice-agent专题.md)
+  - [具身智能与 VLA 专题](interview-questions/具身智能与vla专题.md)
+  - [Profiling 与性能分析专题](interview-questions/profiling与性能分析专题.md)
   - [工程基础八股专题](interview-questions/工程基础八股专题.md)
   - [国产卡生态专题](interview-questions/国产卡生态专题.md)
   - [国产卡后补篇](interview-questions/国产卡后补篇.md)
@@ -146,5 +149,7 @@
   - [设计大模型统一接入网关](system-design/设计大模型统一接入网关.md)
   - [设计分布式推理服务](system-design/设计分布式推理服务.md)
   - [设计 AI 开发平台](system-design/设计ai开发平台.md)
+  - [设计 RL 训练平台](system-design/设计rl训练平台.md)
+  - [设计多模态生成平台](system-design/设计多模态生成平台.md)
 
 - [GitHub 仓库](https://github.com/backtraxe/offer-is-all-you-need)

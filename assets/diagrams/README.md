@@ -145,4 +145,10 @@ candidate 目录可参照任一 `.archify/*/candidate.json`（该目录已 gitig
 - 批次 53（1 张）：guardrail-map 三泳道×3 列（Llama Guard 谱系 / 管线五 rail 与延迟优化 / 红队与合规收口，agent/guardrail系统专题.md，4 轮 1306→1236）。
 - 批次 54（1 张）：rl-env-map 三泳道×3 列（Gym→Agentic 谱系与规模接力 / Verifier 咽喉 / Sandbox 与三池解耦调度，训练与对齐/rl环境工程专题.md，3 轮 1320→1236）。
 
+- 批次 55（1 张）：voice-agent 三泳道×3 列（用户侧/传输层 × 调度与流控 × 模型栈，感知 ASR/VAD→决策 LLM→合成 TTS + E2E 旁路与延迟预算卡，interview-questions/语音与voice-agent专题.md，2 轮 1279→1239，零 advisory）。
+- 批次 56（1 张）：embodied-vla 三泳道×3 列（云大脑 S2 / 端小脑 S1 / 本体执行环 × 观测采集→理解规划→动作执行，action chunk 摊销卡与机器人版 PD 分离卡，interview-questions/具身智能与vla专题.md，3 轮 1305→1235 内；2 条非阻塞 detour 目检可读后接受）。
+- 批次 57（1 张）：rl-platform 三泳道×3 列（Rollout 池 / Env·Verifier 池 / Trainer 池，样本总线 + 权重同步控制器回程仅一条 return 总边，staleness 版本戳/容错 SLO/三池配额三卡，system-design/设计rl训练平台.md，3 轮 1324→1237，零 advisory）。教训：3 泳道×3 列含 3 卡片且同列跨泳道三竖边挤占走廊时，单列宽要压到 220/230（即全列一次再 −35）才进 1240。
+- 批次 58（1 张）：gen-media-platform 三泳道×3 列（接入与审核层 / 队列与多档调度层 / GPU 并行执行层，分池铁律卡：秒级 vs 分钟级，system-design/设计多模态生成平台.md，2 轮 1247→1237；1 条非阻塞 detour 目检可读后接受）。教训：iframe 的 height 要在 930px 嵌入宽度下实测产物实际高度再定，勿按 viewBox 直接套（本篇产物实际高约 800，height 从 630 调到 900 才不裁底卡）。
+- 批次 59（1 张）：profiling 三泳道×3 列（在线无损观测 / 时间线定位 / 单点深潜与修复验证 × 定段→抓 trace→归因下钻，开销阶梯/带宽锚/顺序金句三卡，interview-questions/profiling与性能分析专题.md，3 轮 1302→1232；1 条非阻塞 detour 接受）。
+
 合计张数以本目录实际 html 文件数为准，全仓库 mermaid 清零。
