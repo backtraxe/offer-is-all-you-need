@@ -284,7 +284,7 @@ rank，前向内的 all-reduce 走 NCCL。Scheduler 只在 driver 侧存在一�
      `tokenizers.decoders.DecodeStream`，Rust 实现逐 token 吐字符）；
      慢速 python 实现走 `SlowIncrementalDetokenizer`
      （`detokenize_incrementally` + read_offset/prefix_offset 双指针，
-     只解码新增部分）。**"每个 token 边界不一定是 UTF-8 字符边界"
+     只解码新增部分）。"**每个 token 边界不一定是 UTF-8 字符边界"
      的处理也在这里**；
    - 装 `RequestOutput` 塞进该请求的 `RequestOutputCollector`
      （DELTA 模式还会合并积压输出，消费慢时不爆队列）。

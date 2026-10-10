@@ -169,9 +169,9 @@ $\beta$ 的调参语义略有不同，面试常追问这一点（见第七节）
 | 最适用场景 | 通用偏好对齐（InstructGPT 路线） | 快速偏好微调、算力有限 | 数学/代码等 **verifiable reward** 的推理 RL（R1 路线） |
 | 代表工作 | InstructGPT、Llama-2-Chat | Stanford DPO、Zephyr | DeepSeekMath、DeepSeek-R1 |
 
-一句话总结版：**"PPO 是功能最全最重，DPO 用数学变换把 RL 问题化简成
+一句话总结版："**PPO 是功能最全最重，DPO 用数学变换把 RL 问题化简成
 监督学习，GRPO 把 PPO 的 critic 换成组内均值、专为可验证奖励的推理 RL
-而生。"**
+而生。**"
 
 ## 七、高频工程追问：on/off-policy、重要性采样与 KL 摆放
 

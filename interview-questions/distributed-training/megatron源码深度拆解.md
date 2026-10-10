@@ -104,7 +104,7 @@ EP → DP → PP 最外层跨机（可接受 RDMA 慢链路）。记这个顺序
 1. **forward_backward_no_pipelining**：无流水，对照组；
 2. **forward_backward_pipelining_without_interleaving**：朴素 1F1B，bubble (p−1)/m；
 3. **forward_backward_pipelining_with_interleaving**：virtual pipeline，
-   bubble (p−1)/(m·v)，对应论文吞吐 **+10%+**（同上 SC'21）。
+   bubble (p−1)/(m·v)，对应论文吞吐提升 **10%+（同上 SC'21）**。
 
 2026 年新增的 **combined_1f1b.py** 把调度抽象成 ScheduleNode 细粒度图，直接按
 Zero Bubble 思路排：**前向 / dgrad / wgrad 拆成三类节点**，wgrad 可任意后移；
@@ -126,7 +126,7 @@ allreduce 分段挂在反向后面，不等整层算完）。
 
 - **做法**：按 DP 切分 optimizer state + FP32 master weight + grad bucket，
   通信从 allreduce 改成 **reduce-scatter + allgather**；
-- **官方称 "ZeRO-1 equivalent"**，严格说它同时切了 fp32 主权重，**介于 ZeRO-1/2 之间**；
+- **官方称 "ZeRO-1 equivalent**"，严格说它同时切了 fp32 主权重，**介于 ZeRO-1/2 之间**；
 - **拆账**：Adam state（m+v 两份 fp32，加 fp32 master=12N）从全量 12N
   降为 **12N/DP**——~70B 模型 DP=512 时这一项直接从 TB 级砍到 GB 级。
 
@@ -191,9 +191,9 @@ MoE 技术报告锚点（**arXiv 2603.07685，88 页，2026/03**）：**DeepSeek
 
 `megatron/core/enums.py` 里的枚举是 2025 之后低精度训练的全部入口：
 
-- **Fp8Recipe = {delayed, tensorwise, mxfp8, blockwise, custom}**——
+- **Fp8Recipe 五枚举：delayed / tensorwise / mxfp8 / blockwise / custom**——
   `blockwise` 即 DeepSeek 风格的块状缩放；
-- **Fp4Recipe = {nvfp4, custom}**——NVIDIA 最新 FP4 路径；
+- **Fp4Recipe 两枚举：nvfp4 / custom**——NVIDIA 最新 FP4 路径；
 - **`--use-precision-aware-optimizer`（v0.13 起）**：FP8 权重 + BF16
   optimizer state，把 optimizer 显存再砍一半。
 

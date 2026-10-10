@@ -154,8 +154,8 @@ $$\text{out} = x + F(\text{Norm}(x))$$
 <p><a href="assets/diagrams/pre-vs-post-norm.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
 </div>
 
-一句话答法：**"Pre-Norm 是因为深网络训练稳定——残差通路保持恒等，梯度能直通；
-RMSNorm 是因为省钱——LN 的均值中心化对效果贡献小，砍掉它改 RMS 既快又没掉点。"**
+一句话答法："**Pre-Norm 是因为深网络训练稳定——残差通路保持恒等，梯度能直通；
+RMSNorm 是因为省钱——LN 的均值中心化对效果贡献小，砍掉它改 RMS 既快又没掉点。**"
 
 ## 五、Tokenizer 与 BPE
 
@@ -218,7 +218,7 @@ $$\text{tokens} \approx \text{汉字数} \times 1.5 \;+\; \text{英文词数} \t
    输入侧必须做 token 级 sanitize，不能只做字符串级。
 3. **训练/推理完全一致**：tokenizer 是模型的一部分，错一个合并顺序、换一个
    版本，输出立刻乱码；蒸馏/私有化部署换 tokenizer 约等于换模型，要重新评估。
-4. **glitch token 与"数草莓"**："SolidGoldMagikarp" 这类怪词能触发异常输出，
+4. **glitch token 与"数草莓**"："SolidGoldMagikarp" 这类怪词能触发异常输出，
    根因是合并规则来自语料频率，部分词表 token 的 embedding 几乎没被训练过；
    同理"strawberry 有几个 r"难住模型，是因为模型看见的是 token 边界而非
    字母——**不是推理缺陷，是表征粒度缺陷**。

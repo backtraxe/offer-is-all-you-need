@@ -158,8 +158,8 @@ decode 怎么混在同一批？vLLM 用的是 chunked prefill（把长 prompt �
 <p><a href="assets/diagrams/prefix-cache-compare.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
 </div>
 
-**答法要点**：核心一句话——**"把 prefill 的重复计算变成一次哈希/树查询，以
-显存换 TTFT"**。命中越高，TTFT 越低；代价是额外占用 KV 显存（和可用 batch 抢
+**答法要点**：核心一句话——"**把 prefill 的重复计算变成一次哈希/树查询，以
+显存换 TTFT**"。命中越高，TTFT 越低；代价是额外占用 KV 显存（和可用 batch 抢
 资源，所以都得配淘汰策略）。2026 年 PD 分离落地后，prefix cache 下沉到
 CPU/SSD 做分层（DRAM→HBM 两级缓存）是各家框架的新战场，字节面试已考到
 "KV 下沉 SSD 要不要过主存"。

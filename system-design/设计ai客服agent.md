@@ -9,8 +9,8 @@
 > [多 Agent 与评测](../interview-questions/agent/多agent与评测.md)、
 > [RAG 全链路](../interview-questions/rag/rag全链路.md)。
 
-客服题和知识库题的区别在于：知识库题考"检索链路"，客服题考**"会话状态 + 工具调用 +
-兜底策略"**。得分点是四件事：意图路由、多轮澄清（slot filling）、召不回兜底、
+客服题和知识库题的区别在于：知识库题考"检索链路"，客服题考"**会话状态 + 工具调用 +
+兜底策略**"。得分点是四件事：意图路由、多轮澄清（slot filling）、召不回兜底、
 指标体系。先说清楚一个总原则——**客服系统主干是 workflow，只在局部开放 Agent
 循环**：话术流程能写死的写死（可控、可审、可回归），开放闲聊和复杂问题诊断才用
 ReAct。这正是 [Agent 基础与规划](../interview-questions/agent/agent基础与规划.md)
@@ -130,9 +130,9 @@ scratchpad 模式在本题的标准落法就是"槽位表"。
 | **升级舆情 / 客诉率** | 升级投诉/舆情案件占会话量的比例 | 工单系统对接，guardrail 指标 |
 
 指标话术（参考 [多 Agent 与评测 §二](../interview-questions/agent/多agent与评测.md)
-的 primary + guardrail 框架）：**"解决率是 primary，幻觉率（售后线必须压到接近 0）
+的 primary + guardrail 框架）："**解决率是 primary，幻觉率（售后线必须压到接近 0）
 和延迟是 guardrail；转人工率不是越低越好——压到安全线以下再谈优化，否则是在拿
-资损换报表。"** 这句话是客服题的高分区。
+资损换报表。**" 这句话是客服题的高分区。
 
 ## 五、上线灰度与降级
 

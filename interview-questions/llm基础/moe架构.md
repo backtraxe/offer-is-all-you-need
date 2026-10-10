@@ -143,10 +143,10 @@ trade-off，也是 V3 要干掉它的直接动机。
 
 ### 新法：aux-loss-free 的可学习 bias（DeepSeek-V3）
 
-V3 的思路釜底抽薪：**均衡只做"分流的调度"，不碰"权重的梯度"**。
+V3 的思路釜底抽薪：**均衡只做"分流的调度"，不碰"权重的梯度**"。
 
 - 给每个专家 i 加一个标量 bias $b_i$，路由选择时用 $s_i + b_i$ 决定 top-k，
-  但**最终加权求和仍用不带 bias 的原始得分 $g_i$**——bias 只影响"去哪个专家"，
+  但**最终加权求和仍用不带 bias 的原始得分（$g_i$）**——bias 只影响"去哪个专家"，
   不影响"输出算多重"，所以不进梯度、不污染主 loss。
 - bias 的更新是**规则式的，不走反向传播**：每个 step 结束统计一次负载，
   过载的专家 $b_i \leftarrow b_i - \gamma$，欠载的 $b_i \leftarrow b_i + \gamma$，
@@ -207,7 +207,7 @@ DeepSeek 开源的 DeepEP 干脆承认矛盾，**prefill 和 decode 用两套内
 
 ### dispatch / combine 与 EPLB
 
-- 两个原语一句话记住：**"dispatch 的反向传播就是 combine"**。前向把 token
+- 两个原语一句话记住："**dispatch 的反向传播就是 combine**"。前向把 token
   按路由结果发给专家（dispatch）、加权收回（combine）；反向时梯度沿原路
   走相反操作，所以通信库只需把这两个原语做精。
 - 精度上 DeepEP 做了**非对称设计：dispatch 用 FP8**（量化 token 省带宽，

@@ -45,8 +45,8 @@ softmax 对极端值很敏感：输入差一个数量级，输出就会"一边�
 硬 attention，**梯度趋近于 0**（softmax 的梯度在上界饱和区消失）。除以 $\sqrt{d_k}$
 刚好把方差归一回 1，让 softmax 工作在一个梯度健康的区间。
 
-一句话答法：**"方差随 d_k 线性膨胀，除以 √d_k 把 attention score 的方差归一，防止
-softmax 饱和导致梯度消失。"**
+一句话答法："**方差随 d_k 线性膨胀，除以 √d_k 把 attention score 的方差归一，防止
+softmax 饱和导致梯度消失。**"
 
 ### O(n²) 复杂度
 
@@ -78,7 +78,7 @@ softmax 饱和导致梯度消失。"**
 
 参数量估算（忽略 bias）：每层 attention 有 $W_Q,W_K,W_V,W_O$ 四个 $d \times d$
 矩阵 = $4d^2$；SwiGLU FFN 三个矩阵（gate、up、down），中间维约 $\frac{8}{3}d$，合计
-$3 \cdot d \cdot \frac{8}{3}d = 8d^2$。**每层约 $12d^2$**，L 层加 embedding 就是
+$3 \cdot d \cdot \frac{8}{3}d = 8d^2$。**每层约 $12d^2$，**L 层加 embedding 就是
 
 $$N \approx L \cdot 12d^2 + V \cdot d$$
 
@@ -111,7 +111,7 @@ $$N \approx L \cdot 12d^2 + V \cdot d$$
 - **GQA**：MHA 和 MQA 的折中——分组共享，几乎不掉点、显存省到 g/h。**目前是
   开源模型的主流默认**（LLaMA-2/3-70B、Qwen、Mistral 都是 GQA）。
 - **MLA**：思路换了——不再共享头，而是把每个 token 的 K/V 先从 d 维**下投影到
-  一个低维 latent $c_t$**（DeepSeek-V2 里 $d_c = 512$，远小于 $d$），cache 里只存
+  一个低维 latent（$c_t$）**（DeepSeek-V2 里 $d_c = 512$，远小于 $d$），cache 里只存
   $c_t$（加一个共享的 RoPE 分量），用的时候再上投影还原出各头的 K/V。因为下投影
   矩阵可以**被后续矩阵吸收**（矩阵乘法结合律：$W^{UK}$ 能并进 Q 的投影里不显式算出 K），
   既比 GQA 更省，又能保留接近 MHA 的表达能力。注意 MLA 里 RoPE 和压缩有冲突
@@ -265,8 +265,8 @@ specialization、生产消费流水"即可，不用背 kernel 代码。
   每步只更新 O(1) 状态，把"看全部历史"换成"压缩历史"；代价清清楚楚——状态被压
   进固定大小，记忆精度必有损，needle-in-a-haystack 类精确检索任务上是硬伤。
 - **Hybrid 收敛趋势（2025 主流）**：前些年大家想让"更好复杂度的结构整体取代
-  softmax attention"，2025 年结论收敛到**"大部分层用线性注意力省算力，少数层
-  全注意力兜精度"**——以 Qwen3-Next 的 75% 线性层（Gated DeltaNet）+ 25% 全局
+  softmax attention"，2025 年结论收敛到"**大部分层用线性注意力省算力，少数层
+  全注意力兜精度**"——以 Qwen3-Next 的 75% 线性层（Gated DeltaNet）+ 25% 全局
   全注意力的配比为代表。逻辑：线性层容量已够用，但只有全注意力层能撑精确检索
   与复制；且**只有全注意力层才产生完整 KV cache**（线性层只存 O(1) 状态，不产生
   KV），所以 KV cache 预算只需按那 25% 的层估算——这是 hybrid 对 Infra 侧最大的

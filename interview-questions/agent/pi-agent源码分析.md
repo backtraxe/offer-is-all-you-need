@@ -13,7 +13,7 @@
 
 读 coding agent 源码的候选通常是 Claude Code（闭源）、Aider（Python，历史包袱重）、
 OpenHands（大而全）。Pi 的定位恰好相反：**README 第一句就是
-"a minimal, extensible agent harness"**，并且明确声明跳过 sub-agent 和
+"a minimal, extensible agent harness**"，并且明确声明跳过 sub-agent 和
 plan mode——你想让这些能力存在，就自己写扩展。
 
 这种克制造成了两个好处：

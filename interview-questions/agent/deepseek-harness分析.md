@@ -4,7 +4,7 @@
 > 「极简到 949 行」的 agent loop，现在看它的**镜像反面**——DeepSeek 官方
 > 2026 年 8 月开源的 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)
 > （CLI 名 `dsh`，246k+ stars、MIT、TypeScript），Slogan 是
-> **"Everything is a Plugin"**：模型适配器、工具注册表、会话日志、
+> "**Everything is a Plugin**"：模型适配器、工具注册表、会话日志、
 > **连 agent loop 本身都是插件**，配置层可整体替换。
 > 读完你会获得：Cordis 插件框架的五个核心概念、dsh 的 turn/step 双层循环
 > 与事件溯源设计、以及「极简 vs 元框架」这组架构选型对照的面试话术。
@@ -164,9 +164,7 @@ tool/call（先落日志再执行）
 
 dsh 的 compaction 设计是「缝」思路的范本（`docs/subsystems/compaction.md`）：
 
-- 三个 log-only 事件：**`compaction/start`（拿锁）→ 摘要 →
-  `compaction/summary`（记录 shadowed 范围、token 计数、
-  摘要调用完整 envelope）→ `compaction/end`（放锁）**；
+- 三个 log-only 事件：**compaction/start（拿锁）→ 摘要 → compaction/summary（记录 shadowed 范围、token 计数、摘要调用完整 envelope）→ compaction/end（放锁）**；
   崩溃在锁中间 = 可检测的孤儿锁，而不是误报完成；
 - **唯一的 surface 改写**通过一条带
   `surfaceOp: { op: 'replace', startSeq, endSeq }` 的 `user/message`
@@ -189,7 +187,7 @@ dsh 进一步把「锁、范围、摘要调用的完整证据」全部事件化�
 ## 六、其余值得知道的能力缝
 
 - **Subagent 多 provider 注册表**（`ctx.subagents`）：`spawn-in-process`、
-  `fork-in-process`、`acp`、**`claude-code`、`codex`**——后两个是把
+  `fork-in-process`、`acp`、**claude-code / codex**——后两个是把
   Claude Code 和 Codex 当子 agent 委派的桥接，dsh 因此有「元 harness」
   定位；支持 per-child 模型/推理档、`maxDepth` 委派深度上限、
   `toolFilter` 收缩子 agent 工具集；continuable 后台子 agent 与父
