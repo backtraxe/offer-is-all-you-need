@@ -182,7 +182,7 @@ $$\text{总显存} \approx \text{权重} + \text{KV Cache} + \text{激活/碎片
 
 ▶ 面试题：FlashAttention 原理？——**中高频**（阿里 Infra 深挖）
 
-先纠正一个常见误区：FlashAttention **不改数学结果，计算量仍是 O(n²)**，它省的是
+先纠正一个常见误区：FlashAttention **不改数学结果，计算量仍是 O(n²)，**它省的是
 **显存和 HBM 读写次数**。标准 attention 的痛点是把 $n \times n$ 的 score 矩阵
 显式写出来，softmax 之后再读回来——n=8K 时这个矩阵 BF16 也有 128 MB，而且
 HBM↔SRAM 之间来回搬，memory-bound。

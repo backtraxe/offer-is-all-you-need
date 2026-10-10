@@ -57,6 +57,8 @@
     - [LoRA 与参数高效微调](interview-questions/训练与对齐/lora与参数高效微调.md)
     - [RLHF 与对齐](interview-questions/训练与对齐/rlhf与对齐.md)
     - [RL 训练工程实战](interview-questions/训练与对齐/rl训练工程实战.md)
+    - [veRL 深度拆解](interview-questions/训练与对齐/verl深度拆解.md)
+    - [小米 MiMo 训练栈复盘](interview-questions/训练与对齐/mimo训练栈复盘.md)
     - [Muon 与新优化器](interview-questions/训练与对齐/muon与优化器.md)
   - RAG
     - [RAG 全链路](interview-questions/rag/rag全链路.md)
@@ -103,6 +105,7 @@
     - [三维并行](interview-questions/distributed-training/三维并行.md)
     - [ZeRO 与显存优化](interview-questions/distributed-training/zero与显存优化.md)
     - [训练框架与稳定性](interview-questions/distributed-training/训练框架与稳定性.md)
+    - [Megatron 源码深度拆解](interview-questions/distributed-training/megatron源码深度拆解.md)
 
 - **手撕题**
   - [题库导读](coding/README.md)

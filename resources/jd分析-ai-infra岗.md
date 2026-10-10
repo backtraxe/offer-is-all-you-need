@@ -32,7 +32,7 @@
 | 语言 | **C/C++ 为主**，Python 普遍 | Python+C++ | Go/Java/Python（Moonshot 含 Rust/TS） |
 | 推理框架 | **vLLM / SGLang / TRT-LLM 三件套** + 自研引擎 | 用于 RL rollout：vLLM | 多框架接入 |
 | GPU 编程 | **CUDA 核心**，Triton/tilelang/CUTLASS，ROCm | CUDA 优化、算子融合（加分） | 了解即可 |
-| 分布式训练 | 非必需 | **Megatron/DeepSpeed/FSDP(ZeRO)**，DP/TP/PP/EP/SP，NCCL/HCCL | 集合通信、调度层面 |
+| 分布式训练 | 非必需 | **Megatron/DeepSpeed/FSDP(ZeRO)，**DP/TP/PP/EP/SP，NCCL/HCCL | 集合通信、调度层面 |
 | 推理优化 | PD 分离、量化/剪枝/稀疏、动态 batch、编译优化、低比特/访存 | 显存优化、MFU | 资源利用率、混部 |
 | RL infra | — | **PPO/GRPO/Agent RL**，verl/slime，训推一致性、Rollout 长尾 | — |
 | 数据/存储 | — | Dataloader、IO 瓶颈、Checkpoint 高吞吐、对象存储 | 训练数据调度缓存 |

@@ -28,7 +28,7 @@ scaffolding 改进它自己——GPT-4 提出 beam search、遗传算法、模�
 **DGM（Darwin Gödel Machine，Sakana AI，2025-05-30，已开源）**：
 coding agent **直接改写自己的 Python 代码库**（加工具、改 workflow），
 在 SWE-bench/Polyglot 上打分，开放式进化档案持续分叉。成绩：
-SWE-bench 20% → **50%**，Polyglot 14.2% → **30.7%**；改进可**跨模型
+SWE-bench 20% → **50%，**Polyglot 14.2% → **30.7%；**改进可**跨模型
 迁移**（Claude 3.5 上进化出的结构对 o3-mini 同样有效）——说明学到的
 不是 prompt trick 而是工程结构。名字致敬 Schmidhuber 的 Gödel Machine
 （放弃形式化证明，改经验验证）。

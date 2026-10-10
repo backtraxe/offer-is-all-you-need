@@ -73,7 +73,7 @@ $$\langle R_m q, R_n k \rangle = q^\top R_{m-n} k$$
 外推。它的低频维度波长远大于训练长度，超过训练长度时这些维度的旋转角还在
 第一段里没被训练过，模型立刻崩。所以长上下文扩展需要专门的 tricks：
 
-- **Position Interpolation (PI)**：把长位置**线性压缩**回训练范围内，相当于把 cos/sin 频率整体调慢；
+- **Position Interpolation (PI)：**把长位置**线性压缩**回训练范围内，相当于把 cos/sin 频率整体调慢；
 - **NTK-aware / Dynamic NTK**：分维度插值，高频维度少缩一点，低频多缩——保持高频细节不丢；
 - **YaRN**：在 NTK 基础上进一步分频段做插值策略 + 一个温度系数，LLaMA 系 8K→32K→128K 的最常用配方之一。
 

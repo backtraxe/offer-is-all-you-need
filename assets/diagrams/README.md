@@ -116,4 +116,6 @@ candidate 目录可参照任一 `.archify/*/candidate.json`（该目录已 gitig
 
 - 批次 34（1 张）：softskills-map 双泳道×4 列（自我介绍/离职·gap/反问/谈薪 面试官测什么 → 你的动作，interview-questions/沟通与hr面专题.md 第二节前）。
 
+- 批次 35（3 张，训练栈三专题）：megatron-core-map 三泳道×3 列（架构三层 / 并行源码地图 tp-cp-ep-dp-pp / 精度与容灾，distributed-training/megatron源码深度拆解.md，4 轮迭代 1294→1238）；verl-arch 三泳道（控制面 / 训练侧 / 推理侧，回流边仅留一条 checkpoint_engine→RolloutReplica，训练与对齐/verl深度拆解.md，3 轮 1419→1237）；mimo-stack 双泳道×4 列（训练栈流水线 25T→6M→130K / 配套数据与 infra，训练与对齐/mimo训练栈复盘.md，4 轮 1563→1235）。教训：① 3 泳道×3 列单列宽 250 起步，长路径 sublabel（含模块全路径）极易撑破 1240，先把最长 sublabel 压短再调宽度；② 双泳道×4 列首做务必 sublabel ≤14 字级、列宽 ≤245，否则首轮 1500+；③ 控制/训/推三泳道图的去程与回流走廊必须分离，回流只留一条总边可一轮免 corridor 冲突。
+
 合计 **97 张**，全仓库 mermaid 清零。
