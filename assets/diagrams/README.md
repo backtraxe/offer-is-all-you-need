@@ -126,4 +126,8 @@ candidate 目录可参照任一 `.archify/*/candidate.json`（该目录已 gitig
 
 - 批次 39（1 张）：eval-benchmark-map 三泳道×3 列（口径层 pass@k/pass^k/judge × 工具层 静态集→滚动集→agent 集 × 工程层 沙箱→判分→可复现五件套，interview-questions/评测题专项.md，2 轮 1268→1235）。教训：`「` 全角引号开头的粗体 marked 同样不解析（与批次 37 的半角直线引号同类，比 grep 更难查），涉及引语的整句别进粗体；跨泳道竖边保持同列相邻泳道可零 advisory。
 
+- 批次 40（1 张）：domestic-gpu-supplement-map 三泳道×3 列（海光 DCU 线 × 寒武纪线 × 四小龙，interview-questions/国产卡后补篇.md，4 轮 1293→1233）。
+- 批次 41（1 张）：inference-engine-2026-map 三泳道×3 列（vLLM/SGLang/Dynamo 三演进线 × 架构演进/KV 体系/RL 与弹性，inference/推理引擎2026新进展.md，1 轮 1230）。
+- 批次 42（1 张）：sparse-attention-map 三泳道×3 列（省存 MLA / 省算 NSA·MoBA·DSA / 不算 linear·hybrid，inference/稀疏注意力专题.md，1 轮 1218，1 条非阻塞 detour advisory 目检可读后接受）。
+
 合计张数以本目录实际 html 文件数为准，全仓库 mermaid 清零。
