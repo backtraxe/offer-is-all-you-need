@@ -130,4 +130,9 @@ candidate 目录可参照任一 `.archify/*/candidate.json`（该目录已 gitig
 - 批次 41（1 张）：inference-engine-2026-map 三泳道×3 列（vLLM/SGLang/Dynamo 三演进线 × 架构演进/KV 体系/RL 与弹性，inference/推理引擎2026新进展.md，1 轮 1230）。
 - 批次 42（1 张）：sparse-attention-map 三泳道×3 列（省存 MLA / 省算 NSA·MoBA·DSA / 不算 linear·hybrid，inference/稀疏注意力专题.md，1 轮 1218，1 条非阻塞 detour advisory 目检可读后接受）。
 
+- 批次 43（1 张）：cuda-kernel-map 三泳道×3 列（attention kernel 主线 FA1→FA4 数字接力 / decode·服务 kernel 线 split-KV→FlashMLA→FlashInfer / 融合与 Triton 选型，interview-questions/cuda与kernel专题.md，2 轮 1269→1228）。
+- 批次 44（1 张）：inference-scheduling-map 三泳道×3 列（三代范式 FT→ORCA 36.9×→Sarathi / vLLM 调度结构 FCFS·budget·抢占 / 旋钮与 SLO，inference/推理调度专题.md，3 轮 1280→1230）。
+- 批次 45（1 张）：inference-hardware-map 三泳道×3 列（Groq/LPX 线 / Cerebras 线 / SambaNova+其他，interview-questions/推理专用硬件专题.md，2 轮 1270→1240）。
+- 批次 46（1 张）：na-infra-jd-map 三泳道×3 列（三家在招实情与薪资带 / 关键词交集差集与 RL infra 溢价 / 流程对策与路径，resources/jd分析-北美infra岗.md，4 轮 1327→1236；1 条非阻塞 detour 目检可读后接受）。
+
 合计张数以本目录实际 html 文件数为准，全仓库 mermaid 清零。

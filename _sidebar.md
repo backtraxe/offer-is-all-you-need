@@ -14,6 +14,7 @@
   - [学习路线图](resources/学习路线图.md)
   - [JD 分析 · Agent 开发岗](resources/jd分析-agent开发岗.md)
   - [JD 分析 · AI Infra 岗](resources/jd分析-ai-infra岗.md)
+  - [JD 分析 · 北美 Infra 岗](resources/jd分析-北美infra岗.md)
   - [学习资源清单](resources/学习资源清单.md)
 
 - **项目篇章**
@@ -40,6 +41,8 @@
   - [高频面试真题汇总](interview-questions/高频面试真题汇总.md)
   - [负载均衡专题](interview-questions/负载均衡专题.md)
   - [显存计算专题](interview-questions/显存计算专题.md)
+  - [CUDA 与 Kernel 专题](interview-questions/cuda与kernel专题.md)
+  - [推理专用硬件专题](interview-questions/推理专用硬件专题.md)
   - [工程基础八股专题](interview-questions/工程基础八股专题.md)
   - [国产卡生态专题](interview-questions/国产卡生态专题.md)
   - [国产卡后补篇](interview-questions/国产卡后补篇.md)
@@ -92,6 +95,7 @@
     - [RSI 递归自我改进](interview-questions/agent/rsi自我改进.md)
   - 推理部署（Inference）
     - [vLLM 与推理加速核心](interview-questions/inference/vllm与推理加速核心.md)
+    - [推理调度专题](interview-questions/inference/推理调度专题.md)
     - [长上下文推理与 KV 多级体系](interview-questions/inference/长上下文推理与kv体系.md)
     - [稀疏注意力专题](interview-questions/inference/稀疏注意力专题.md)
     - [多模态推理专题](interview-questions/inference/多模态推理专题.md)
