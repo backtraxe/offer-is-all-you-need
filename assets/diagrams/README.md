@@ -178,4 +178,9 @@ candidate 目录可参照任一 `.archify/*/candidate.json`（该目录已 gitig
 - 批次 82（1 张）：kv-offload-tiered-storage 四泳道×3 列（HBM/DRAM/SSD/远端池四层 × 命中查找→异步换入→回写驱逐，92.2% 命中率卡与九坑卡，interview-questions/inference/kv-offload与分层存储专题.md，2 轮 1263→全列 250→240 收敛；3 条非阻塞 detour 目检可读后接受，iframe height=940 实测内容底约 890）。
 - 批次 83（1 张）：domestic-inference-stack 三泳道×3 列（插件机制 / CUDA 参照栈 / ROCm 与昇腾栈 × 主仓调度→插件换位→硬件执行，RFC#11162 卡与适配仓热度天梯卡，interview-questions/国产推理芯片栈专题.md，3 轮 1297→1262→≤1240 全列 250→224；1 条非阻塞 detour 接受，iframe height=800 实测 930px 下内容底约 750）。
 
+- 批次 84（1 张）：speculative-decoding-2026 三泳道×3 列（draft 谱系演进 / 验证与无损保障 / 大 batch 衰减与自适应验证 × draft→verify→截断，EAGLE-3 双口径卡与 MTP 85-90% 卡，interview-questions/inference/投机解码2026专题.md，3 轮 1351→1263→≤1240 全列收敛 215px，零 advisory，iframe height=790 实测 930px 下内容底 744）。
+- 批次 85（1 张）：memory-training-compression 三泳道×3 列（外挂式一代 / 激活态 latent 二代 / 训练原生三代 × 摘要→记忆槽→RL 行为，MEM1 3.5× 卡与厂商暗盒卡，interview-questions/agent/上下文压缩与记忆训练专题.md，4 轮 1270→1228 收敛+dot 枚举 sky→cyan，零 advisory，iframe height=850 实测 930px 下内容底 804）。
+- 批次 86（1 张）：rl-training-inference-convergence 三泳道×3 列（rollout 服务器池 / trainer 与 staleness 闸 / weight sync 回灌 × prompt→轨迹→更新回灌，20s@1T 卡与 delta 1.9-3.1× 卡，interview-questions/distributed-training/rl系统训推一体专题.md，review-1 一次全过零 advisory，iframe height=855 实测 930px 下内容底约 802）。
+- 批次 87（1 张）：long-video-inference 三泳道×3 列（一小时 token 账本 / 压缩谱系 × 视频推理数据流，70/258 token 每帧卡与 pruning 禁 CUDA graph 卡，interview-questions/inference/长视频推理工程专题.md，一次全过零 advisory，iframe height=750 实测 930px 下内容底约 700）。
+
 合计张数以本目录实际 html 文件数为准，全仓库 mermaid 清零。
