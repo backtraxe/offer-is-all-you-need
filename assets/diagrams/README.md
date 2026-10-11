@@ -160,5 +160,9 @@ candidate 目录可参照任一 `.archify/*/candidate.json`（该目录已 gitig
 - 批次 65（1 张）：compiler-stack 三泳道×3 列（捕捉层 Dynamo/AOTAutograd / 优化层 Inductor+自定义 pass / 生成执行层 Triton·CUDA Graph·手件 kernel，编译赢什么/手件守什么边界卡，interview-questions/ai编译器与torch-compile专题.md，2 轮 1276→≤1240；2 条同列竖边非阻塞 detour 接受）。
 - 批次 66（1 张）：edge-inference 三泳道×3 列（硬件面 TOPS/带宽 / 模型与引擎层 / 端云协同形态 × prefill 吃算力→decode 吃带宽→路由与协同，tok/s≈带宽÷字节数公式卡与 GGUF 档位卡，interview-questions/端侧推理专题.md，1 轮；1 条非阻塞 detour 接受）。
 - 批次 67（1 张）：finops-cost 三泳道×3 列（成本公式层 / 降本组合拳层 / 组织与采购层 × 单价→吞吐×利用率→单位 token 成本，70B 推导账与乘法叠加卡，interview-questions/finops与算力成本专题.md，3 轮 1282→≤1240；1 条非阻塞 detour 接受）。教训：docsify 宽列下标注卡 2+1 换行，iframe height 要按卡片换行后的实际高度定（本篇 800 内容高但三卡换行后要 1040），不能只看节点区实测高。
+- 批次 68（1 张）：thinking-train 三泳道×3 列（冷启动与数据层 / RLVR 主阶段 / 长度控制与 test-time 接口 × 冷启动 SFT→推理 RL→再 SFT→通用 RL，R1 四段式与长度控制三路线卡，interview-questions/训练与对齐/推理模型训练专题.md，2 轮；1 条非阻塞 detour 接受，iframe height=920）。
+- 批次 69（1 张）：agentic-rl 三泳道×3 列（多轮 POMDP 与步级归因 / 工业配方层 / 训练系统层 × GRPO 三缺口→GiGPO 两锚→四工业配方，TITO 双侧 IS 与 coding agent 谱系卡，interview-questions/训练与对齐/agentic-rl专题.md，2 轮，iframe height=980）。
+- 批次 70（1 张）：agentic-serving 三泳道×3 列（前缀与缓存层 / 路由与调度层 / 结构约束与采样层 × 会话生命周期→单步执行→分支与回退，195K vs 317 token 实测卡与 sticky-until-saturated τ 标定卡，interview-questions/inference/agentic-serving专题.md，3 轮 1283→1245→过门，零 advisory，iframe height=720 实测 930px 下内容底 668）。
+- 批次 71（1 张）：gui-agent 三泳道×3 列（感知与 grounding / 控制回路与动作空间 / 环境·评测·安全 × 截图进→推理出动作→环境执行与校验，OSWorld-Verified 阶梯卡与步数预算卡，interview-questions/agent/gui-agent与computer-use专题.md，7 轮：role 枚举修复（exit→branch）、2 次 ambiguous-corridor 修复（改同列相邻竖边+删挤走廊引申边）、readability 250→212 收敛；2 条非阻塞 detour 接受，iframe height=840 实测 930px 下内容高约 800）。
 
 合计张数以本目录实际 html 文件数为准，全仓库 mermaid 清零。
