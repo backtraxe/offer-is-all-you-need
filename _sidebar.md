@@ -27,6 +27,7 @@
   - [简历篇章导读](resume/README.md)
   - [简历结构与量化写法](resume/简历结构与量化写法.md)
   - [分方向简历范文](resume/分方向简历范文.md)
+  - [我的简历母版](resume/我的简历母版.md)
 
 - **面经复盘**
   - [面经目录与机制观察](interview-experiences/README.md)
