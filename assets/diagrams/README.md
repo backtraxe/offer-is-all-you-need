@@ -164,5 +164,9 @@ candidate 目录可参照任一 `.archify/*/candidate.json`（该目录已 gitig
 - 批次 69（1 张）：agentic-rl 三泳道×3 列（多轮 POMDP 与步级归因 / 工业配方层 / 训练系统层 × GRPO 三缺口→GiGPO 两锚→四工业配方，TITO 双侧 IS 与 coding agent 谱系卡，interview-questions/训练与对齐/agentic-rl专题.md，2 轮，iframe height=980）。
 - 批次 70（1 张）：agentic-serving 三泳道×3 列（前缀与缓存层 / 路由与调度层 / 结构约束与采样层 × 会话生命周期→单步执行→分支与回退，195K vs 317 token 实测卡与 sticky-until-saturated τ 标定卡，interview-questions/inference/agentic-serving专题.md，3 轮 1283→1245→过门，零 advisory，iframe height=720 实测 930px 下内容底 668）。
 - 批次 71（1 张）：gui-agent 三泳道×3 列（感知与 grounding / 控制回路与动作空间 / 环境·评测·安全 × 截图进→推理出动作→环境执行与校验，OSWorld-Verified 阶梯卡与步数预算卡，interview-questions/agent/gui-agent与computer-use专题.md，7 轮：role 枚举修复（exit→branch）、2 次 ambiguous-corridor 修复（改同列相邻竖边+删挤走廊引申边）、readability 250→212 收敛；2 条非阻塞 detour 接受，iframe height=840 实测 930px 下内容高约 800）。
+- 批次 72（1 张）：thinking-serving 三泳道×3 列（指标与计费 / 调度与预算 / 并行采样与 CoT 处理 × 请求进→thinking 相→answer 相，TTFT→TTFAT 卡与 budget 三档卡，interview-questions/inference/thinking-serving专题.md，2 轮 1248→1228 全列 240→232 收敛，零 advisory，iframe height=800 实测 930px 下内容底 748）。
+- 批次 73（1 张）：agent-memory-layer 三泳道×3 列（写入管线 / 存储与组织 / 读取管线 × 会话内→跨会话持久→合规与删除权，五路线 star 水位卡与记忆注入×前缀缓存卡，interview-questions/agent/agent记忆产品化专题.md，2 轮 1268→≤1240 全列 250→238 收敛，零 advisory，iframe height=860 实测 930px 下内容底 826）。
+- 批次 74（1 张）：graphrag-flow 三泳道×3 列（索引构建 / 查询态 / 轻量与按需 × 语料进→图与摘要→查询与召回，0.1% 索引成本卡与 star 反超卡，interview-questions/rag/graphrag专题.md，1 轮一次过门；1 条非阻塞 detour 接受，iframe height=770 实测 930px 下内容底 723）。
+- 批次 75（1 张）：realtime-omni 三泳道×3 列（codec 层 / 模型层 / serving 层 × 音频进→推理→音频出，160ms 结构账卡与 12.5Hz/1.1kbps 甜点卡，interview-questions/inference/实时多模态模型专题.md，1 轮一次过门；2 条非阻塞 detour 接受，iframe height=730 实测 930px 下内容底 705）。
 
 合计张数以本目录实际 html 文件数为准，全仓库 mermaid 清零。
