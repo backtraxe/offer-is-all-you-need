@@ -168,5 +168,9 @@ candidate 目录可参照任一 `.archify/*/candidate.json`（该目录已 gitig
 - 批次 73（1 张）：agent-memory-layer 三泳道×3 列（写入管线 / 存储与组织 / 读取管线 × 会话内→跨会话持久→合规与删除权，五路线 star 水位卡与记忆注入×前缀缓存卡，interview-questions/agent/agent记忆产品化专题.md，2 轮 1268→≤1240 全列 250→238 收敛，零 advisory，iframe height=860 实测 930px 下内容底 826）。
 - 批次 74（1 张）：graphrag-flow 三泳道×3 列（索引构建 / 查询态 / 轻量与按需 × 语料进→图与摘要→查询与召回，0.1% 索引成本卡与 star 反超卡，interview-questions/rag/graphrag专题.md，1 轮一次过门；1 条非阻塞 detour 接受，iframe height=770 实测 930px 下内容底 723）。
 - 批次 75（1 张）：realtime-omni 三泳道×3 列（codec 层 / 模型层 / serving 层 × 音频进→推理→音频出，160ms 结构账卡与 12.5Hz/1.1kbps 甜点卡，interview-questions/inference/实时多模态模型专题.md，1 轮一次过门；2 条非阻塞 detour 接受，iframe height=730 实测 930px 下内容底 705）。
+- 批次 76（1 张）：rl-loss-stability 三泳道×3 列（先行指标与监控 / 数值精度机制 / 恢复 runbook × 正常训练→前兆→崩溃与恢复，Llama3 中断账卡与 QK-Clip 卡，interview-questions/训练与对齐/loss稳定性与数值精度专题.md，2 轮 1265→全列 −10px 收敛；1 条非阻塞 detour 接受，iframe height=700 实测 930px 下内容底 665）。
+- 批次 77（1 张）：train-frameworks-2026 三泳道×3 列（训练框架主线 / RL 框架主线 / 横切议题 × 训练→权重同步→rollout，star 易主卡与 delta_sharded 卡，interview-questions/distributed-training/训练框架2026新进展.md，1 轮一次过门零 advisory，iframe height=840 实测 930px 下内容底约 780）。
+- 批次 78（1 张）：coding-agent-compare 三泳道×3 列（上下文续命三路线 / 写权限三种收口 / 协议与生态 × 读/检索→写/编辑原语→安全边界，Verified 换代卡与 star 倒挂卡，interview-questions/agent/coding-agent横评专题.md，1 轮一次过门；1 条非阻塞 detour 接受，iframe height=830 实测 930px 下内容底约 795）。
+- 批次 79（1 张）：agentic-bench 三泳道×3 列（SWE 谱系与选榜 / 终端与对话型 / 治理与防腐 × 题出→断分→榜单维护，Verified 轨迹卡与选榜差 26pt 卡，interview-questions/agent/agentic评测基准专题.md，2 轮：review-1 因 workflow 不支持 branch 节点类型被拦，改 cloud/backend 后过；零 advisory，iframe height=890 实测 930px 下内容底约 852）。教训：candidate 节点 role 枚举里没有 branch，要用 cloud/backend 等合法枚举，validate 第一轮就会拦。
 
 合计张数以本目录实际 html 文件数为准，全仓库 mermaid 清零。
