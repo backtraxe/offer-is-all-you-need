@@ -151,4 +151,9 @@ candidate 目录可参照任一 `.archify/*/candidate.json`（该目录已 gitig
 - 批次 58（1 张）：gen-media-platform 三泳道×3 列（接入与审核层 / 队列与多档调度层 / GPU 并行执行层，分池铁律卡：秒级 vs 分钟级，system-design/设计多模态生成平台.md，2 轮 1247→1237；1 条非阻塞 detour 目检可读后接受）。教训：iframe 的 height 要在 930px 嵌入宽度下实测产物实际高度再定，勿按 viewBox 直接套（本篇产物实际高约 800，height 从 630 调到 900 才不裁底卡）。
 - 批次 59（1 张）：profiling 三泳道×3 列（在线无损观测 / 时间线定位 / 单点深潜与修复验证 × 定段→抓 trace→归因下钻，开销阶梯/带宽锚/顺序金句三卡，interview-questions/profiling与性能分析专题.md，3 轮 1302→1232；1 条非阻塞 detour 接受）。
 
+- 批次 60（1 张）：data-engineering 三泳道×3 列（数据源与抽取 / 清洗与去重 / 配比与课程 × 预训练胚子→SFT 与偏好→RL 与合成，分类器驱动重采样与成本锚卡，interview-questions/数据工程专题.md，2 轮 1267→1237，零 advisory）。
+- 批次 61（1 张）：distill-prune 三泳道×3 列（蒸馏信号谱系 / 剪枝三代 / 压缩组合生产线，72.6 vs 44.0 与 17920 vs 1800 GPU·h 两张数字锚卡，interview-questions/蒸馏与剪枝专题.md，4 轮 1340→≤1240 单列收敛到 210px，零 advisory）。
+- 批次 62（1 张）：llmops-release 三泳道×3 列（Registry 与版本层 / 发布策略层 / 监控与回滚层 × 注册→灰度→全量，双平面与四维元组卡，interview-questions/llmops与模型发布专题.md，2 轮 1257→≤1240 全列 230→220，零 advisory）。
+- 批次 63（1 张）：agent-security 三泳道×3 列（攻击面：注入→越权→外泄 / 防线谱系 L0→L4 / 隔离与合规收口，致命三角与 AgentDojo 卡，agent/agent安全与防护.md 扩写 171→470 行，2 轮；1 条非阻塞 detour 目检可读后接受）。新坑：card 的 dot 颜色字段是枚举，`red` 不可用要用 `rose`，validate 第一轮就会拦。
+
 合计张数以本目录实际 html 文件数为准，全仓库 mermaid 清零。
