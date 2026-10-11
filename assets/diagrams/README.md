@@ -156,4 +156,9 @@ candidate 目录可参照任一 `.archify/*/candidate.json`（该目录已 gitig
 - 批次 62（1 张）：llmops-release 三泳道×3 列（Registry 与版本层 / 发布策略层 / 监控与回滚层 × 注册→灰度→全量，双平面与四维元组卡，interview-questions/llmops与模型发布专题.md，2 轮 1257→≤1240 全列 230→220，零 advisory）。
 - 批次 63（1 张）：agent-security 三泳道×3 列（攻击面：注入→越权→外泄 / 防线谱系 L0→L4 / 隔离与合规收口，致命三角与 AgentDojo 卡，agent/agent安全与防护.md 扩写 171→470 行，2 轮；1 条非阻塞 detour 目检可读后接受）。新坑：card 的 dot 颜色字段是枚举，`red` 不可用要用 `rose`，validate 第一轮就会拦。
 
+- 批次 64（1 张）：gpu-cluster-sched 三泳道×3 列（配额与准入层 Kueue/Volcano / 放置层 / 节点与容错层 × 作业到达→准入与 gang→上机运行与自愈，18 倍带宽差与 Arnold +10.6% 卡，interview-questions/集群调度与资源管理专题.md，1 轮零 advisory 直过）。
+- 批次 65（1 张）：compiler-stack 三泳道×3 列（捕捉层 Dynamo/AOTAutograd / 优化层 Inductor+自定义 pass / 生成执行层 Triton·CUDA Graph·手件 kernel，编译赢什么/手件守什么边界卡，interview-questions/ai编译器与torch-compile专题.md，2 轮 1276→≤1240；2 条同列竖边非阻塞 detour 接受）。
+- 批次 66（1 张）：edge-inference 三泳道×3 列（硬件面 TOPS/带宽 / 模型与引擎层 / 端云协同形态 × prefill 吃算力→decode 吃带宽→路由与协同，tok/s≈带宽÷字节数公式卡与 GGUF 档位卡，interview-questions/端侧推理专题.md，1 轮；1 条非阻塞 detour 接受）。
+- 批次 67（1 张）：finops-cost 三泳道×3 列（成本公式层 / 降本组合拳层 / 组织与采购层 × 单价→吞吐×利用率→单位 token 成本，70B 推导账与乘法叠加卡，interview-questions/finops与算力成本专题.md，3 轮 1282→≤1240；1 条非阻塞 detour 接受）。教训：docsify 宽列下标注卡 2+1 换行，iframe height 要按卡片换行后的实际高度定（本篇 800 内容高但三卡换行后要 1040），不能只看节点区实测高。
+
 合计张数以本目录实际 html 文件数为准，全仓库 mermaid 清零。
