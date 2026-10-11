@@ -183,4 +183,9 @@ candidate 目录可参照任一 `.archify/*/candidate.json`（该目录已 gitig
 - 批次 86（1 张）：rl-training-inference-convergence 三泳道×3 列（rollout 服务器池 / trainer 与 staleness 闸 / weight sync 回灌 × prompt→轨迹→更新回灌，20s@1T 卡与 delta 1.9-3.1× 卡，interview-questions/distributed-training/rl系统训推一体专题.md，review-1 一次全过零 advisory，iframe height=855 实测 930px 下内容底约 802）。
 - 批次 87（1 张）：long-video-inference 三泳道×3 列（一小时 token 账本 / 压缩谱系 × 视频推理数据流，70/258 token 每帧卡与 pruning 禁 CUDA graph 卡，interview-questions/inference/长视频推理工程专题.md，一次全过零 advisory，iframe height=750 实测 930px 下内容底约 700）。
 
+- 批次 88（1 张）：model-merging 三泳道×3 列（base θ₀ 同源微调 / τ=θᵢ−θ₀ 算术 / EVAL 回环 × 成本锚与干扰修复数字卡，mergekit 7392★ 卡，interview-questions/训练与对齐/模型合并专题.md，2 轮 1261→全列 −10px 收敛；1 条非阻塞 detour 接受，iframe height=870 实测 930px 下内容底约 820）。
+- 批次 89（1 张）：agent-sandbox-engineering 三泳道×3 列（共享内核级谱系 / VM 级与云托管 / 数字锚 × 子进程→容器→gVisor→microVM→云托管，Firecracker 三数字卡与沙箱外攻击面卡，interview-questions/agent/agent沙箱工程专题.md，4 轮 1282→1244 −5px 收敛；2 条非阻塞 detour 接受，iframe height=800 实测 930px 下内容底约 750）。
+- 批次 90（1 张）：attention-variants-2026 三泳道×3 列（省存线 / 省算线 / 线性 hybrid 线 × 2017→2026 谱系演进，GQA/MLA 字节账卡与 Kimi Linear 75%/6× 卡，interview-questions/inference/注意力变体2026专题.md，3 轮列宽 250→234 收敛，零 advisory，iframe height=860 实测 930px 下内容底约 810）。
+- 批次 91（1 张）：continual-learning-ttt 三泳道×3 列（续预训线 / 遗忘处置顺位 / TTT 与自我改进闭环 × 基座→续训→回流，ChipNeMo 1.5% 卡与 MIT TTT 53→61.9 卡，interview-questions/训练与对齐/持续学习与ttt专题.md，iframe height 以文内实际值为准）。
+
 合计张数以本目录实际 html 文件数为准，全仓库 mermaid 清零。
