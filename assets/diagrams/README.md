@@ -173,4 +173,9 @@ candidate 目录可参照任一 `.archify/*/candidate.json`（该目录已 gitig
 - 批次 78（1 张）：coding-agent-compare 三泳道×3 列（上下文续命三路线 / 写权限三种收口 / 协议与生态 × 读/检索→写/编辑原语→安全边界，Verified 换代卡与 star 倒挂卡，interview-questions/agent/coding-agent横评专题.md，1 轮一次过门；1 条非阻塞 detour 接受，iframe height=830 实测 930px 下内容底约 795）。
 - 批次 79（1 张）：agentic-bench 三泳道×3 列（SWE 谱系与选榜 / 终端与对话型 / 治理与防腐 × 题出→断分→榜单维护，Verified 轨迹卡与选榜差 26pt 卡，interview-questions/agent/agentic评测基准专题.md，2 轮：review-1 因 workflow 不支持 branch 节点类型被拦，改 cloud/backend 后过；零 advisory，iframe height=890 实测 930px 下内容底约 852）。教训：candidate 节点 role 枚举里没有 branch，要用 cloud/backend 等合法枚举，validate 第一轮就会拦。
 
+- 批次 80（1 张）：post-training-distill-pipeline 三泳道×3 列（强模型线造数据 / 学生线装配 / 成本与三坑 × 原料→拒绝采样→蒸馏收尾，5K vs 101K GPU·h 卡与 Qwen3 双阶段对照卡，interview-questions/训练与对齐/post-training蒸馏生产线专题.md，2 轮 1260→全列 220→205 收敛；iframe height=945 实测 930px 下内容底 887）。
+- 批次 81（1 张）：dr-paradigms 三泳道×3 列（范式 A 工作流 / 范式 B 端到端 RL / 横切底座 × query→检索阅读循环→综合报告，Kimi 23 步 200+URL 卡与三件套卡，interview-questions/agent/deep-research架构专题.md，1 轮一次过门零 advisory，iframe height=880 实测 930px 下内容底约 830）。
+- 批次 82（1 张）：kv-offload-tiered-storage 四泳道×3 列（HBM/DRAM/SSD/远端池四层 × 命中查找→异步换入→回写驱逐，92.2% 命中率卡与九坑卡，interview-questions/inference/kv-offload与分层存储专题.md，2 轮 1263→全列 250→240 收敛；3 条非阻塞 detour 目检可读后接受，iframe height=940 实测内容底约 890）。
+- 批次 83（1 张）：domestic-inference-stack 三泳道×3 列（插件机制 / CUDA 参照栈 / ROCm 与昇腾栈 × 主仓调度→插件换位→硬件执行，RFC#11162 卡与适配仓热度天梯卡，interview-questions/国产推理芯片栈专题.md，3 轮 1297→1262→≤1240 全列 250→224；1 条非阻塞 detour 接受，iframe height=800 实测 930px 下内容底约 750）。
+
 合计张数以本目录实际 html 文件数为准，全仓库 mermaid 清零。
