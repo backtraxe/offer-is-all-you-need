@@ -77,6 +77,7 @@
   - 训练与对齐
     - [预训练与 SFT](interview-questions/训练与对齐/预训练与sft.md)
     - [数据工程专题](interview-questions/训练与对齐/数据工程专题.md)
+    - [合成数据工程专题](interview-questions/训练与对齐/合成数据工程专题.md)
     - [Scaling Law 与范式迁移](interview-questions/训练与对齐/scaling-law与范式迁移.md)
     - [LoRA 与参数高效微调](interview-questions/训练与对齐/lora与参数高效微调.md)
     - [RLHF 与对齐](interview-questions/训练与对齐/rlhf与对齐.md)
@@ -103,6 +104,7 @@
     - [Agentic RAG](interview-questions/rag/agentic-rag.md)
     - [GraphRAG 与知识图谱 RAG 专题](interview-questions/rag/graphrag专题.md)
     - [RAG 权限控制](interview-questions/rag/rag权限控制.md)
+    - [搜索增强与 Grounding 专题](interview-questions/rag/搜索增强与grounding专题.md)
   - Agent
     - [Agent 由浅入深路线图](interview-questions/agent/agent由浅入深路线图.md)
     - [场景全链路 Trace](interview-questions/agent/场景全链路trace.md)
@@ -110,6 +112,7 @@
     - [Agent 基础与规划](interview-questions/agent/agent基础与规划.md)
     - [工具调用与 MCP](interview-questions/agent/工具调用与mcp.md)
     - [MCP vs 工具调用深度对比](interview-questions/agent/mcp与工具调用深度对比.md)
+    - [MCP Server 开发工程专题](interview-questions/agent/mcp-server开发工程专题.md)
     - [LangChain 与编排框架](interview-questions/agent/langchain与编排框架.md)
     - [记忆与上下文工程](interview-questions/agent/记忆与上下文工程.md)
     - [Agent Skills 详解](interview-questions/agent/agent-skills详解.md)
@@ -131,6 +134,7 @@
     - [Agent 评测与观测闭环专题](interview-questions/agent/agent评测与观测闭环专题.md)
     - [Function Calling 训练专题](interview-questions/agent/function-calling训练专题.md)
     - [Deep Research 架构专题](interview-questions/agent/deep-research架构专题.md)
+    - [Agent 成本与 Token 预算专题](interview-questions/agent/agent成本与token预算专题.md)
     - [AI 编程与 Claude Code 内幕](interview-questions/agent/ai编程与claudecode内幕.md)
     - [Pi Agent 源码分析](interview-questions/agent/pi-agent源码分析.md)
     - [DeepSeek Harness 分析](interview-questions/agent/deepseek-harness分析.md)

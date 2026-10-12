@@ -211,4 +211,12 @@ candidate 目录可参照任一 `.archify/*/candidate.json`（该目录已 gitig
 
 - 批次 104（1 张）：dllm-lineage 三泳道×3 列（谱系时间线 D3PM→LLaDA/Dream→MoE/SDAR × 平行解码机制 全掩码→N 步并行→KV cache 失效 × 评测对标 追平档/规划赢/速度标本，数字锚卡+AO-ARM 等价差异卡+面试口径卡，interview-questions/llm基础/扩散语言模型专题.md，1 轮一次过门零 advisory，iframe height=940 实测 960px 下内容底约 890）。
 
+- 批次 111（1 张）：agent-cost-budget 三泳道×3 列（成本构成 官方数字锚 × 降本六步 杠杆排序 × 定价与折扣 2026-10，同列竖边 c0→r0、r2→p2，四象限账卡+杠杆排序卡+折扣适用性卡，interview-questions/agent/agent成本与token预算专题.md §一后，2 轮 1242→列宽 232→230 收敛；1 条非阻塞 detour（c0→r0 左侧绕行 3 弯）目检可读后接受，iframe height=900 实测 980px 下内容底约 828）。
+
+- 批次 109（1 张）：mcp-server-engineering 三泳道×3 列（设计层 schema与描述 / 运行层 传输与错误 / 交付层 测试与发布，同列相邻泳道竖边 d1→r1→t1 承接，25,000 tokens 预算数字锚卡+spec 三条硬约束卡，interview-questions/agent/mcp-server开发工程专题.md 第〇节后，1 轮一次过门零 advisory，iframe height=840）。教训：粗体以反引号代码段开头且跨行（**`--read-only` …**型）marked 不解析——dump-dom 字面 `**` 终检抓出，把代码段挪出粗体开头即修复。
+
+- 批次 110（1 张）：grounding-pipeline 三泳道×3 列（query 规划 意图识别×freshness 路由→改写 fan-out→自适应多轮 × 搜索与拼包 搜索 API 三层→拼包 token 预算→日期感知合成 × 引用归因 句级 schema→post-hoc 校验→兜底降级，同列相邻泳道竖边 a1→b1→c1 承接，计费锚点卡+审计评测数字卡，interview-questions/rag/搜索增强与grounding专题.md 第一节主线后，1 轮一次过门零 advisory，iframe height=860 实测 930px 下内容底约 790）。教训：粗体以 `**$数字` 开头且紧跟全角标点（回答）**$4/1k…型）是批次 50 铁律的 $ 变体，marked 不解析——dump-dom 字面 `**` 终检抓出，开头塞一个 CJK 字（「按」）即修复。
+
+- 批次 108（1 张）：synth-data-lineage 三泳道×3 列（指令合成四代谱系 Self-Instruct→Evol→Magpie/Persona / 轨迹与 verifier 闭环 STaR·RFT→环境采轨迹→verifier 三形态 / 治理与坍缩防线 去污染双闸→GSM1K 实锤→坍缩四必备条件，同列相邻泳道竖边 i2→t2 与 t1→g1 承接，Magpie 4M→300K/Nemotron-4 >98%/GSM1K 降 13 点数字卡，interview-questions/训练与对齐/合成数据工程专题.md 第 2.8 节后，2 轮 1269→全列 235→222 收敛，零 advisory，iframe height=903 实测 930px 下内容底 853）。
+
 合计张数以本目录实际 html 文件数为准，全仓库 mermaid 清零。
