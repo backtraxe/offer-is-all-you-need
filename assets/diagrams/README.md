@@ -187,5 +187,9 @@ candidate 目录可参照任一 `.archify/*/candidate.json`（该目录已 gitig
 - 批次 89（1 张）：agent-sandbox-engineering 三泳道×3 列（共享内核级谱系 / VM 级与云托管 / 数字锚 × 子进程→容器→gVisor→microVM→云托管，Firecracker 三数字卡与沙箱外攻击面卡，interview-questions/agent/agent沙箱工程专题.md，4 轮 1282→1244 −5px 收敛；2 条非阻塞 detour 接受，iframe height=800 实测 930px 下内容底约 750）。
 - 批次 90（1 张）：attention-variants-2026 三泳道×3 列（省存线 / 省算线 / 线性 hybrid 线 × 2017→2026 谱系演进，GQA/MLA 字节账卡与 Kimi Linear 75%/6× 卡，interview-questions/inference/注意力变体2026专题.md，3 轮列宽 250→234 收敛，零 advisory，iframe height=860 实测 930px 下内容底约 810）。
 - 批次 91（1 张）：continual-learning-ttt 三泳道×3 列（续预训线 / 遗忘处置顺位 / TTT 与自我改进闭环 × 基座→续训→回流，ChipNeMo 1.5% 卡与 MIT TTT 53→61.9 卡，interview-questions/训练与对齐/持续学习与ttt专题.md，iframe height 以文内实际值为准）。
+- 批次 93（1 张）：multimodal-tokenizer-lineage 四泳道×3 列（文本 tokenizer 谱系 / 视觉离散 VQ 派 / 视觉连续特征派 / 数据规模阶梯 LAION-5B→MINT-1T，词表尺寸小卡+TiTok 32 token 410× 数字锚卡，interview-questions/llm基础/多模态数据与tokenizer专题.md，3 轮 1258→全列 240→232 收敛，零 advisory，iframe height=940 实测 930px 下内容底约 920）。
+- 批次 92（1 张）：inference-gpu-topology 三泳道×3 列（GPU 规格梯队 H100/H200→GB200/Rubin / 三步选型决策链 / NVLink domain 与 IB-RoCE 对 PD 分离大 EP，$0.20/1M output 官方口径数字卡，interview-questions/推理gpu选型与集群拓扑专题.md，四门全过零 advisory，iframe height=860 实测 930px 下内容底约 805）。
+- 批次 94（1 张）：agent-eval-loop 三泳道×3 列（线上观测 / 闭环 pipeline / 离线评测力量，两条 return 边成环，pass^k 42% 与 judge 四偏差双卡，interview-questions/agent/agent评测与观测闭环专题.md，5 轮 1422→列宽 178 收敛，iframe height=880 实测 930px 下内容底约 830）。
+- 批次 95（1 张）：fc-training-lineage 三泳道×3 列（格式四派 / 训练里程碑 Gorilla→APIGen/xLAM→ToolACE/Qwen3 / BFCL 评测维度 V1→V4，88.24% 数字锚卡+合成数据五步卡+BFCL 口径纪律卡，interview-questions/agent/function-calling训练专题.md，3 轮 1272→1242→列宽 226 收敛，零 advisory，iframe height=880 实测 930px 下内容底约 830）。
 
 合计张数以本目录实际 html 文件数为准，全仓库 mermaid 清零。

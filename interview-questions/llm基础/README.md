@@ -12,6 +12,7 @@
 | [位置编码、Norm 与 Tokenizer](./位置编码与norm.md) | 绝对/相对位置编码、RoPE 原理与长上下文扩展（NTK/YaRN）、ALiBi、Pre-Norm vs Post-Norm、LayerNorm vs RMSNorm、BPE 与 token 估算 | "RoPE 原理" "为什么大模型用 RMSNorm" "BPE 是怎么训练的" |
 | [MoE 架构与专家并行](./moe架构.md) | 稀疏激活与等效激活参数、Switch→GShard→DeepSeek V2/V3→Qwen3 演进、辅助 loss vs aux-loss-free bias、EP 并行与 all-to-all、DeepEP 双内核与 EPLB | "MoE 相比 Dense 的优势" "负载均衡怎么做" "EP 的 all-to-all 为什么是瓶颈" |
 | [多模态架构基础（最小考点地图）](./多模态架构基础.md) | VLM 三大流派（LLaVA 投影 / Q-Former 压缩 / 原生早融合）、M-RoPE、对齐预训练→指令微调→偏好优化、图像 token 与 prefill/KV 成本 | "主流 VLM 流派有哪些" "图像特征怎么进 LLM" "M-RoPE 解决什么" |
+| [多模态数据与 tokenizer 专题](./多模态数据与tokenizer专题.md) | 文本 tokenizer 谱系（BPE→SentencePiece→BBPE→tiktoken）与 12 模型词表对照、中文 fertility、VQ 离散 vs CLIP/SigLIP 连续两派（TiTok/Cosmos 统一化）、LAION/DataComp/MINT-1T 数据阶梯、recaption 与合成占比、词表×embedding 参数账 | "BPE 是怎么演化的" "词表做大的代价是什么" "中文 token 数怎么估" "图像 token 数怎么算" |
 
 <div class="diagram-embed">
 <iframe src="assets/diagrams/llm-map.html" width="100%" height="820" style="border:none;border-radius:12px" loading="lazy"></iframe>
