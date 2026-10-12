@@ -203,4 +203,12 @@ candidate 目录可参照任一 `.archify/*/candidate.json`（该目录已 gitig
 - 批次 100（1 张）：longctx-training 三泳道×3 列（PE 外插谱系 PI→YaRN→LongRoPE2 / 长文数据工程 源与清洗→长度课程→长短混合 / 系统与评测 CP 三兄弟→packing 与显存折算→有效窗口，同列相邻泳道两条竖边 pe2→d2→s2，PE 谱系数字锚卡+USP 47% MFU 通信账卡+有效窗口评测卡，interview-questions/训练与对齐/长上下文训练工程专题.md，1 轮一次过门零 advisory，iframe height=940 实测 930px 下内容底约 890）。
 - 批次 103（1 张）：edge-agent-arch 三泳道×3 列（端上三层 模型/工具/权限 × 端云路由 隐私分级与延迟成本 × 场景谱系 手机/车/机器人，Apple 3B+PCC 适配器仓卡与小模型能力底线数字卡，interview-questions/agent/端侧agent专题.md，1 轮一次过门零 advisory，iframe height=1100 按 docsify 740px 内宽卡片 2+1 换行实测内容底约 1060）。
 
+- 批次 107（1 张）：mm-embedding-retrieval 三泳道×3 列（双塔单向量派 CLIP→SigLIP2→E5-V/Qwen3-VL × 多向量 late interaction 派 ColBERT→ColPali→ColQwen2.5 × 工程落库 schema→分层漏斗→多模态 reranker，同列相邻泳道两条竖边 a1→b1→c1 承接，ViDoRE NDCG@5 阶梯卡+ColPali 三笔成本卡，interview-questions/rag/多模态embedding与检索专题.md 第一节后，5 轮 1584→≤1240：先缩 sublabel 全列 215、再缩泳道/边 label 到 1248、最后全列 208 收敛，零 advisory，iframe height=830 实测 930px 下内容底约 780）。教训：拉丁长泳道 label（late interaction 派）与长边 label 对 viewBox 的抬升比节点 sublabel 更大，首轮应从这两者起缩。
+
+- 批次 106（1 张）：agent-orchestration-spectrum 三泳道×3 列（三范式光谱 DAG/状态机/自由loop × 工程兜底 人审/checkpoint/数值缰绳 × 选型决策 R0-R4，每列两条同列竖边成链，star 水位卡+收敛共识卡，interview-questions/agent/agent编排范式工程专题.md，1 轮一次过门；2 条非阻塞 detour（首列 s0→g0、g0→p0 左侧绕行 3 弯）目检可读后接受，iframe height=840 实测 930px 下内容底约 735）。
+
+- 批次 105（1 张）：kv-quant-evict 三泳道×3 列（量化位宽派 KVQuant→KIVI→SKVQ / 驱散裁剪派 StreamingLLM→H2O·SnapKV·PyramidKV→Razor·DuoAttention / 引擎落地 vLLM→SGLang 静默坑→FlashMLA 原生 FP8·FP4，同列竖边 e0→q0 与 e2→g2，单卡百万上下文三级跳卡+并发换算账卡+四坑位卡，interview-questions/inference/kv量化与压缩专题.md 第一节后）。教训：3 轮收敛 1261→≤1240，先缩 sublabel 无效（viewBox 由布局走廊撑开），全列 230→222→216 才过门；q1 sublabel 下悬挂「sublabel 换行」形式未触发，iframe height=890 实测 960px 下内容底约 845）。
+
+- 批次 104（1 张）：dllm-lineage 三泳道×3 列（谱系时间线 D3PM→LLaDA/Dream→MoE/SDAR × 平行解码机制 全掩码→N 步并行→KV cache 失效 × 评测对标 追平档/规划赢/速度标本，数字锚卡+AO-ARM 等价差异卡+面试口径卡，interview-questions/llm基础/扩散语言模型专题.md，1 轮一次过门零 advisory，iframe height=940 实测 960px 下内容底约 890）。
+
 合计张数以本目录实际 html 文件数为准，全仓库 mermaid 清零。

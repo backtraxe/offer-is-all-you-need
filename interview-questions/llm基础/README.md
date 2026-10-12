@@ -13,6 +13,7 @@
 | [MoE 架构与专家并行](./moe架构.md) | 稀疏激活与等效激活参数、Switch→GShard→DeepSeek V2/V3→Qwen3 演进、辅助 loss vs aux-loss-free bias、EP 并行与 all-to-all、DeepEP 双内核与 EPLB | "MoE 相比 Dense 的优势" "负载均衡怎么做" "EP 的 all-to-all 为什么是瓶颈" |
 | [多模态架构基础（最小考点地图）](./多模态架构基础.md) | VLM 三大流派（LLaVA 投影 / Q-Former 压缩 / 原生早融合）、M-RoPE、对齐预训练→指令微调→偏好优化、图像 token 与 prefill/KV 成本 | "主流 VLM 流派有哪些" "图像特征怎么进 LLM" "M-RoPE 解决什么" |
 | [多模态数据与 tokenizer 专题](./多模态数据与tokenizer专题.md) | 文本 tokenizer 谱系（BPE→SentencePiece→BBPE→tiktoken）与 12 模型词表对照、中文 fertility、VQ 离散 vs CLIP/SigLIP 连续两派（TiTok/Cosmos 统一化）、LAION/DataComp/MINT-1T 数据阶梯、recaption 与合成占比、词表×embedding 参数账 | "BPE 是怎么演化的" "词表做大的代价是什么" "中文 token 数怎么估" "图像 token 数怎么算" |
+| [扩散语言模型专题](./扩散语言模型专题.md) | 离散扩散基础（D3PM 吸收态/SEDD/MDLM 加权 MLM、AO-ARM 等价）、谱系里程碑（LLaDA→Dream→Mercury→Block Diffusion→SDAR）、平行解码与 KV cache 失效（Fast-dLLM 27.6×）、从零训 vs AR 适配成本账、Dream/LLaDA 评测对标、赢/输场景与 vLLM 三点式 | "扩散和 AR 的本质区别" "为什么不能用 vLLM 栈" "扩散凭什么快" "从零训还是 AR 适配" "反转诅咒为什么能解" |
 
 <div class="diagram-embed">
 <iframe src="assets/diagrams/llm-map.html" width="100%" height="820" style="border:none;border-radius:12px" loading="lazy"></iframe>
