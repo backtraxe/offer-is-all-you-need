@@ -88,6 +88,7 @@
     - [Post-training 蒸馏生产线专题](interview-questions/训练与对齐/post-training蒸馏生产线专题.md)
     - [模型合并专题](interview-questions/训练与对齐/模型合并专题.md)
     - [持续学习与 TTT 专题](interview-questions/训练与对齐/持续学习与ttt专题.md)
+    - [长上下文训练工程专题](interview-questions/训练与对齐/长上下文训练工程专题.md)
     - [veRL 深度拆解](interview-questions/训练与对齐/verl深度拆解.md)
     - [小米 MiMo 训练栈复盘](interview-questions/训练与对齐/mimo训练栈复盘.md)
     - [Muon 与新优化器](interview-questions/训练与对齐/muon与优化器.md)
@@ -114,6 +115,7 @@
     - [观测与 Trace 工程](interview-questions/agent/观测与trace工程.md)
     - [决策模型与 Jev](interview-questions/agent/决策模型与jev.md)
     - [多 Agent 与评测](interview-questions/agent/多agent与评测.md)
+    - [Agent 通信协议专题](interview-questions/agent/agent通信协议专题.md)
     - [Agent 安全与防护](interview-questions/agent/agent安全与防护.md)
     - [Agent 沙箱工程专题](interview-questions/agent/agent沙箱工程专题.md)
     - [Guardrail 系统专题](interview-questions/agent/guardrail系统专题.md)
@@ -132,6 +134,7 @@
     - [Codex 源码分析](interview-questions/agent/codex源码分析.md)
     - [MiniMax Code 分析](interview-questions/agent/minimax-code分析.md)
     - [RSI 递归自我改进](interview-questions/agent/rsi自我改进.md)
+    - [端侧 Agent 专题](interview-questions/agent/端侧agent专题.md)
   - 推理部署（Inference）
     - [vLLM 与推理加速核心](interview-questions/inference/vllm与推理加速核心.md)
     - [推理调度专题](interview-questions/inference/推理调度专题.md)
@@ -154,6 +157,7 @@
     - [推理引擎 2026 新进展](interview-questions/inference/推理引擎2026新进展.md)
     - [推理服务 SLO 与运营](interview-questions/inference/推理服务slo与运营.md)
     - [推理压测与容量规划专题](interview-questions/inference/推理压测与容量规划专题.md)
+    - [推理多租户与成本归因专题](interview-questions/inference/推理多租户与成本归因专题.md)
     - [推理 Infra 社招面经与备战](interview-questions/inference/推理infra社招面经与备战.md)
     - 源码解读专题
       - [专题导读](interview-questions/inference/源码解读/README.md)

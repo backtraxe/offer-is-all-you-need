@@ -197,4 +197,10 @@ candidate 目录可参照任一 `.archify/*/candidate.json`（该目录已 gitig
 - 批次 98（1 张）：agent-memory-eval-gc 三泳道×3 列（评测基准层 LoCoMo→LongMemEval→MemBench·RULER / 治理工具层 merge gate→双时态 invalidate→漂移监控×三层 GC / 产品决策层 ChatGPT→Mem0·Letta→Zep 反面，0.5773 vs 0.9184 数字锚卡+在线四红灯卡+五板斧主线卡，interview-questions/agent/agent记忆评测与遗忘治理专题.md，3 轮 1285→1245→列宽 205 且缩 b1 文本收敛，零 advisory，iframe height=960 实测 930px 下卡片底约 900）。
 - 批次 99（1 张）：npu-engine-adaptation 三泳道×3 列（引擎三分支 vLLM-Ascend/SGLang-NPU/MindIE / 算子移植三条路径 Ascend C、Triton-on-NPU、生态缓冲 / 坑排行，DeepSeek-on-NPU 性能口径双卡，interview-questions/国产卡推理引擎适配专题.md，3 轮 1251→列宽 216 收敛，零 advisory，iframe height=860 实测 930px 下内容底约 790）。
 
+- 批次 101（1 张）：multitenant-serving 三泳道×3 列（隔离机制 准入/排队/状态层 × 公平调度 RPM-VTC-max-min × 成本归因与 tier 计量→计价→混部，VTC 2× 上界 340 vs 779 卡与 tier 价锚卡，interview-questions/inference/推理多租户与成本归因专题.md，1 轮一次过门零 advisory，iframe height=880 实测 930px 下卡片底约 800）。
+- 批次 102（1 张）：agent-protocol-stack 三泳道×3 列分层栈（上接用户 AG-UI / 平接 agent A2A / 下接工具 MCP，Client Agent→Remote Agent 同列竖边承接委派，A2A 时间线四节点卡+采用与安全批评卡，interview-questions/agent/agent通信协议专题.md，3 轮 1272→1242→全列 200px 收敛；1 条非阻塞 detour 目检可读后接受，iframe height=830）。
+
+- 批次 100（1 张）：longctx-training 三泳道×3 列（PE 外插谱系 PI→YaRN→LongRoPE2 / 长文数据工程 源与清洗→长度课程→长短混合 / 系统与评测 CP 三兄弟→packing 与显存折算→有效窗口，同列相邻泳道两条竖边 pe2→d2→s2，PE 谱系数字锚卡+USP 47% MFU 通信账卡+有效窗口评测卡，interview-questions/训练与对齐/长上下文训练工程专题.md，1 轮一次过门零 advisory，iframe height=940 实测 930px 下内容底约 890）。
+- 批次 103（1 张）：edge-agent-arch 三泳道×3 列（端上三层 模型/工具/权限 × 端云路由 隐私分级与延迟成本 × 场景谱系 手机/车/机器人，Apple 3B+PCC 适配器仓卡与小模型能力底线数字卡，interview-questions/agent/端侧agent专题.md，1 轮一次过门零 advisory，iframe height=1100 按 docsify 740px 内宽卡片 2+1 换行实测内容底约 1060）。
+
 合计张数以本目录实际 html 文件数为准，全仓库 mermaid 清零。
