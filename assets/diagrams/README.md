@@ -191,5 +191,10 @@ candidate 目录可参照任一 `.archify/*/candidate.json`（该目录已 gitig
 - 批次 92（1 张）：inference-gpu-topology 三泳道×3 列（GPU 规格梯队 H100/H200→GB200/Rubin / 三步选型决策链 / NVLink domain 与 IB-RoCE 对 PD 分离大 EP，$0.20/1M output 官方口径数字卡，interview-questions/推理gpu选型与集群拓扑专题.md，四门全过零 advisory，iframe height=860 实测 930px 下内容底约 805）。
 - 批次 94（1 张）：agent-eval-loop 三泳道×3 列（线上观测 / 闭环 pipeline / 离线评测力量，两条 return 边成环，pass^k 42% 与 judge 四偏差双卡，interview-questions/agent/agent评测与观测闭环专题.md，5 轮 1422→列宽 178 收敛，iframe height=880 实测 930px 下内容底约 830）。
 - 批次 95（1 张）：fc-training-lineage 三泳道×3 列（格式四派 / 训练里程碑 Gorilla→APIGen/xLAM→ToolACE/Qwen3 / BFCL 评测维度 V1→V4，88.24% 数字锚卡+合成数据五步卡+BFCL 口径纪律卡，interview-questions/agent/function-calling训练专题.md，3 轮 1272→1242→列宽 226 收敛，零 advisory，iframe height=880 实测 930px 下内容底约 830）。
+- 批次 97（1 张）：inference-capacity-loop 三泳道×3 列（负载建模层 / 压测与定容层 / 上线与回灌层 × 画像进 → knee 定容 → 监控回灌，三条 return 边成环，headroom 1.5-2x 卡与 knee 三信号卡，interview-questions/inference/推理压测与容量规划专题.md，3 轮：dot 枚举 sky→cyan、readability 240→232 收敛，零 advisory，iframe height=800 实测 930px 下内容底约 740）。
+
+- 批次 96（1 张）：rl-reward-design 三泳道×3 列（奖励三派 ORM/PRM/规则 × hacking 攻防 × RM 校准与防 Goodhart，PRM800K 证据链卡+Goodhart 拐点卡+monitorability tax 卡，interview-questions/训练与对齐/rl奖励设计专题.md，1 轮一次过门零 advisory，iframe height=990 实测 930px 下内容底 936）。
+- 批次 98（1 张）：agent-memory-eval-gc 三泳道×3 列（评测基准层 LoCoMo→LongMemEval→MemBench·RULER / 治理工具层 merge gate→双时态 invalidate→漂移监控×三层 GC / 产品决策层 ChatGPT→Mem0·Letta→Zep 反面，0.5773 vs 0.9184 数字锚卡+在线四红灯卡+五板斧主线卡，interview-questions/agent/agent记忆评测与遗忘治理专题.md，3 轮 1285→1245→列宽 205 且缩 b1 文本收敛，零 advisory，iframe height=960 实测 930px 下卡片底约 900）。
+- 批次 99（1 张）：npu-engine-adaptation 三泳道×3 列（引擎三分支 vLLM-Ascend/SGLang-NPU/MindIE / 算子移植三条路径 Ascend C、Triton-on-NPU、生态缓冲 / 坑排行，DeepSeek-on-NPU 性能口径双卡，interview-questions/国产卡推理引擎适配专题.md，3 轮 1251→列宽 216 收敛，零 advisory，iframe height=860 实测 930px 下内容底约 790）。
 
 合计张数以本目录实际 html 文件数为准，全仓库 mermaid 清零。
