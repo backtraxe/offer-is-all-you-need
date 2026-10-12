@@ -1,5 +1,10 @@
 # offer-is-all-you-need
 
+[![GitHub stars](https://img.shields.io/github/stars/backtraxe/offer-is-all-you-need?style=flat-square)](https://github.com/backtraxe/offer-is-all-you-need/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/backtraxe/offer-is-all-you-need?style=flat-square)](https://github.com/backtraxe/offer-is-all-you-need/network/members)
+[![在线文档](https://img.shields.io/badge/docs-GitHub%20Pages-blue?style=flat-square)](https://backtraxe.github.io/offer-is-all-you-need/)
+[![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
+
 > Attention 买不到 offer，但这个 repo 可以。
 
 **摘要**：We propose a simple but effective repository, `offer-is-all-you-need`,
@@ -30,6 +35,25 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 「散」是设计如此：面试前夜你要的是 5 分钟定位到一家公司的一类题，
 不是一门顺序课。但主线永远只有一条，先把 ★ 啃完再谈查漏补缺。
+
+## 刷完你能得到什么
+
+- 高频考点成体系——从「什么是大模型」到 PD 分离、GRPO、显存公式
+  手撕，约 15 篇主线 + 100 余篇词典式专题，知道 how 也知道 why。
+- 22 家公司的出题信号——面经合集主信号总表里，每家公司考什么、
+  怎么追问都有实据（多帖互证、标注口径）。
+- 一套可执行的行动系统——12 周日历、投递策略、模拟面试模考卷、
+  挂后复盘四步法，不只管「学什么」也管「怎么上岸」。
+- 面试感的手撕能力——coding 篇按真实考频排序，GRPO Loss、
+  蒸馏 KL、KV 显存公式都有从零手推版。
+
+## 最近更新
+
+- 2026-10：备战总路线图交互大图（12 周行动线 × Agent/Infra 双主线）
+- 2026-10：系统化收口——学习路线图变双轨总入口，五信号表合并为主信号总表
+- 2026-10：求职操作四件套（投递与 offer 实战 / 模拟面试 / 挂后复盘 / 12 周日历）
+- 2026-10：coding 新题型 3 篇（GRPO Loss / 蒸馏 KL / KV 显存公式）+ 刷题频次映射表
+- 更早：vLLM/SGLang 源码全链路、对比专题（vLLM vs SGLang、MoE vs Dense、MCP vs 工具）等
 
 ## 仓库结构
 
@@ -66,8 +90,8 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## Contribution
 
-- 发现错误欢迎提 issue / PR
-- 想分享你的面经也欢迎 PR，记得脱敏
+- 发现错误欢迎提 issue / PR，会尽快回复（勘误比面子重要）
+- 想分享你的面经也欢迎 PR，记得脱敏；整理得好的我会并进面经合集并署名来源
 - 想看某个方向的整理，开 issue 许愿
 - 排版注意（踩过坑）：本站点 docsify@4 的 marked 不认「粗体以 ASCII 标点（`%`
   `)` `/`）结尾、闭合 `**` 后紧跟 CJK 文字/全角标点」的写法——会漏渲染甚至把
