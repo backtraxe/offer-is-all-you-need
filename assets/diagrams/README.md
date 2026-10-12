@@ -219,4 +219,6 @@ candidate 目录可参照任一 `.archify/*/candidate.json`（该目录已 gitig
 
 - 批次 108（1 张）：synth-data-lineage 三泳道×3 列（指令合成四代谱系 Self-Instruct→Evol→Magpie/Persona / 轨迹与 verifier 闭环 STaR·RFT→环境采轨迹→verifier 三形态 / 治理与坍缩防线 去污染双闸→GSM1K 实锤→坍缩四必备条件，同列相邻泳道竖边 i2→t2 与 t1→g1 承接，Magpie 4M→300K/Nemotron-4 >98%/GSM1K 降 13 点数字卡，interview-questions/训练与对齐/合成数据工程专题.md 第 2.8 节后，2 轮 1269→全列 235→222 收敛，零 advisory，iframe height=903 实测 930px 下内容底 853）。
 
+- 批次 112（1 张）：master-battle-roadmap 三泳道×3 列（行动线 12 周日历 W1-4/W5-8/W9-12 × Agent 必读主线 8 篇 × Infra 必读主线 8 篇，零散导览层收口后的总入口图，双竖边「同时开啃/同时上强度」，resources/学习路线图.md 第零节，3 轮 1321→列宽 237 收敛，零 advisory，iframe height=860 实测 930px 下内容底约 760）。
+
 合计张数以本目录实际 html 文件数为准，全仓库 mermaid 清零。
