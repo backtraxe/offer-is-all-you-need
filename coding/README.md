@@ -14,6 +14,9 @@
 | [手写 attention.md](模型手撕/手写attention.md) | PyTorch MHA、numpy attention 前向、KV Cache 增量推理、RoPE、LayerNorm/RMSNorm、GQA 广播 | 字节算法岗/AML 一面 |
 | [手写 transformer 组件.md](模型手撕/手写transformer组件.md) | Pre-Norm Block + SwiGLU FFN、简易 MoE、BPE 合并、参数量/显存手算 | 美团、滴滴、通用 |
 | [对齐与并行代码.md](模型手撕/对齐与并行代码.md) | LoRA 层、DPO loss、GRPO advantage、TP 行切/列切、ZeRO-3 伪代码 | 阿里深挖、Infra 岗 |
+| [手写grpo-loss.md](模型手撕/手写grpo-loss.md) | 完整 GRPO Loss：组内优势→广播→log prob→IS ratio→clip/KL | 滴滴二面 2026-10（新题型） |
+| [手写蒸馏kl.md](模型手撕/手写蒸馏kl.md) | 蒸馏 KL + 温度 T² + 硬标签加权、黑盒/跨词表变体 | 字节频次表 22 次 |
+| [手写kv显存公式.md](模型手撕/手写kv显存公式.md) | KV Cache 显存五因子公式、GQA/SWA/MLA 变体、TP 切分 | 小米 MiMo 团队 2026-10 |
 
 ### 工程手撕/（应用/Infra 岗重点）
 
@@ -32,6 +35,9 @@
 
 ## 备考权重速查
 
-- **算法岗**：MHA / TransformerBlock / RoPE > MoE / DPO > 通用算法
-- **AI Infra 岗**：CUDA 算子 / 显存计算 > TP/ZeRO > MHA
+- **按出现频次刷**：[刷题频次映射表](刷题频次映射表.md)——字节频次表
+  与 2026-10 新题型到仓库文件的逐题对照（新题型 GRPO Loss / KV 公式
+  命中率爬升中，优先于旧高频）。
+- **算法岗**：MHA / TransformerBlock / RoPE / GRPO Loss > 蒸馏 KL / MoE / DPO > 通用算法
+- **AI Infra 岗**：CUDA 算子 / KV 显存公式 > TP/ZeRO > MHA
 - **应用岗**：最小 Agent / 滑动窗口 > LRU / Top-K / DP 中等题

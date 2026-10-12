@@ -183,10 +183,14 @@
 
 - **手撕题**
   - [题库导读](coding/README.md)
+  - [刷题频次映射表](coding/刷题频次映射表.md)
   - 模型手撕
     - [手写 Attention](coding/模型手撕/手写attention.md)
     - [手写 Transformer 组件](coding/模型手撕/手写transformer组件.md)
     - [对齐与并行代码](coding/模型手撕/对齐与并行代码.md)
+    - [手写 GRPO Loss](coding/模型手撕/手写grpo-loss.md)
+    - [手写蒸馏 KL](coding/模型手撕/手写蒸馏kl.md)
+    - [手写 KV 显存公式](coding/模型手撕/手写kv显存公式.md)
   - 工程手撕
     - [手写最小 Agent](coding/工程手撕/手写最小agent.md)
     - [CUDA 算子手撕](coding/工程手撕/cuda算子手撕.md)
