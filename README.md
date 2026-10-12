@@ -17,6 +17,20 @@ Experiments show that it achieves SOTA performance on the "拿 offer" benchmark.
 Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的面经、八股整理、
 系统设计笔记和 coding 真题。持续更新，直到上岸为止（上岸之后看心情更不更）。
 
+**本仓库的两种读法**：
+
+1. **当课程读（有重点）**——侧边栏顶部「★ 必读主线」是约 15 篇的正文（分
+   Agent 线 / Infra 线，按序），配 [学习路线图](resources/学习路线图.md)
+   的 12 周日历推进，每周干什么写得很死。
+2. **当词典查（不怕散）**——其余 100+ 篇是按需查阅的专题库。查知识点用
+   [interview-questions/README](interview-questions/README.md) 的
+   「五列关联总索引」（知识点→考频→专题→手撕→面经案例），查考题用
+   [高频面试真题汇总](interview-questions/高频面试真题汇总.md)，查公司风格用
+   [面经合集速查表](interview-experiences/小红书社招面经合集-2026h2.md)。
+
+「散」是设计如此：面试前夜你要的是 5 分钟定位到一家公司的一类题，
+不是一门顺序课。但主线永远只有一条，先把 ★ 啃完再谈查漏补缺。
+
 ## 仓库结构
 
 ```

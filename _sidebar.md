@@ -1,5 +1,10 @@
 - [首页](README.md)
 
+- **★ 必读主线（其余为按需查阅的词典）**
+  - [双轨总入口：学习路线图](resources/学习路线图.md)
+  - Agent 线（按序）：[知识串联与 Why 链](interview-questions/知识串联与why链.md) → [RAG 全链路](interview-questions/rag/rag全链路.md) → [检索与混合召回](interview-questions/rag/检索与混合召回.md) → [幻觉与事实性](interview-questions/rag/幻觉与事实性.md) → [Agent 基础与规划](interview-questions/agent/agent基础与规划.md) → [工具调用与 MCP](interview-questions/agent/工具调用与mcp.md) → [记忆与上下文工程](interview-questions/agent/记忆与上下文工程.md) → [Harness 工程实战](interview-questions/agent/harness工程实战.md) → [Agent 评测与观测闭环](interview-questions/agent/agent评测与观测闭环专题.md)
+  - Infra 线（按序）：[vLLM 与推理加速核心](interview-questions/inference/vllm与推理加速核心.md) → [长上下文推理与 KV 体系](interview-questions/inference/长上下文推理与kv体系.md) → [显存计算专题](interview-questions/显存计算专题.md) → [负载均衡专题](interview-questions/负载均衡专题.md) → [三维并行](interview-questions/distributed-training/三维并行.md) → [RLHF 与对齐](interview-questions/训练与对齐/rlhf与对齐.md) → [RL 训练工程实战](interview-questions/训练与对齐/rl训练工程实战.md)
+
 - **零基础入门**
   - [入门导读](basics/README.md)
   - [01 什么是大模型](basics/01-什么是大模型.md)
