@@ -106,7 +106,7 @@
 | **分布式训练** ||||
 | DP/TP/PP/EP + ZeRO | 高 | ★[distributed-training/三维并行](distributed-training/三维并行.md) + [zero与显存优化](distributed-training/zero与显存优化.md) | [对齐与并行代码](../coding/模型手撕/对齐与并行代码.md) TP 节 | 平头哥并行通信板块 |
 | 集合通信 / NCCL | 高 | [distributed-training/通信与网络专题](distributed-training/通信与网络专题.md) | — | 阿里云三轮、宇树三轮 |
-| Megatron 与训练框架 | 中高 | [megatron源码深度拆解](distributed-training/megatron源码深度拆解.md) + [训练框架与稳定性](distributed-training/训练框架与稳定性.md) + [训练生产排障手册](distributed-training/训练生产排障手册.md) | — | 万卡三面标准题 |
+| Megatron / DeepSpeed / 框架选型 | 中高 | [训练栈全链路专题](distributed-training/训练栈全链路专题.md)（平台→框架→RL 链路图）+ [megatron源码深度拆解](distributed-training/megatron源码深度拆解.md) + [deepspeed专题](distributed-training/deepspeed专题.md)（配置卡片/ckpt 工程）+ [训练框架与稳定性](distributed-training/训练框架与稳定性.md) | — | 万卡三面标准题 |
 | RL 系统（训推一体/权重同步） | 新高 | [rl系统训推一体专题](distributed-training/rl系统训推一体专题.md) | — | 「训练组也考推理优化」信号 |
 
 ## 四、公司面试风格差异（面经体现）

@@ -194,6 +194,8 @@
     - [三维并行](interview-questions/distributed-training/三维并行.md)
     - [ZeRO 与显存优化](interview-questions/distributed-training/zero与显存优化.md)
     - [训练框架与稳定性](interview-questions/distributed-training/训练框架与稳定性.md)
+    - [训练栈全链路专题](interview-questions/distributed-training/训练栈全链路专题.md)
+    - [DeepSpeed 专题](interview-questions/distributed-training/deepspeed专题.md)
     - [训练生产排障手册](interview-questions/distributed-training/训练生产排障手册.md)
     - [训练框架 2026 新进展](interview-questions/distributed-training/训练框架2026新进展.md)
     - [RL 系统训推一体专题](interview-questions/distributed-training/rl系统训推一体专题.md)
