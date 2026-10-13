@@ -68,7 +68,7 @@
 | **公共底盘** ||||
 | Transformer / Self-Attention | 极高 | [llm基础/](llm基础) | [coding/手写attention](../coding/模型手撕/手写attention.md) | 平头哥五板块、字节多模态 |
 | KV Cache 原理与显存估算 | 极高 | ★[inference/长上下文推理与kv体系](inference/长上下文推理与kv体系.md) + [显存计算专题](显存计算专题.md) | [coding/手写kv显存公式](../coding/模型手撕/手写kv显存公式.md) | 小米手撕公式、月之暗面预算治理 |
-| MHA→GQA/MQA→MLA 演进 | 高 | [注意力变体2026专题](inference/注意力变体2026专题.md) | coding/手写attention GQA 节 | 小米 SWA 情报 |
+| MHA→GQA/MQA→MLA 演进 | 高 | [注意力变体2026专题](inference/注意力变体2026专题.md) + [mla深度穿透专题](llm基础/mla深度穿透专题.md)（矩阵吸收/手撕 cache 账） | coding/手写attention GQA 节 | 小米 SWA 情报 |
 | RoPE 位置编码 | 高 | [llm基础/位置编码与norm](llm基础/位置编码与norm.md) | coding/手写attention RoPE 节 | 字节频次表 32 次 |
 | **RAG** ||||
 | RAG 全链路 | 极高 | ★[rag/rag全链路](rag/rag全链路.md) | [system-design/设计企业知识库agent](../system-design/设计企业知识库agent.md) | 字节评测岗三层口径 |
