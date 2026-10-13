@@ -88,6 +88,7 @@
 | **训练与对齐** ||||
 | PPO / DPO / GRPO 差异与推导 | 极高（算法岗） | ★[rlhf与对齐](训练与对齐/rlhf与对齐.md) + [经典rl地基专题](训练与对齐/经典rl地基专题.md)（MDP→贝尔曼→PPO 全程映射 RLHF）+ [rl训练工程实战](训练与对齐/rl训练工程实战.md) | [coding/手写grpo-loss](../coding/模型手撕/手写grpo-loss.md) + [对齐与并行代码](../coding/模型手撕/对齐与并行代码.md) | 滴滴四连追问、GRPO 13 关 |
 | SFT / OPD / RL 选型 | 新高 | [post-training蒸馏生产线专题](训练与对齐/post-training蒸馏生产线专题.md) | [coding/手写蒸馏kl](../coding/模型手撕/手写蒸馏kl.md) | 滴滴选型五连问、字节多模态 |
+| SFT 数据侧：loss mask / 端到端实战口径 | 高 | [多轮对话loss-mask专题](训练与对齐/多轮对话loss-mask专题.md) + [从零训练小模型实战专题](训练与对齐/从零训练小模型实战专题.md) | loss÷mask之和手算（专题内） | 「你训过模型吗」分水岭题 |
 | Reward 设计 / 防长度 hack / 熵坍缩 | 高 | [rl奖励设计专题](训练与对齐/rl奖励设计专题.md) | rl训练工程实战 | 字节 agent RL 三面、字节多模态 |
 | 训推不一致 / 异步 rollout | 高（RL infra） | [rl训练工程实战](训练与对齐/rl训练工程实战.md) + [verl深度拆解](训练与对齐/verl深度拆解.md) | — | 字节 agent RL 三面、面试官接缝复盘 |
 | LoRA 与参数高效微调 | 极高 | [训练与对齐/lora与参数高效微调](训练与对齐/lora与参数高效微调.md) | 对齐与并行代码 LoRA 节 | 各类算法岗通考 |
@@ -95,6 +96,7 @@
 | **推理部署** ||||
 | vLLM / PagedAttention / 连续批处理 | 高 | ★[inference/vllm与推理加速核心](inference/vllm与推理加速核心.md) + [vllm与sglang深度对比](inference/vllm与sglang深度对比.md) | — | 字节 infra 一面、理想一面 |
 | 请求过一个引擎的全过程 | 高 | [inference/推理引擎选型与源码路线](inference/推理引擎选型与源码路线.md) + [源码解读/](inference/源码解读) | — | 面经合集二次调研新批 |
+| 服务化层：Triton / ensemble / BLS | 中（新补） | [inference/triton-inference-server专题](inference/triton-inference-server专题.md) | — | 「多模型混部怎么搭」场景题 |
 | 量化（对称/非对称/QAT/FP8） | 高 | [蒸馏与剪枝专题](蒸馏与剪枝专题.md) + [inference/量化与压缩](inference/量化与压缩.md) | INT8 scale 手算 | 字节 infra 题单、2276 赞视频 |
 | PD 分离 / 负载均衡 / 前缀缓存 | 高 | ★[负载均衡专题](负载均衡专题.md) + [agentic-serving专题](inference/agentic-serving专题.md) | 模考卷 B 第 4-5 题 | 平头哥 HiCache/ radix 追问 |
 | CUDA / GEMM / Bank 冲突 | 高 | [cuda与kernel专题](cuda与kernel专题.md) | [coding/cuda算子手撕](../coding/工程手撕/cuda算子手撕.md) | 平头哥现场画图、地平线 21 问 |

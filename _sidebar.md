@@ -84,6 +84,8 @@
     - [扩散语言模型专题](interview-questions/llm基础/扩散语言模型专题.md)
   - 训练与对齐
     - [预训练与 SFT](interview-questions/训练与对齐/预训练与sft.md)
+    - [从零训练小模型实战专题](interview-questions/训练与对齐/从零训练小模型实战专题.md)
+    - [多轮对话 loss mask 专题](interview-questions/训练与对齐/多轮对话loss-mask专题.md)
     - [数据工程专题](interview-questions/训练与对齐/数据工程专题.md)
     - [合成数据工程专题](interview-questions/训练与对齐/合成数据工程专题.md)
     - [Scaling Law 与范式迁移](interview-questions/训练与对齐/scaling-law与范式迁移.md)
@@ -155,6 +157,7 @@
   - 推理部署（Inference）
     - [vLLM 与推理加速核心](interview-questions/inference/vllm与推理加速核心.md)
     - [推理调度专题](interview-questions/inference/推理调度专题.md)
+    - [Triton Inference Server 专题](interview-questions/inference/triton-inference-server专题.md)
     - [多 LoRA Serving 专题](interview-questions/inference/多lora-serving专题.md)
     - [长上下文推理与 KV 多级体系](interview-questions/inference/长上下文推理与kv体系.md)
     - [KV Offload 与分层存储专题](interview-questions/inference/kv-offload与分层存储专题.md)
