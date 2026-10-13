@@ -49,6 +49,7 @@
   - [考点地图（README）](interview-questions/README.md)
   - [高频面试真题汇总](interview-questions/高频面试真题汇总.md)
   - [排障面试实战题库](interview-questions/排障面试实战题库.md)
+  - [事故复盘案例集](interview-questions/事故复盘案例集.md)
   - [负载均衡专题](interview-questions/负载均衡专题.md)
   - [显存计算专题](interview-questions/显存计算专题.md)
   - [CUDA 与 Kernel 专题](interview-questions/cuda与kernel专题.md)

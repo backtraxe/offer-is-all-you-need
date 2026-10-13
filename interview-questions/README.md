@@ -101,7 +101,7 @@
 | PD 分离 / 负载均衡 / 前缀缓存 | 高 | ★[负载均衡专题](负载均衡专题.md) + [agentic-serving专题](inference/agentic-serving专题.md) | 模考卷 B 第 4-5 题 | 平头哥 HiCache/ radix 追问 |
 | CUDA / GEMM / Bank 冲突 | 高 | [cuda与kernel专题](cuda与kernel专题.md) | [coding/cuda算子手撕](../coding/工程手撕/cuda算子手撕.md) | 平头哥现场画图、地平线 21 问 |
 | 仿真 / Configurator / 性能表 | 新高 | [profiling与性能分析专题](profiling与性能分析专题.md) + [推理压测与容量规划专题](inference/推理压测与容量规划专题.md) + [推理profile实战专题](inference/推理profile实战专题.md)（抓 trace→优化动作闭环） | 收益条件公式（[合集十九节](../interview-experiences/小红书社招面经合集-2026h2.md)） | 小米仿真连环问 |
-| 服务排障 runbook（p99/抢占/OOM/慢节点） | 高（运维面分水岭） | [排障面试实战题库](排障面试实战题库.md)（30 题四段论）+ [推理服务排障深挖手册](inference/推理服务排障深挖手册.md) + [训练生产排障手册](distributed-training/训练生产排障手册.md) + [agent线上排障手册](agent/agent线上排障手册.md) | — | 「线上 p99 毛刺怎么排」 |
+| 服务排障 runbook（p99/抢占/OOM/慢节点） | 高（运维面分水岭） | [排障面试实战题库](排障面试实战题库.md)（30 题四段论）+ [事故复盘案例集](事故复盘案例集.md)（15 案 postmortem 叙事）+ 三篇排障手册（推理/训练/Agent） | — | 「线上 p99 毛刺怎么排」「讲一个棘手问题」 |
 | 国产卡栈（MLU/NPU） | 中高 | [国产卡生态专题](国产卡生态专题.md) + [国产卡推理引擎适配专题](国产卡推理引擎适配专题.md) | — | 寒武纪三轮、字节国产线 |
 | **分布式训练** ||||
 | DP/TP/PP/EP + ZeRO | 高 | ★[distributed-training/三维并行](distributed-training/三维并行.md) + [zero与显存优化](distributed-training/zero与显存优化.md) | [对齐与并行代码](../coding/模型手撕/对齐与并行代码.md) TP 节 | 平头哥并行通信板块 |
