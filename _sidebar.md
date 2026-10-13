@@ -73,6 +73,7 @@
   - [国产推理芯片栈专题](interview-questions/国产推理芯片栈专题.md)
   - [国产卡推理引擎适配专题](interview-questions/国产卡推理引擎适配专题.md)
   - [评测题专项](interview-questions/评测题专项.md)
+  - [评测体系实战专题](interview-questions/评测体系实战专题.md)
   - [沟通与 HR 面专题](interview-questions/沟通与hr面专题.md)
   - [面试四周冲刺自检清单](interview-questions/面试四周冲刺自检清单.md)
   - [知识串联与 Why 链](interview-questions/知识串联与why链.md)
