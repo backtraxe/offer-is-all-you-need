@@ -81,7 +81,7 @@
 | 工具调用 / Function Calling / MCP | 极高 | ★[agent/工具调用与mcp](agent/工具调用与mcp.md) + [mcp与工具调用深度对比](agent/mcp与工具调用深度对比.md) | JSON 兜底三件套（[模拟面试](../resources/模拟面试与口语化表达.md)） | 滴滴连问 4 道 MCP |
 | Skills 机制 | 新高 | [agent/agent-skills详解](agent/agent-skills详解.md) | — | 字节追 Skills 底层 |
 | 记忆分层 / 上下文工程 | 高 | ★[agent/记忆与上下文工程](agent/记忆与上下文工程.md) + [上下文压缩与记忆训练专题](agent/上下文压缩与记忆训练专题.md) | 模考卷 A 第 3 题 | 「第二十轮丢信息」排查链 |
-| Harness / 评测 / 观测闭环 | 高（爬升） | ★[agent/harness工程实战](agent/harness工程实战.md) + [agent评测与观测闭环专题](agent/agent评测与观测闭环专题.md) + [agent线上排障手册](agent/agent线上排障手册.md) | 模考卷 A 第 9 题 | 字节实习面六连问、某厂画架构 |
+| Harness / 评测 / 观测闭环 | 高（爬升） | ★[agent/harness工程实战](agent/harness工程实战.md) + [agent评测与观测闭环专题](agent/agent评测与观测闭环专题.md) + [agent线上排障手册](agent/agent线上排障手册.md) + [agent线上稳定性运营专题](agent/agent线上稳定性运营专题.md) | 模考卷 A 第 9 题 | 字节实习面六连问、某厂画架构 |
 | 安全 / 红队 / Guardrail | 高（新题块） | [agent/agent安全与防护](agent/agent安全与防护.md) + [guardrail系统专题](agent/guardrail系统专题.md) | — | 2026 安全攻略 18 题 |
 | 多 Agent 协作与状态仲裁 | 中 | [agent/多agent与评测](agent/多agent与评测.md) | 模考卷 A 第 10 题 | 面试官追问链、抖音场景题 |
 | Agentic RL | 高（爬升） | [训练与对齐/agentic-rl专题](训练与对齐/agentic-rl专题.md) + [agentic-rl前沿手法专题](训练与对齐/agentic-rl前沿手法专题.md)（Search-R1/ReTool/OPD）+ [rl环境工程专题](训练与对齐/rl环境工程专题.md) | [coding/手写grpo-loss](../coding/模型手撕/手写grpo-loss.md) | 字节 agent RL 三面、美团 M17 教程 |

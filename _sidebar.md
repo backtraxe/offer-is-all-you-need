@@ -133,6 +133,7 @@
     - [Agent Skills 详解](interview-questions/agent/agent-skills详解.md)
     - [Harness 工程实战](interview-questions/agent/harness工程实战.md)
     - [Agent 线上排障手册](interview-questions/agent/agent线上排障手册.md)
+    - [Agent 线上稳定性运营专题](interview-questions/agent/agent线上稳定性运营专题.md)
     - [观测与 Trace 工程](interview-questions/agent/观测与trace工程.md)
     - [决策模型与 Jev](interview-questions/agent/决策模型与jev.md)
     - [多 Agent 与评测](interview-questions/agent/多agent与评测.md)
