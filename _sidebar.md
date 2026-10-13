@@ -182,6 +182,7 @@
     - [推理服务 SLO 与运营](interview-questions/inference/推理服务slo与运营.md)
     - [推理服务排障深挖手册](interview-questions/inference/推理服务排障深挖手册.md)
     - [推理压测与容量规划专题](interview-questions/inference/推理压测与容量规划专题.md)
+    - [推理 Profile 实战专题](interview-questions/inference/推理profile实战专题.md)
     - [推理多租户与成本归因专题](interview-questions/inference/推理多租户与成本归因专题.md)
     - [推理 Infra 社招面经与备战](interview-questions/inference/推理infra社招面经与备战.md)
     - 源码解读专题
