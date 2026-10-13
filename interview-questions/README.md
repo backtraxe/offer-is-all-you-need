@@ -84,9 +84,9 @@
 | Harness / 评测 / 观测闭环 | 高（爬升） | ★[agent/harness工程实战](agent/harness工程实战.md) + [agent评测与观测闭环专题](agent/agent评测与观测闭环专题.md) | 模考卷 A 第 9 题 | 字节实习面六连问、某厂画架构 |
 | 安全 / 红队 / Guardrail | 高（新题块） | [agent/agent安全与防护](agent/agent安全与防护.md) + [guardrail系统专题](agent/guardrail系统专题.md) | — | 2026 安全攻略 18 题 |
 | 多 Agent 协作与状态仲裁 | 中 | [agent/多agent与评测](agent/多agent与评测.md) | 模考卷 A 第 10 题 | 面试官追问链、抖音场景题 |
-| Agentic RL | 高（爬升） | [训练与对齐/agentic-rl专题](训练与对齐/agentic-rl专题.md) + [rl环境工程专题](训练与对齐/rl环境工程专题.md) | [coding/手写grpo-loss](../coding/模型手撕/手写grpo-loss.md) | 字节 agent RL 三面、美团 M17 教程 |
+| Agentic RL | 高（爬升） | [训练与对齐/agentic-rl专题](训练与对齐/agentic-rl专题.md) + [agentic-rl前沿手法专题](训练与对齐/agentic-rl前沿手法专题.md)（Search-R1/ReTool/OPD）+ [rl环境工程专题](训练与对齐/rl环境工程专题.md) | [coding/手写grpo-loss](../coding/模型手撕/手写grpo-loss.md) | 字节 agent RL 三面、美团 M17 教程 |
 | **训练与对齐** ||||
-| PPO / DPO / GRPO 差异与推导 | 极高（算法岗） | ★[rlhf与对齐](训练与对齐/rlhf与对齐.md) + [rl训练工程实战](训练与对齐/rl训练工程实战.md) | [coding/手写grpo-loss](../coding/模型手撕/手写grpo-loss.md) + [对齐与并行代码](../coding/模型手撕/对齐与并行代码.md) | 滴滴四连追问、GRPO 13 关 |
+| PPO / DPO / GRPO 差异与推导 | 极高（算法岗） | ★[rlhf与对齐](训练与对齐/rlhf与对齐.md) + [经典rl地基专题](训练与对齐/经典rl地基专题.md)（MDP→贝尔曼→PPO 全程映射 RLHF）+ [rl训练工程实战](训练与对齐/rl训练工程实战.md) | [coding/手写grpo-loss](../coding/模型手撕/手写grpo-loss.md) + [对齐与并行代码](../coding/模型手撕/对齐与并行代码.md) | 滴滴四连追问、GRPO 13 关 |
 | SFT / OPD / RL 选型 | 新高 | [post-training蒸馏生产线专题](训练与对齐/post-training蒸馏生产线专题.md) | [coding/手写蒸馏kl](../coding/模型手撕/手写蒸馏kl.md) | 滴滴选型五连问、字节多模态 |
 | Reward 设计 / 防长度 hack / 熵坍缩 | 高 | [rl奖励设计专题](训练与对齐/rl奖励设计专题.md) | rl训练工程实战 | 字节 agent RL 三面、字节多模态 |
 | 训推不一致 / 异步 rollout | 高（RL infra） | [rl训练工程实战](训练与对齐/rl训练工程实战.md) + [verl深度拆解](训练与对齐/verl深度拆解.md) | — | 字节 agent RL 三面、面试官接缝复盘 |
