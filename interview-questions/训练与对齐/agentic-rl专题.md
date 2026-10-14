@@ -17,6 +17,33 @@
 > 2026-02 GLM-5；官方报告/模型卡数字均括注来源，论文自述提升幅度与未核实
 > 项一律标明，见文末「口径与未核实说明」。
 
+## 〇、Agentic 三阶段训练管线总览（CPT → SFT → RL）
+
+进正文前先把地图放平：Agent 模型的训练不是「SFT + RL」两段，而是**三
+阶段管线（CPT → SFT → RL）**，各段的目标、数据形态与掩码口径完全不同：
+
+| 阶段 | 目标 | 数据形态 | 掩码 / loss 口径 |
+|---|---|---|---|
+| CPT（持续预训练） | 注入工具使用与环境交互先验：调用格式、常见 API 签名、文件系统 / 终端语感 | 含 tool call 格式与 observation 文本的大规模语料（文档、代码工单、合成轨迹混合） | 标准 next-token 全量回灌，基本不 mask |
+| SFT | 轨迹蒸馏，学「这一步该做什么动作」而非照抄工具返回 | 带角色分段的多轮轨迹（prompt / action / observation / action …），强模型蒸馏或人工标注 | observation token **必须被 mask 掉**，只在 prompt 与 action token 上算 loss |
+| RL | 在线 rollout 中按结果奖励 + 过程奖励调策略，学代价写不出来的取舍 | 真实环境跑出的整条轨迹（本文件正文的主战场） | 只对模型自采样的 action token 算 policy gradient；observation 天然不进 loss |
+
+**为什么 Agent 要单设 CPT 阶段**：基模预训练语料里几乎没有 tool call
+的语法、文件系统 / 终端长程交互的样本，模型连「函数参数长什么样、
+observation 之后该接什么」的先验都没有——指望 SFT 的小数据量同时教
+格式和策略，格式先学崩。CPT 先把先验打平，SFT 才能专注教动作选择。
+
+三阶段联动一句话：CPT 教先验、SFT 教动作、RL 教取舍——本文其余章节
+（第二章起的 credit assignment 与 reward 粒度）都是在回答第三阶段
+「取舍怎么教」的问题。
+
+最后收一条必被追问的题：**「SFT 为什么要 mask observation tokens」的
+一句话答案**——observation 是环境返回、不是策略要学的分布，让它进
+loss 等于纵容模型学着生成工具返回：既污染动作分布，又白白烧掉一大半
+loss 面。三种构造方式与完整推导见
+[多轮对话 loss mask 专题](./多轮对话loss-mask专题.md)；RL 侧「observation
+不进梯度但占上下文」的系统后果即本文件第一节的第三个本质差异。
+
 ## 一、直觉：单轮 RLVR 推广到多轮轨迹
 
 单轮 RLVR 的画面很简单：模型一次回答，规则一次打分（数学对答案、代码过

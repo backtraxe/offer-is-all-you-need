@@ -132,7 +132,7 @@ Vertex /Gemini API 的产品形态极薄：请求体加 `tools: [{googleSearch: 
   检索噪声。
 - 生态位扩张（2026-10 Vertex grounding overview 共 7 种）：Google
   Search /Google Maps /Agent Search（私有数据）/RAG Engine /
-  Elasticsearch /自带 search API /Web Grounding for Enterprise（强合规
+  Elasticsearch（工程层展开见 §1.5）/自带 search API /Web Grounding for Enterprise（强合规
   行业索引，$45/1k）/Grounding with Parallel web search。消费者侧的
   AI Overviews /AI Mode 即同套 grounding 的产品化。
 
@@ -156,6 +156,30 @@ Vertex /Gemini API 的产品形态极薄：请求体加 `tools: [{googleSearch: 
 事件的生态含义大于产品含义：**公网搜索 API 从此「去 Bing 化」**，
 中小开发者可选底座只剩 Google grounding（捆绑 Gemini）、Brave 独立
 索引、SERP 代理与 LLM 优化搜索三层——生态对比见第五节。
+
+### 1.5 Elasticsearch 工程层（RAG 里的倒排主力）
+
+▶ 面试题：ES 在 RAG 里怎么用、怎么调？—— 中高频，偏工程面。前面把 ES
+列为 grounding 生态的一站，这里把自建侧的工程账补齐。
+
+- **分词器选型**：英文/代码语料 `standard` 够用；中文知识库主力是
+  `ik_max_word`（切得细、召回优先、索引胖）vs `ik_smart`（切得粗、
+  精度优先）；前缀联想搜索用 `edge_ngram`（索引期做前缀展开），代价是
+  索引体积**放大经验量级约 5 到 10 倍**。
+- **双字段设计**：`text`（分词检索）+ `keyword`（精确过滤/聚合）双写是
+  基本功；向量字段 `dense_vector` 并列在同一条 document 里，一个 chunk
+  同时拥有倒排与向量两条路。
+- **检索调优**：filter 条件用 `term` 走 bitset 缓存（指向 `.keyword`
+  字段），别用 `match` 平白打分；深翻页禁 `from` + `size`——
+  `index.max_result_window` 官方口径默认一万条，超了直接报错，改用
+  `search_after`（带上一页最后一条的排序值继续拉）；`wildcard` 前缀
+  通配查询是线上事故源，真要前缀就上 `edge_ngram`。
+- **索引治理**：别名 + 滚动索引（重建时别名秒切、零停机）+ ILM 生命周期
+  策略（hot-warm-archived 自动滚动归档）；分片数的经验法则是单分片控制在
+  **经验量级约 20 到 50 GB 的体量**，按总数据量反推 primary shard 数。
+- **与向量召回的混合**：ES 自带 `knn` 查询能当向量一路；更常见的是 BM25
+  走 ES、向量走专门向量库（或同库并列），再 RRF 融合——混合召回的完整
+  选型与融合公式见 [检索与混合召回](./检索与混合召回.md)。
 
 ## 二、计费锚点：grounding 怎么收钱（2026-10 现行口径）
 
