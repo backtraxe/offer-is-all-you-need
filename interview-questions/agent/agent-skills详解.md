@@ -229,6 +229,31 @@ progressive disclosure，本质和 RAG 的『检索代替全量塞入』
 生效——skill 只是文本，它触发的**工具调用**仍走权限管线，
 这是最后一道闸。」
 
+## 生态新进展（2026-10-15 gh 调研增补，未编号避免挤占延伸阅读）
+
+Skill 生态正沿两条腿收敛：**标准注册表**与**可训练资产**。
+
+- **标准注册表收敛**:`anthropics/skills` 仓 star 数已逾 18 万(2026-10
+  gh 直查口径),配套的 Agent Skills 规范(agentskills.io)成为事实标准。
+  规范极薄——SKILL.md 的 YAML frontmatter 只要求 name 与 description
+  两个字段,正文存指令,scripts/references 自组织;官方把驱动 Claude 文档
+  能力的 docx/pdf/pptx/xlsx 四个生产级 skill 以 source-available 形式放出,
+  **看「写得好的 skill 长什么样」读这四个参考实现比读博客有效**;plugin
+  marketplace 让 skill 能一行命令安装分发——分发链路也标准化了。
+- **skill 也能被训练**:microsoft/SkillOpt(star 逾 1.8 万,方法见
+  arXiv:2605.23904)把 skill 文档当作**冻结 agent 的可训练参数**,用深度
+  学习的纪律做文本空间优化:rollout 打分 → optimizer 模型产出有界的
+  add/delete/replace 编辑 → 只在 held-out 验证集严格变优时才接受;配文本版
+  学习率预算与被拒编辑缓冲防震荡;部署时零额外调用,产物是一个 300-2000
+  token 的 best_skill.md。官方自报口径:6 基准 × 7 模型 × 3 种 harness 的
+  52 个格子全部 best 或并列第一;GPT-5.5 上 direct chat +23.5 分、Codex
+  环内 +24.8、Claude Code 环内 +19.1。夜间版 SkillOpt-Sleep(harvest →
+  mine → replay → consolidate,过验证门)把「睡觉时自我进化」做成 CLI。
+- **面试对接**:「渐进式加载」之后自然的升级问法是**skill 能不能从经验
+  里自动变好**——答三档演进:手写 → 强模型一次性生成 → 带验证门的迭代
+  训练(SkillOpt 是第三档代表)。它把文本梯度/OPD 的思路落到了 agent
+  资产层,和记忆产品化专题的文件记忆是同一种「文本即状态」的世界观。
+
 ## 十、延伸阅读（仓内）
 
 - 源码实现：[Pi 源码分析 · Skills 一节](./pi-agent源码分析.md)。

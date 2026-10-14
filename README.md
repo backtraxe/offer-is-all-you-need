@@ -49,6 +49,9 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-15：GitHub 新锐雷达（学习资源清单 §1.6，gh 直查 11 仓星标）+ 五处专题补丁：
+  skills 生态新进展（18 万星注册表 + SkillOpt 训练 skill）、nanochat 全栈参照系、
+  SimpleMem/EvolveMem 开源记忆参照、AgentCPM 4B 长程全开源栈、KTransformers 异构推理行
 - 2026-10-15：查漏补缺批——32 个新面经考点覆盖审计后补 12 处薄弱点：
   MCP 拒绝降级/SSE 续传、run 级版本锁定、多租户配额、Tool 端硬校验、
   DeepEP 机制拆解（官方数字）、MoE 排障症状 g、Agentic 三阶段对照、

@@ -308,6 +308,26 @@ GPU 长尾闲置组成**（结构性工程估算，非引用数字）；金句�
 体现为 curation 期的一次性镜像构建与持续存储**。架构上**先优化 GPU 利用率
 （异步化）再优化环境池命中率**，顺序反了收益微乎其微。
 
+## 参照系：AgentCPM——4B 也能跑长程探索的全开源栈
+
+OpenBMB 联合清华 NLP/人大发布的 AgentCPM 系列(gh 2026-10 直查),正好
+把本篇反复强调的「环境-沙箱-评测三件套很难一次凑齐」做成了开箱即用:
+
+- **AgentCPM-Explore(4B)**:官方口径首个以 4B 参数量登上 GAIA、HLE、
+  BrowseComp 等八个长程 agent 榜单的开源模型,可连续交互 100+ 轮。意义
+  不在分数,而在**小参数量加长程**这条组合线第一次有了训练、推理、工具
+  沙箱全部开源的完整样板——想复现「端到端 agent 训练闭环」,它是目前
+  最小参照系。
+- **三件套逐一对应本篇地图**:AgentDock = 统一 MCP 工具沙箱管理调度
+  平台(docker compose 一键拉起,对应 §五);AgentRL = 全异步 agent RL
+  训练框架(对应 §六 rollout 调度);AgentToLeaP = 一键评测框架(对应
+  §四 verifier 侧)。
+- **AgentCPM-Report(8B,MiniCPM4.1 底座)**:平均约 40 轮检索加近百轮
+  思维链生成万字报告,官方口径对标闭源 deep research 系统;主打离线
+  私有化部署(UltraRAG + vLLM + Milvus,另有 llama.cpp CPU 版)。
+- **面试引用点**:被问「你怎么看小模型 agent」时,4B 跑满上百轮交互 +
+  八个长程榜在列,是两个现成论据(注意标官方口径,勿当第三方结论)。
+
 ## 八、▶ 面试题 10 条（全收）
 
 **Q1【极高】Gym 的 step 五元组里 terminated 和 truncated 为什么要分开？**
