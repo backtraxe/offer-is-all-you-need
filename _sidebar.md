@@ -167,6 +167,7 @@
     - [vLLM 与推理加速核心](interview-questions/inference/vllm与推理加速核心.md)
     - [推理调度专题](interview-questions/inference/推理调度专题.md)
     - [推理并行策略决策专题](interview-questions/inference/推理并行策略决策专题.md)
+    - [DCP 解码上下文并行专题](interview-questions/inference/dcp解码上下文并行专题.md)
     - [Triton Inference Server 专题](interview-questions/inference/triton-inference-server专题.md)
     - [多 LoRA Serving 专题](interview-questions/inference/多lora-serving专题.md)
     - [长上下文推理与 KV 多级体系](interview-questions/inference/长上下文推理与kv体系.md)
