@@ -49,6 +49,9 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-15：Vera Rubin 调优实录专题——SGLang 团队 Kimi K3 新硬件四板斧
+  （MLA 深流水线 +16%/split-KV 先读后算 +20%/MoE 尾融合省 276 次 launch/KDA
+  barrier 消除 +20%/饱和转换 2.5×/Miles RL 曲线跨硬件贴合）
 - 2026-10-15：Attention 的 Profile 实战专题——naive 到 SDPA 四后端逐 trace 拆解
   （math 慢 3.7 倍三段原因链/flash 13% occupancy 是设计/cuDNN 0% 是 CUPTI 盲区/
   kernel 名当指纹读/CPU 活搬进了库里）

@@ -185,6 +185,7 @@
     - [vLLM vs SGLang 深度对比](interview-questions/inference/vllm与sglang深度对比.md)
     - [TensorRT-LLM 专题](interview-questions/inference/tensorrt-llm专题.md)
     - [推理引擎 2026 新进展](interview-questions/inference/推理引擎2026新进展.md)
+    - [Vera Rubin 调优实录专题](interview-questions/inference/vera-rubin调优实录专题.md)
     - [推理服务 SLO 与运营](interview-questions/inference/推理服务slo与运营.md)
     - [推理服务排障深挖手册](interview-questions/inference/推理服务排障深挖手册.md)
     - [推理压测与容量规划专题](interview-questions/inference/推理压测与容量规划专题.md)
