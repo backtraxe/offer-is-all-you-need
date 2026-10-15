@@ -49,6 +49,11 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-15：投机解码2026专题再补（jarvislabs 四法实测）——Suffix
+  机制深挖（双后缀树/D(N) 置信度贪心扩展/CPU 自适应 MAX_SPEC）+ IBM
+  MLP Speculator 边栏（逐头 loss、两阶段训练、0.12.0 未完全支持坑位）+
+  8B/70B×对话/代码实测矩阵（8B 计算受限 Suffix 赢代码、70B 带宽受限
+  EAGLE-3 双赢；落地公式：先 Suffix 摸天花板再决定是否上 EAGLE-3）
 - 2026-10-15：训推逐位一致专题（vLLM 官方长文：推理 kernel 定数值、训练
   只补反向；diff=0 五要素；DSV4-Flash 逐算子 recipe——Top-K 固定平局、
   跨卡归约移出比较路径、CUDA Graph 三冲突；rollout 91.3%/87.5% 保住 A；
