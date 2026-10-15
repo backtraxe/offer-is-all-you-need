@@ -212,7 +212,8 @@ specialization、生产消费流水"即可，不用背 kernel 代码。
 
 | 追问 | 答题要点 |
 |---|---|
-| 为什么用 Decoder-only 而不是 Encoder-Decoder？ | ① 生成任务天然是自回归的，causal mask 的 Decoder 结构简单统一；② Decoder-only 在 zero-shot/少样本 generalization 上表现更好（有研究指出 full attention 的 prefix-LM 结构 bidirectional 部分会引入噪声）；③ prefill 时输入也走同一条路径，工程上 KD/蒸馏/KV Cache 都更顺。代价是理解类任务不如 Encoder 双向建模。——**高频**（腾讯/阿里） |
+| 为什么用 Decoder-only 而不是 Encoder-Decoder？ | ① 生成任务天然是自回归的，causal mask 的 Decoder 结构简单统一；② Decoder-only 在 zero-shot/少样本 generalization 上表现更好（有研究指出 full attention 的 prefix-LM 结构 bidirectional 部分会引入噪声）；③ prefill 时输入也走同一条路径，工程上 KD/蒸馏/KV Cache 都更顺。代价是理解类任务不如 Encoder 双向建模。——**高频**（腾讯/阿里）。补充三条 2026 版论述：④ **数据效率**：自回归目标下每个 token 都是监督信号（1000 token 产 999 个训练任务），span corruption 类目标只有被遮 token 产 loss 且遮盖策略本身是超参——规模法则下数据吞吐效率是胜负手；⑤ **训推一致性**：decoder-only 训练与推理共用完全同一张计算图，encoder-decoder 存在 teacher forcing 与前缀生成的 exposure bias 管理成本；⑥ **ICL 天然契合**：prompt 与生成共享同一自回归序列，few-shot 示例注入无 encoder 信息瓶颈。Encoder-Decoder 的保留地：输入理解密集（翻译/摘要/QA）、输入输出长度悬殊、非自回归并行生成。 |
+| QKV 里 K 的作用是什么？能否省 K 直接用 V 匹配？ | K 是「匹配器/索引」，V 是「内容」——**匹配与读取解耦**：一个位置可以「容易被关注」（好 K）但「贡献特定变换后的信息」（好 V）。省 K 等于强制 W_K = W_V：① 匹配与读取锁死，可学变换空间被压缩，多头丢失「不同匹配模式」的多样性；② **对称性破坏**：QK^T 有方向性（代词找先行词 ≠ 先行词找代词），QV^T 是对称的，查询与被查询不该对称；③ 独立 K 投影多一条梯度通路，共享后部分任务收敛更慢。所以没人省 K，省的是 KV 的**头数**（MQA/GQA）或**维度**（MLA）——存储侧压缩，不解耦匹配与读取。 |
 | 因果 mask 是什么？ | 上三角置 $-\infty$ 再过 softmax，保证第 t 个位置只能看到 ≤ t 的 token；训练和推理逻辑统一（teacher forcing 也靠它防泄漏）。 |
 | 残差连接为什么必须有？ | 深网络梯度通路（恒等映射），缓解梯度消失；配合 Pre-Norm 后残差通路是"干净"的，能训练上百层。 |
 | FFN 为什么要先把维度放大再缩回？SwiGLU 哪里好？ | FFN 提供逐位置非线性变换和"记忆库"，扩维后容量更大；SwiGLU = Swish(xW₁) ⊙ (xW₃) 再过 W₂，门控结构比 GELU 两层 FFN 同参数下效果更稳，代价是三个矩阵。 |

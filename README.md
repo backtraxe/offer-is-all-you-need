@@ -49,6 +49,10 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-15：llm基础小补丁（八道面试题-1 吸收）——省 K 之问（匹配/
+  读取解耦+QV^T 对称性破坏）+ decoder-only 胜出补三条 2026 论述（数据
+  效率 999/1000、训推同图无 exposure bias、ICL 无信息瓶颈）+ 位置编码
+  表补 NoPE/CoPE 边角变体
 - 2026-10-15：投机解码2026专题再补（jarvislabs 四法实测）——Suffix
   机制深挖（双后缀树/D(N) 置信度贪心扩展/CPU 自适应 MAX_SPEC）+ IBM
   MLP Speculator 边栏（逐头 loss、两阶段训练、0.12.0 未完全支持坑位）+

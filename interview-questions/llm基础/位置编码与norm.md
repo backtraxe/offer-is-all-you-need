@@ -108,6 +108,15 @@ m 是一个按头不同的斜率（head i 用 $m_i = 2^{-8i/h}$）。离得越�
 | **RoPE** | Q/K 旋转 | 强（内积只依赖差） | 好，配 NTK/YaRN | LLaMA/Qwen/GLM |
 | ALiBi | score 线性 bias | 强 | 最好 | BLOOM/Falcon |
 
+**两个面试官爱考的「边角」变体**：
+
+- **NoPE（无位置编码）**：causal mask 的 decoder-only 本身就能隐式
+  学到位置信息（第 t 步可见前缀长度即位置特征），部分任务上去掉
+  显式编码也可行——被问「位置编码可不可以不要」时答这个，别慌；
+- **CoPE（上下文位置编码）**：位置不由 token 计数决定，而由**上下文
+  语义单元**动态决定——适合需要按「句/段/事件」定位的场景（如代码
+  按函数边界），是 RoPE 家族之外的研究线，知道名字和动机即可。
+
 ## 四、Norm
 
 ▶ 面试题：Pre-Norm vs Post-Norm？LayerNorm vs RMSNorm，为什么大模型用 RMSNorm？—**高频**（腾讯）
