@@ -235,6 +235,7 @@
     - [手写 GRPO Loss](coding/模型手撕/手写grpo-loss.md)
     - [手写蒸馏 KL](coding/模型手撕/手写蒸馏kl.md)
     - [手写 KV 显存公式](coding/模型手撕/手写kv显存公式.md)
+    - [手写投机解码](coding/模型手撕/手写投机解码.md)
   - 工程手撕
     - [手写最小 Agent](coding/工程手撕/手写最小agent.md)
     - [CUDA 算子手撕](coding/工程手撕/cuda算子手撕.md)

@@ -17,6 +17,7 @@
 | [手写grpo-loss.md](模型手撕/手写grpo-loss.md) | 完整 GRPO Loss：组内优势→广播→log prob→IS ratio→clip/KL | 滴滴二面 2026-10（新题型） |
 | [手写蒸馏kl.md](模型手撕/手写蒸馏kl.md) | 蒸馏 KL + 温度 T² + 硬标签加权、黑盒/跨词表变体 | 字节频次表 22 次 |
 | [手写kv显存公式.md](模型手撕/手写kv显存公式.md) | KV Cache 显存五因子公式、GQA/SWA/MLA 变体、TP 切分 | 小米 MiMo 团队 2026-10 |
+| [手写投机解码.md](模型手撕/手写投机解码.md) | draft-verify 贪心循环（20 行）、rejection sampling 采样版无损判定、期望加速比口算 | 2026 新题型预备（vLLM/SGLang 主线化后自然现场题） |
 
 ### 工程手撕/（应用/Infra 岗重点）
 

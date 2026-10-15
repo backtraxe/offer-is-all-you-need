@@ -49,6 +49,10 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-16：查漏补缺批——coding 新增手撕「手写 Speculative Decoding」
+  （贪心 verify 20 行 + rejection sampling 采样版 + 期望加速比三要素口算；
+  2026 投机主线化后的预备现场题），coding README/频次表/真题汇总三处
+  登记，投机解码 2026 专题回链
 - 2026-10-15：组合并行机制专题（进程组坐标化编址 rank=tp+t·(dp+d·pp)、
   连续性=同机=NVLink 的推导链、反例双输分析、EP 从 DP 维切出 EDP 五族组、
   「复制到哪梯度求和到哪」七行对账、tied embedding 与输出头两处完整网络
