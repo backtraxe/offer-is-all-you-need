@@ -174,6 +174,9 @@ bf16 ≈ 50 MB × 2 = 100 MB 的 HBM 流量被消掉；除以有效带宽就是
 
 ## 九、串联阅读
 
+- [torch.profiler 入门实战专题](./torch-profiler入门实战专题.md)：
+  系列第一篇（两个产物/三个侦探案例/速查表），本篇的 dispatch 与
+  compile 知识是它的升级版；
 - [Attention 的 Profile 实战专题](./attention的profile实战专题.md)：
   系列第三篇（SDPA 四后端+kenerl 指纹），本篇是第二篇（MLP 层），
   连读即完整课程；

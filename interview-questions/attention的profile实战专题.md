@@ -162,6 +162,8 @@ sm80）。**kernel 名就是指纹**——trace 里先扫名字再谈数字。
 
 ## 九、串联阅读
 
+- [torch.profiler 入门实战专题](./torch-profiler入门实战专题.md)：
+  系列第一篇（表 vs trace/侦探案例/速查表），先读它再读本篇更顺；
 - [线性层与 MLP 的 Profile 实战专题](./线性层与mlp的profile实战专题.md)：
   系列第二篇（epilogue/零 kernel op/compile 融合/Liger vs Inductor），
   与本篇连读即完整课程；

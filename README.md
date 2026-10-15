@@ -49,6 +49,10 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-15：torch.profiler 入门实战专题——Profiling 系列三部曲补齐
+  （表 vs trace 两产物/overhead vs compute 判定/三个侦探案例：首步 227µs 死区、
+  buffer 请求偏移、同 kernel 快慢不一/compile 两真相：融合在 dispatcher 层、
+  小 op 上 CPU 贵 2 倍/随身速查表）
 - 2026-10-15：线性层与 MLP 的 Profile 实战专题——Profiling 系列姊妹篇
   （epilogue 无单独 add/零 kernel op 名单/kernel 名 `_tn_` 指纹/compile 塌链融合
   中间量不出 HBM/Liger 89.4 vs 92.8µs 的特化 vs 通用取舍）
