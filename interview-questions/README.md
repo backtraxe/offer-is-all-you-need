@@ -104,7 +104,7 @@
 | 服务排障 runbook（p99/抢占/OOM/慢节点） | 高（运维面分水岭） | [排障面试实战题库](排障面试实战题库.md)（30 题四段论）+ [事故复盘案例集](事故复盘案例集.md)（15 案 postmortem 叙事）+ 三篇排障手册（推理/训练/Agent） | — | 「线上 p99 毛刺怎么排」「讲一个棘手问题」 |
 | 国产卡栈（MLU/NPU） | 中高 | [国产卡生态专题](国产卡生态专题.md) + [国产卡推理引擎适配专题](国产卡推理引擎适配专题.md) | — | 寒武纪三轮、字节国产线 |
 | **分布式训练** ||||
-| DP/TP/PP/EP + ZeRO | 高 | ★[distributed-training/三维并行](distributed-training/三维并行.md) + [zero与显存优化](distributed-training/zero与显存优化.md) + [inference/推理并行策略决策专题](inference/推理并行策略决策专题.md)（五问框架）+ [inference/dcp解码上下文并行专题](inference/dcp解码上下文并行专题.md)（DCP 深挖） | [对齐与并行代码](../coding/模型手撕/对齐与并行代码.md) TP 节 | 平头哥并行通信板块 |
+| DP/TP/PP/EP + ZeRO | 高 | ★[distributed-training/三维并行](distributed-training/三维并行.md) + [组合并行机制专题](distributed-training/组合并行机制专题.md)（坐标编址/EP 五族组/梯度三本账） + [zero与显存优化](distributed-training/zero与显存优化.md) + [inference/推理并行策略决策专题](inference/推理并行策略决策专题.md)（五问框架）+ [inference/dcp解码上下文并行专题](inference/dcp解码上下文并行专题.md)（DCP 深挖） | [对齐与并行代码](../coding/模型手撕/对齐与并行代码.md) TP 节 | 平头哥并行通信板块 |
 | 集合通信 / NCCL | 高 | [distributed-training/通信与网络专题](distributed-training/通信与网络专题.md) | — | 阿里云三轮、宇树三轮 |
 | Megatron / DeepSpeed / 框架选型 | 中高 | [训练栈全链路专题](distributed-training/训练栈全链路专题.md)（平台→框架→RL 链路图）+ [megatron源码深度拆解](distributed-training/megatron源码深度拆解.md) + [deepspeed专题](distributed-training/deepspeed专题.md)（配置卡片/ckpt 工程）+ [训练框架与稳定性](distributed-training/训练框架与稳定性.md) + [确定性训练专题](distributed-training/确定性训练专题.md)（比特级可复现）+ [训练光速手算实战专题](distributed-training/训练光速手算实战专题.md)（FSDP vs PP 光速判决书） | — | 万卡三面标准题 |
 | RL 系统（训推一体/权重同步） | 新高 | [rl系统训推一体专题](distributed-training/rl系统训推一体专题.md) | — | 「训练组也考推理优化」信号 |

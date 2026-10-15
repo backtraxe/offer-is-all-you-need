@@ -49,6 +49,10 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-15：组合并行机制专题（进程组坐标化编址 rank=tp+t·(dp+d·pp)、
+  连续性=同机=NVLink 的推导链、反例双输分析、EP 从 DP 维切出 EDP 五族组、
+  「复制到哪梯度求和到哪」七行对账、tied embedding 与输出头两处完整网络
+  特有通信；Megatron initialize_model_parallel 次序的最好背法）
 - 2026-10-15：llm基础小补丁（八道面试题-1 吸收）——省 K 之问（匹配/
   读取解耦+QV^T 对称性破坏）+ decoder-only 胜出补三条 2026 论述（数据
   效率 999/1000、训推同图无 exposure bias、ICL 无信息瓶颈）+ 位置编码

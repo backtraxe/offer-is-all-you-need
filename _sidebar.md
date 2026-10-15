@@ -210,6 +210,7 @@
       - [SGLang 请求全链路](interview-questions/inference/源码解读/sglang请求全链路.md)
   - 分布式训练
     - [三维并行](interview-questions/distributed-training/三维并行.md)
+    - [组合并行机制专题](interview-questions/distributed-training/组合并行机制专题.md)
     - [ZeRO 与显存优化](interview-questions/distributed-training/zero与显存优化.md)
     - [训练框架与稳定性](interview-questions/distributed-training/训练框架与稳定性.md)
     - [训练栈全链路专题](interview-questions/distributed-training/训练栈全链路专题.md)
