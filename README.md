@@ -49,6 +49,9 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-15：Attention 的 Profile 实战专题——naive 到 SDPA 四后端逐 trace 拆解
+  （math 慢 3.7 倍三段原因链/flash 13% occupancy 是设计/cuDNN 0% 是 CUPTI 盲区/
+  kernel 名当指纹读/CPU 活搬进了库里）
 - 2026-10-15：消费级硬件推理实战专题——FastH3 137.7 GiB 视频生成模型上 RTX 的
   六把刀（砍层/NVFP4 全层化/校准溢出案例/FP8 单位 scale 技巧/600 次测量剪枝/
   pinned 内存坑），每把刀挂面试题

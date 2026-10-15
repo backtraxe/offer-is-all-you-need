@@ -60,6 +60,7 @@
   - [语音与 Voice Agent 专题](interview-questions/语音与voice-agent专题.md)
   - [具身智能与 VLA 专题](interview-questions/具身智能与vla专题.md)
   - [Profiling 与性能分析专题](interview-questions/profiling与性能分析专题.md)
+  - [Attention 的 Profile 实战专题](interview-questions/attention的profile实战专题.md)
   - [数据工程专题](interview-questions/数据工程专题.md)
   - [蒸馏与剪枝专题](interview-questions/蒸馏与剪枝专题.md)
   - [消费级硬件推理实战专题](interview-questions/消费级硬件推理实战专题.md)
