@@ -49,6 +49,11 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-15：投机解码2026专题大补（vLLM/AMD 官方文吸收）——Gemma 4 MTP
+  中间形态（独立 ckpt 共享 KV）+ 两轴分类法 + DFlash anchor/KV 每层注入
+  vs EAGLE-3 输入拼接 + DSpark Markov head 补联合不一致（`of problem.`）+
+  AMD MI300X/355X 实测 2.87× 与 N∈4–7 调参法 + 训练工作流五坑（target 必须
+  自产响应/hidden 三模式/loss 不算数）+ 六家 draft 模型生态地图
 - 2026-10-15：低精度预训练专题（NVFP4 训练侧五味配方：微块缩放 16/E4M3
   scale/Hadamard 揉分布/2D 块对齐/随机舍入，12B×10T token 从零训 loss 贴
   FP8，训练三大死结的完整对答）
