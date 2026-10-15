@@ -62,6 +62,7 @@
   - [Profiling 与性能分析专题](interview-questions/profiling与性能分析专题.md)
   - [数据工程专题](interview-questions/数据工程专题.md)
   - [蒸馏与剪枝专题](interview-questions/蒸馏与剪枝专题.md)
+  - [消费级硬件推理实战专题](interview-questions/消费级硬件推理实战专题.md)
   - [LLMOps 与模型发布专题](interview-questions/llmops与模型发布专题.md)
   - [集群调度与资源管理专题](interview-questions/集群调度与资源管理专题.md)
   - [AI 编译器与 torch.compile 专题](interview-questions/ai编译器与torch-compile专题.md)

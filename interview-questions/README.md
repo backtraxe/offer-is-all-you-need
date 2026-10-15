@@ -97,7 +97,7 @@
 | vLLM / PagedAttention / 连续批处理 | 高 | ★[inference/vllm与推理加速核心](inference/vllm与推理加速核心.md) + [vllm与sglang深度对比](inference/vllm与sglang深度对比.md) | — | 字节 infra 一面、理想一面 |
 | 请求过一个引擎的全过程 | 高 | [inference/推理引擎选型与源码路线](inference/推理引擎选型与源码路线.md) + [源码解读/](inference/源码解读) | — | 面经合集二次调研新批 |
 | 服务化层：Triton / ensemble / BLS | 中（新补） | [inference/triton-inference-server专题](inference/triton-inference-server专题.md) | — | 「多模型混部怎么搭」场景题 |
-| 量化（对称/非对称/QAT/FP8） | 高 | [蒸馏与剪枝专题](蒸馏与剪枝专题.md) + [inference/量化与压缩](inference/量化与压缩.md) | INT8 scale 手算 | 字节 infra 题单、2276 赞视频 |
+| 量化（对称/非对称/QAT/FP8） | 高 | [蒸馏与剪枝专题](蒸馏与剪枝专题.md) + [inference/量化与压缩](inference/量化与压缩.md) + [消费级硬件推理实战专题](消费级硬件推理实战专题.md) | INT8 scale 手算 | 字节 infra 题单、2276 赞视频 |
 | PD 分离 / 负载均衡 / 前缀缓存 | 高 | ★[负载均衡专题](负载均衡专题.md) + [agentic-serving专题](inference/agentic-serving专题.md) | 模考卷 B 第 4-5 题 | 平头哥 HiCache/ radix 追问 |
 | CUDA / GEMM / Bank 冲突 | 高 | [cuda与kernel专题](cuda与kernel专题.md) | [coding/cuda算子手撕](../coding/工程手撕/cuda算子手撕.md) | 平头哥现场画图、地平线 21 问 |
 | 仿真 / Configurator / 性能表 | 新高 | [profiling与性能分析专题](profiling与性能分析专题.md) + [推理压测与容量规划专题](inference/推理压测与容量规划专题.md) + [推理profile实战专题](inference/推理profile实战专题.md)（抓 trace→优化动作闭环） | 收益条件公式（[合集十九节](../interview-experiences/小红书社招面经合集-2026h2.md)） | 小米仿真连环问 |
