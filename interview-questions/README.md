@@ -90,7 +90,7 @@
 | SFT / OPD / RL 选型 | 新高 | [post-training蒸馏生产线专题](训练与对齐/post-training蒸馏生产线专题.md) | [coding/手写蒸馏kl](../coding/模型手撕/手写蒸馏kl.md) | 滴滴选型五连问、字节多模态 |
 | SFT 数据侧：loss mask / 端到端实战口径 | 高 | [多轮对话loss-mask专题](训练与对齐/多轮对话loss-mask专题.md) + [从零训练小模型实战专题](训练与对齐/从零训练小模型实战专题.md) | loss÷mask之和手算（专题内） | 「你训过模型吗」分水岭题 |
 | Reward 设计 / 防长度 hack / 熵坍缩 | 高 | [rl奖励设计专题](训练与对齐/rl奖励设计专题.md) | rl训练工程实战 | 字节 agent RL 三面、字节多模态 |
-| 训推不一致 / 异步 rollout | 高（RL infra） | [rl训练工程实战](训练与对齐/rl训练工程实战.md) + [verl深度拆解](训练与对齐/verl深度拆解.md) | — | 字节 agent RL 三面、面试官接缝复盘 |
+| 训推不一致 / 异步 rollout | 高（RL infra） | [rl训练工程实战](训练与对齐/rl训练工程实战.md) + [verl深度拆解](训练与对齐/verl深度拆解.md) + [训推逐位一致专题](distributed-training/训推逐位一致专题.md)（diff=0 五要素+逐算子 recipe+Agent skill） | — | 字节 agent RL 三面、面试官接缝复盘 |
 | LoRA 与参数高效微调 | 极高 | [训练与对齐/lora与参数高效微调](训练与对齐/lora与参数高效微调.md) | 对齐与并行代码 LoRA 节 | 各类算法岗通考 |
 | 模型合并 / 基模合版 | 中（新信号） | [模型合并专题](训练与对齐/模型合并专题.md) | — | 字节 agent RL 三面 |
 | **推理部署** ||||

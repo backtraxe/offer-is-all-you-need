@@ -220,6 +220,7 @@
     - [训练框架 2026 新进展](interview-questions/distributed-training/训练框架2026新进展.md)
     - [低精度预训练专题](interview-questions/distributed-training/低精度预训练专题.md)
     - [RL 系统训推一体专题](interview-questions/distributed-training/rl系统训推一体专题.md)
+    - [训推逐位一致专题](interview-questions/distributed-training/训推逐位一致专题.md)
     - [Megatron 源码深度拆解](interview-questions/distributed-training/megatron源码深度拆解.md)
     - [通信与网络专题](interview-questions/distributed-training/通信与网络专题.md)
 

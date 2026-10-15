@@ -49,6 +49,10 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-15：训推逐位一致专题（vLLM 官方长文：推理 kernel 定数值、训练
+  只补反向；diff=0 五要素；DSV4-Flash 逐算子 recipe——Top-K 固定平局、
+  跨卡归约移出比较路径、CUDA Graph 三冲突；rollout 91.3%/87.5% 保住 A；
+  Agent+skill C0–C10 工程化；Nemotron 基线 0.56→0.22 vs 一致版不回落）
 - 2026-10-15：Kernel 工具链选型专题（cuBLAS→TVM/XLA→Triton→手写→
   Mojo/MAX 五层控制阶梯：每层给什么拿走什么、TVM 四挑战、Mojo 用 MLIR
   comptime 派发跨硬件、决策四问；L4 手写层与本仓三篇 GEMM/kernel 实战互接）
