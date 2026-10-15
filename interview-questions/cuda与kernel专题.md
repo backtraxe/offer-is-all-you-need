@@ -226,6 +226,12 @@ tl.dot 操作数自动 stash 进 SMEM、tl.load 的 mask + other 自动越界
 Blackwell 的细颗粒特性（warp spec、TMEM、2-CTA MMA）Triton-IR
 表达不了，Gluon 是补救方向，但前沿 attention 已经流向 CUDA 系。
 
+反面证据的精彩样本：2026-10 PyTorch 官方 FBTriton 案例——推荐系统
+TBE 稀疏算子整条前/反向用 Triton 重写，前向 1.28×、反向 1.22× 打赢
+模板生成 CUDA，赢法不是搬得少而是**阈值选得对**（SL 32→256 胜负带
+实现带宽 5.8×），完整拆解见
+[FBTriton 与稀疏算子 Kernel 实战专题](./fbtriton与稀疏算子kernel实战专题.md)。
+
 ## 五、算子融合方法论：roofline 判据 → launch 开销 → CUDA Graph
 
 ### 5.1 roofline 判据：先算账再融合

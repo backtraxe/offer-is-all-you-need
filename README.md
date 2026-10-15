@@ -49,6 +49,9 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-15：FBTriton 与稀疏算子 Kernel 实战专题——TBE 前向 1.28× 反向 1.22×
+  的 Triton 全案（六个可抄工程解法/赢在阈值：SL 32→256 胜负带实现带宽 5.8×/
+  输在哪也如实收录）
 - 2026-10-15：Vera Rubin 调优实录专题——SGLang 团队 Kimi K3 新硬件四板斧
   （MLA 深流水线 +16%/split-KV 先读后算 +20%/MoE 尾融合省 276 次 launch/KDA
   barrier 消除 +20%/饱和转换 2.5×/Miles RL 曲线跨硬件贴合）
