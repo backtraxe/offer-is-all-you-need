@@ -49,6 +49,10 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-15：Blackwell GEMM 实战专题（B200 手写八步 164→1401 TFLOP/s：
+  TMA/mbarrier/TMEM/tcgen05 四件装备、128B swizzle 单步 4.1 倍治 TMA 写
+  bank 冲突、双 CTA 算术强度 85→128、persistent+TMEM 双缓冲；三步白工的
+  排除法与「sweep 只在它的 regime 里有效」四金句）
 - 2026-10-15：投机解码2026专题大补（vLLM/AMD 官方文吸收）——Gemma 4 MTP
   中间形态（独立 ckpt 共享 KV）+ 两轴分类法 + DFlash anchor/KV 每层注入
   vs EAGLE-3 输入拼接 + DSpark Markov head 补联合不一致（`of problem.`）+

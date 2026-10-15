@@ -55,6 +55,7 @@
   - [CUDA 与 Kernel 专题](interview-questions/cuda与kernel专题.md)
   - [FBTriton 与稀疏算子 Kernel 实战专题](interview-questions/fbtriton与稀疏算子kernel实战专题.md)
   - [GEMM 优化阶梯专题](interview-questions/gemm优化阶梯专题.md)
+  - [Blackwell GEMM 实战专题](interview-questions/blackwell-gemm实战专题.md)
   - [GQA Decode Kernel 调优实录专题](interview-questions/gqa-decode-kernel调优实录专题.md)
   - [推理专用硬件专题](interview-questions/推理专用硬件专题.md)
   - [推理 GPU 选型与集群拓扑专题](interview-questions/推理gpu选型与集群拓扑专题.md)

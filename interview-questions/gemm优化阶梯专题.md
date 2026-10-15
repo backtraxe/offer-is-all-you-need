@@ -160,7 +160,10 @@ softmax 后的本地归约、多 tile 归并的收尾。原则：把「必须等
   读指令流指纹的方法（kernel 名/occupancy），与本篇的 ATT 追踪
   是同一肌肉；
 - [推理 GPU 选型与集群拓扑专题](./推理gpu选型与集群拓扑专题.md)：
-  Helios/MI455X 的硬件位置，本篇是它的 kernel 层深入。
+  Helios/MI455X 的硬件位置，本篇是它的 kernel 层深入；
+- [Blackwell GEMM 实战专题](./blackwell-gemm实战专题.md)：NVIDIA
+  B200 侧的镜像案——128B swizzle 治 TMA 写 bank 冲突、TMEM 双缓冲、
+  三步白工的排除法，与本篇通用阶梯互证。
 
 ## 口径与未核实说明
 
