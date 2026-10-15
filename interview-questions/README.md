@@ -81,7 +81,7 @@
 | 工具调用 / Function Calling / MCP | 极高 | ★[agent/工具调用与mcp](agent/工具调用与mcp.md) + [mcp与工具调用深度对比](agent/mcp与工具调用深度对比.md) | JSON 兜底三件套（[模拟面试](../resources/模拟面试与口语化表达.md)） | 滴滴连问 4 道 MCP |
 | Skills 机制 | 新高 | [agent/agent-skills详解](agent/agent-skills详解.md) | — | 字节追 Skills 底层 |
 | 记忆分层 / 上下文工程 | 高 | ★[agent/记忆与上下文工程](agent/记忆与上下文工程.md) + [上下文压缩与记忆训练专题](agent/上下文压缩与记忆训练专题.md) | 模考卷 A 第 3 题 | 「第二十轮丢信息」排查链 |
-| Harness / 评测 / 观测闭环 | 高（爬升） | ★[agent/harness工程实战](agent/harness工程实战.md) + [agent评测与观测闭环专题](agent/agent评测与观测闭环专题.md) + [agent线上排障手册](agent/agent线上排障手册.md) + [agent线上稳定性运营专题](agent/agent线上稳定性运营专题.md) + [评测体系实战专题](评测体系实战专题.md)（从 0 搭业务评测） | 模考卷 A 第 9 题 | 字节实习面六连问、某厂画架构 |
+| Harness / 评测 / 观测闭环 | 高（爬升） | ★[agent/harness工程实战](agent/harness工程实战.md) + [agent评测与观测闭环专题](agent/agent评测与观测闭环专题.md) + [agent线上排障手册](agent/agent线上排障手册.md) + [agent线上稳定性运营专题](agent/agent线上稳定性运营专题.md) + [评测体系实战专题](评测体系实战专题.md)（从 0 搭业务评测） + [kernel-agent竞赛复盘专题](agent/kernel-agent竞赛复盘专题.md)（竞赛实证） | 模考卷 A 第 9 题 | 字节实习面六连问、某厂画架构 |
 | 安全 / 红队 / Guardrail | 高（新题块） | [agent/agent安全与防护](agent/agent安全与防护.md) + [guardrail系统专题](agent/guardrail系统专题.md) | — | 2026 安全攻略 18 题 |
 | 多 Agent 协作与状态仲裁 | 中 | [agent/多agent与评测](agent/多agent与评测.md) | 模考卷 A 第 10 题 | 面试官追问链、抖音场景题 |
 | Agentic RL | 高（爬升） | [训练与对齐/agentic-rl专题](训练与对齐/agentic-rl专题.md) + [agentic-rl前沿手法专题](训练与对齐/agentic-rl前沿手法专题.md)（Search-R1/ReTool/OPD）+ [rl环境工程专题](训练与对齐/rl环境工程专题.md) | [coding/手写grpo-loss](../coding/模型手撕/手写grpo-loss.md) | 字节 agent RL 三面、美团 M17 教程 |
@@ -94,19 +94,19 @@
 | LoRA 与参数高效微调 | 极高 | [训练与对齐/lora与参数高效微调](训练与对齐/lora与参数高效微调.md) | 对齐与并行代码 LoRA 节 | 各类算法岗通考 |
 | 模型合并 / 基模合版 | 中（新信号） | [模型合并专题](训练与对齐/模型合并专题.md) | — | 字节 agent RL 三面 |
 | **推理部署** ||||
-| vLLM / PagedAttention / 连续批处理 | 高 | ★[inference/vllm与推理加速核心](inference/vllm与推理加速核心.md) + [vllm与sglang深度对比](inference/vllm与sglang深度对比.md) | — | 字节 infra 一面、理想一面 |
+| vLLM / PagedAttention / 连续批处理 | 高 | ★[inference/vllm与推理加速核心](inference/vllm与推理加速核心.md) + [vllm与sglang深度对比](inference/vllm与sglang深度对比.md) + [inference/dsv41-vllm优化实录专题](inference/dsv41-vllm优化实录专题.md)（Agentic 5.3× 实录） | — | 字节 infra 一面、理想一面 |
 | 请求过一个引擎的全过程 | 高 | [inference/推理引擎选型与源码路线](inference/推理引擎选型与源码路线.md) + [源码解读/](inference/源码解读) | — | 面经合集二次调研新批 |
 | 服务化层：Triton / ensemble / BLS | 中（新补） | [inference/triton-inference-server专题](inference/triton-inference-server专题.md) | — | 「多模型混部怎么搭」场景题 |
 | 量化（对称/非对称/QAT/FP8） | 高 | [蒸馏与剪枝专题](蒸馏与剪枝专题.md) + [inference/量化与压缩](inference/量化与压缩.md) + [消费级硬件推理实战专题](消费级硬件推理实战专题.md) | INT8 scale 手算 | 字节 infra 题单、2276 赞视频 |
 | PD 分离 / 负载均衡 / 前缀缓存 | 高 | ★[负载均衡专题](负载均衡专题.md) + [agentic-serving专题](inference/agentic-serving专题.md) | 模考卷 B 第 4-5 题 | 平头哥 HiCache/ radix 追问 |
-| CUDA / GEMM / Bank 冲突 | 高 | [cuda与kernel专题](cuda与kernel专题.md) + [inference/vera-rubin调优实录专题](inference/vera-rubin调优实录专题.md)（新硬件四板斧实录） + [fbtriton与稀疏算子kernel实战专题](fbtriton与稀疏算子kernel实战专题.md)（Triton 打赢 CUDA 生产案例） | [coding/cuda算子手撕](../coding/工程手撕/cuda算子手撕.md) | 平头哥现场画图、地平线 21 问 |
+| CUDA / GEMM / Bank 冲突 | 高 | [cuda与kernel专题](cuda与kernel专题.md) + [inference/vera-rubin调优实录专题](inference/vera-rubin调优实录专题.md)（新硬件四板斧实录） + [fbtriton与稀疏算子kernel实战专题](fbtriton与稀疏算子kernel实战专题.md)（Triton 打赢 CUDA 生产案例） + [gemm优化阶梯专题](gemm优化阶梯专题.md)（13 级阶梯） + [gqa-decode-kernel调优实录专题](gqa-decode-kernel调优实录专题.md)（赢 FA4 1.46×） | [coding/cuda算子手撕](../coding/工程手撕/cuda算子手撕.md) | 平头哥现场画图、地平线 21 问 |
 | 仿真 / Configurator / 性能表 | 新高 | [profiling与性能分析专题](profiling与性能分析专题.md) + [torch-profiler入门实战专题](torch-profiler入门实战专题.md)（系列一） + [线性层与mlp的profile实战专题](线性层与mlp的profile实战专题.md)（系列二） + [attention的profile实战专题](attention的profile实战专题.md)（系列三） + [推理压测与容量规划专题](inference/推理压测与容量规划专题.md) + [推理profile实战专题](inference/推理profile实战专题.md)（抓 trace→优化动作闭环） | 收益条件公式（[合集十九节](../interview-experiences/小红书社招面经合集-2026h2.md)） | 小米仿真连环问 |
 | 服务排障 runbook（p99/抢占/OOM/慢节点） | 高（运维面分水岭） | [排障面试实战题库](排障面试实战题库.md)（30 题四段论）+ [事故复盘案例集](事故复盘案例集.md)（15 案 postmortem 叙事）+ 三篇排障手册（推理/训练/Agent） | — | 「线上 p99 毛刺怎么排」「讲一个棘手问题」 |
 | 国产卡栈（MLU/NPU） | 中高 | [国产卡生态专题](国产卡生态专题.md) + [国产卡推理引擎适配专题](国产卡推理引擎适配专题.md) | — | 寒武纪三轮、字节国产线 |
 | **分布式训练** ||||
 | DP/TP/PP/EP + ZeRO | 高 | ★[distributed-training/三维并行](distributed-training/三维并行.md) + [zero与显存优化](distributed-training/zero与显存优化.md) + [inference/推理并行策略决策专题](inference/推理并行策略决策专题.md)（五问框架）+ [inference/dcp解码上下文并行专题](inference/dcp解码上下文并行专题.md)（DCP 深挖） | [对齐与并行代码](../coding/模型手撕/对齐与并行代码.md) TP 节 | 平头哥并行通信板块 |
 | 集合通信 / NCCL | 高 | [distributed-training/通信与网络专题](distributed-training/通信与网络专题.md) | — | 阿里云三轮、宇树三轮 |
-| Megatron / DeepSpeed / 框架选型 | 中高 | [训练栈全链路专题](distributed-training/训练栈全链路专题.md)（平台→框架→RL 链路图）+ [megatron源码深度拆解](distributed-training/megatron源码深度拆解.md) + [deepspeed专题](distributed-training/deepspeed专题.md)（配置卡片/ckpt 工程）+ [训练框架与稳定性](distributed-training/训练框架与稳定性.md) + [确定性训练专题](distributed-training/确定性训练专题.md)（比特级可复现） | — | 万卡三面标准题 |
+| Megatron / DeepSpeed / 框架选型 | 中高 | [训练栈全链路专题](distributed-training/训练栈全链路专题.md)（平台→框架→RL 链路图）+ [megatron源码深度拆解](distributed-training/megatron源码深度拆解.md) + [deepspeed专题](distributed-training/deepspeed专题.md)（配置卡片/ckpt 工程）+ [训练框架与稳定性](distributed-training/训练框架与稳定性.md) + [确定性训练专题](distributed-training/确定性训练专题.md)（比特级可复现）+ [训练光速手算实战专题](distributed-training/训练光速手算实战专题.md)（FSDP vs PP 光速判决书） | — | 万卡三面标准题 |
 | RL 系统（训推一体/权重同步） | 新高 | [rl系统训推一体专题](distributed-training/rl系统训推一体专题.md) | — | 「训练组也考推理优化」信号 |
 
 ## 四、公司面试风格差异（面经体现）

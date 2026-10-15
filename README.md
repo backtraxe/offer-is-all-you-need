@@ -49,6 +49,12 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-15：六篇深度新专题+一补丁（官方博客/竞赛/论文级实战吸收）——
+  训练光速手算实战（DSv3 一步拆账，FSDP 69% 暴露 vs PP bubble 3.89%，光速
+  6.64s 对实测 3 倍的逐 kernel 对账）/ DSv4.1 × vLLM 优化实录（Agentic 三周
+  5.3×）/ GEMM 优化 13 级阶梯（AMD 案例）/ GQA decode 手写 kernel（赢 FA4
+  中位 1.46×）/ Kernel Agent 竞赛复盘（harness 工程胜负手）/ 投机解码补丁
+  （TensorFold 字节级精确）
 - 2026-10-15：torch.profiler 入门实战专题——Profiling 系列三部曲补齐
   （表 vs trace 两产物/overhead vs compute 判定/三个侦探案例：首步 227µs 死区、
   buffer 请求偏移、同 kernel 快慢不一/compile 两真相：融合在 dispatcher 层、
