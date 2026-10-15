@@ -162,6 +162,9 @@ sm80）。**kernel 名就是指纹**——trace 里先扫名字再谈数字。
 
 ## 九、串联阅读
 
+- [线性层与 MLP 的 Profile 实战专题](./线性层与mlp的profile实战专题.md)：
+  系列第二篇（epilogue/零 kernel op/compile 融合/Liger vs Inductor），
+  与本篇连读即完整课程；
 - [Profiling 与性能分析专题](./profiling与性能分析专题.md)：工具链、
   指标口径与 Nsight 家族，本篇的案例在那套工具上跑；
 - [推理 Profile 实战专题](./inference/推理profile实战专题.md)：推理版

@@ -49,6 +49,9 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-15：线性层与 MLP 的 Profile 实战专题——Profiling 系列姊妹篇
+  （epilogue 无单独 add/零 kernel op 名单/kernel 名 `_tn_` 指纹/compile 塌链融合
+  中间量不出 HBM/Liger 89.4 vs 92.8µs 的特化 vs 通用取舍）
 - 2026-10-15：PD 解耦补丁×2——推理并行决策专题补混跑干扰定量直觉（5 卡 4:1
   时间账）+解耦成本三件套+Agent 契合；推理专用硬件专题补 Cerebras 异构解耦官宣
   （同 WSE 数吞吐 5 倍厂商口径），行业配方第三家坐实
