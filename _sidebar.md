@@ -166,6 +166,7 @@
     - [Triton Inference Server 专题](interview-questions/inference/triton-inference-server专题.md)
     - [多 LoRA Serving 专题](interview-questions/inference/多lora-serving专题.md)
     - [长上下文推理与 KV 多级体系](interview-questions/inference/长上下文推理与kv体系.md)
+    - [双向 KV 传输与多轮复用专题](interview-questions/inference/双向kv传输与多轮复用专题.md)
     - [KV Offload 与分层存储专题](interview-questions/inference/kv-offload与分层存储专题.md)
     - [KV 量化与压缩专题](interview-questions/inference/kv量化与压缩专题.md)
     - [Agentic Serving 专题](interview-questions/inference/agentic-serving专题.md)

@@ -49,6 +49,8 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-15：双向 KV 传输与多轮复用专题（vLLM 2026-10-12 官方能力：decode 反向
+  借 KV 给 prefill，多轮 TTFT 最长降 3.3 倍；机制六步 + 两个调参旋钮 + 数字锚）
 - 2026-10-15：GitHub 新锐雷达（学习资源清单 §1.6，gh 直查 11 仓星标）+ 五处专题补丁：
   skills 生态新进展（18 万星注册表 + SkillOpt 训练 skill）、nanochat 全栈参照系、
   SimpleMem/EvolveMem 开源记忆参照、AgentCPM 4B 长程全开源栈、KTransformers 异构推理行
