@@ -373,6 +373,8 @@ KernelBench 上限尚低、产物仍需人工 review。追问：为什么进化�
 
 ## 串联阅读
 
+- [kernel工具链选型专题](./kernel工具链选型专题.md)：本篇深挖的 L2（AI
+  编译器层）在五层控制阶梯中的位置，以及与库/DSL/手写/Mojo 的选型权衡。
 - [cuda与kernel专题](./cuda与kernel专题.md)：手件 kernel 主线的数字接力，
   本篇「手件守什么」边界卡的全部细节都在那里。
 - [profiling与性能分析专题](./profiling与性能分析专题.md)：roofline 与

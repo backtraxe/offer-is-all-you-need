@@ -53,6 +53,7 @@
   - [负载均衡专题](interview-questions/负载均衡专题.md)
   - [显存计算专题](interview-questions/显存计算专题.md)
   - [CUDA 与 Kernel 专题](interview-questions/cuda与kernel专题.md)
+  - [Kernel 工具链选型专题](interview-questions/kernel工具链选型专题.md)
   - [FBTriton 与稀疏算子 Kernel 实战专题](interview-questions/fbtriton与稀疏算子kernel实战专题.md)
   - [GEMM 优化阶梯专题](interview-questions/gemm优化阶梯专题.md)
   - [Blackwell GEMM 实战专题](interview-questions/blackwell-gemm实战专题.md)

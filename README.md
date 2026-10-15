@@ -49,6 +49,9 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-15：Kernel 工具链选型专题（cuBLAS→TVM/XLA→Triton→手写→
+  Mojo/MAX 五层控制阶梯：每层给什么拿走什么、TVM 四挑战、Mojo 用 MLIR
+  comptime 派发跨硬件、决策四问；L4 手写层与本仓三篇 GEMM/kernel 实战互接）
 - 2026-10-15：Blackwell GEMM 实战专题（B200 手写八步 164→1401 TFLOP/s：
   TMA/mbarrier/TMEM/tcgen05 四件装备、128B swizzle 单步 4.1 倍治 TMA 写
   bank 冲突、双 CTA 算术强度 85→128、persistent+TMEM 双缓冲；三步白工的
