@@ -147,4 +147,7 @@ goal loop，每节 code.py 可以跑。它不教 API 而是教 harness 设计的
   [场景全链路 trace](./场景全链路trace.md)；
 - 四框架拆机：[pi](./pi-agent源码分析.md) · [dsh](./deepseek-harness分析.md)
   · [codex](./codex源码分析.md) · [MiniMax Code](./minimax-code分析.md)；
+- Claude Code 本体机制层：[claude-code源码机制专题](./claude-code源码机制专题.md)
+  （逆向 v2.1.88 重建：上下文五阶段、记忆四层、工具桩模式——
+  本书目讲「怎么用」，专题讲「怎么造」）；
 - 手写练习：[coding/手写最小agent](../../coding/工程手撕/手写最小agent.md)。

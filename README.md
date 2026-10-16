@@ -49,6 +49,12 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-16：agent 新篇「Claude Code 源码机制专题」——源码系列第四极
+  （闭源逆向读法三源互证、90 编译时 flag DCE 物理隔离、cch 认证占位符、
+  query.ts 九阶段、上下文五阶段账本含 25 万次/天熔断事故、CLAUDE.md
+  在第一条 user message 的社区最大误解、后台记忆提取五重门控+用安全层
+  换经济性、MCP 桩模式与 ToolSearch 延迟加载、Coordinator「Prompt 即
+  编排」；IQ README 新增 Coding Agent 源码路线索引行）
 - 2026-10-16：Codex 分析再补（章节级深挖 Ch07/Ch22）——Skill 双通道注入
   （developer 目录/user 正文 + 预算三层退化逐字符轮转 + implicit 只观测
   不注入 + MCP 依赖弹窗闭环）与 Code Mode V8（exec/wait/cell_id 可恢复

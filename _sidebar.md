@@ -165,6 +165,7 @@
     - [Deep Research 架构专题](interview-questions/agent/deep-research架构专题.md)
     - [Agent 成本与 Token 预算专题](interview-questions/agent/agent成本与token预算专题.md)
     - [AI 编程与 Claude Code 内幕](interview-questions/agent/ai编程与claudecode内幕.md)
+    - [Claude Code 源码机制专题](interview-questions/agent/claude-code源码机制专题.md)
     - [Pi Agent 源码分析](interview-questions/agent/pi-agent源码分析.md)
     - [DeepSeek Harness 分析](interview-questions/agent/deepseek-harness分析.md)
     - [Codex 源码分析](interview-questions/agent/codex源码分析.md)
