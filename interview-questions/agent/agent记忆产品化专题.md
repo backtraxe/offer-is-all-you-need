@@ -433,3 +433,6 @@ Zep 的 94.8% vs 93.4% / +18.5% / −90%，Memobase 的「固定 3 次调用、�
 - [coding-agent会话记忆工程专题](./coding-agent会话记忆工程专题.md)：本篇讲
   服务端记忆产品（mem0/Zep/Letta），它讲 coding agent 会话侧的第三条线——
   context-mode 沙箱、claude-mem 摘要注入、Hindsight 仿生四类记忆。
+- [hermes与openclaw生态专题](./hermes与openclaw生态专题.md)：FTS5/BM25
+  路线的又一个邻案——Hermes 三层记忆的「搜索性」层同样选 SQLite FTS5
+  而非向量库，选型四理由与本篇「进窗的是检索能力不是内容」互证。

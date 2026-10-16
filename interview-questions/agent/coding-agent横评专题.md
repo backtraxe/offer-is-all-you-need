@@ -384,3 +384,7 @@ Composer）；Skills 形态跨厂扩散（Codex 2026 也上线 skills 文档页�
   Codex 2026 上线 skills 文档页这一跨厂扩散信号。
 - [minimax-code分析](./minimax-code分析.md)：国产 coding agent 单家解析，
   国产横向对比留作后续专题切口。
+- [hermes与openclaw生态专题](./hermes与openclaw生态专题.md)：Gateway vs
+  ExecutionLoop 的范式分野与全网 Harness 四范式分类学——本篇负责
+  四极横评，那篇补 OpenClaw/Hermes 这条「个人助手」支线的增长与
+  伦理维度。

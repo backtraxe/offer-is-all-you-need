@@ -49,6 +49,12 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-17：agent 新篇「Hermes 与 OpenClaw 生态专题」——90k star
+  增长拆因子（自进化叙事+migrate 迁移池+Nous 品牌+MIT 数据主权）、
+  「OpenClaw Python 重实现 + EvoMap 嫁接」本质判断三证据与时间线、
+  run_agent.py 11,487→4,410 的 Transport ABC 重构、三十日五版三条
+  主线、FTS5 选型四理由、Harness 四范式分类学、开源伦理三立场框架
+  （指控按 EvoMap 单方口径转述不采为结论）+ 面试题 Q1–Q8
 - 2026-10-16：agent 新篇「Claude Code 源码机制专题」——源码系列第四极
   （闭源逆向读法三源互证、90 编译时 flag DCE 物理隔离、cch 认证占位符、
   query.ts 九阶段、上下文五阶段账本含 25 万次/天熔断事故、CLAUDE.md
