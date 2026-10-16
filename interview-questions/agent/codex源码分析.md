@@ -211,8 +211,8 @@ dsh 讲插件化与事件溯源，codex 讲安全纵深与工程化细节。
 
 ## 六·增、深读增量：协议层 × 易错清单 × 网络策略（三方报告）
 
-> 来源：[puer99miss/codex-source-analysis](https://github.com/puer99miss/codex-source-analysis)
-> （fork 自 xiaonancs 同名仓，与本篇 §六增在 dsh 篇引用的是同一
+> 来源：[xiaonancs/codex-source-analysis](https://github.com/xiaonancs/codex-source-analysis)
+> （2026-10 时点 123 star；与 dsh 篇 §七引用的是同一
 > 「Agent Harness 源码深读系列」；25 章约 51 万字，CC BY-SA 4.0；
 > 源码基线注明本地路径可复核、规模数字为 2026-05-27 复核口径）。
 > 本节事实均按报告给出的「文件:行号」口径转述，本仓未逐行复核。
@@ -352,7 +352,7 @@ Initialize、新 API 只进 v2）、in-process 门面统一握手分发且关键
 ## 九、延伸阅读
 
 - 三方深读报告（本文 §六增来源）：
-  [puer99miss/codex-source-analysis](https://github.com/puer99miss/codex-source-analysis)
+  [xiaonancs/codex-source-analysis](https://github.com/xiaonancs/codex-source-analysis)
   （25 章约 51 万字 + 149 张架构图，多模型三阶段产出，CC BY-SA 4.0）。
 - 一手仓库：[openai/codex](https://github.com/openai/codex)；
   核心文件 `codex-rs/core/src/session/turn.rs`（采样循环）、
