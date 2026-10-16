@@ -64,6 +64,11 @@ all-reduce、RMSNorm。每个 kernel 都很小，**launch 开销占比反超计�
   `mma.m16n8k16` 张量核指令（只动了 4 到 8 行）→ **decode 步时间再降
   1.1%（官方口径）**。
 
+顺带一提：第三条里的「MoE latent 上投影」正是 K3 架构侧的新设计——路由
+专家被压进约半宽的潜空间计算，dispatch 与权重读取字节同减。机制拆解见
+[MoE 架构](../llm基础/moe架构.md) 第六节的 LatentMoE 专题，本条是这套
+设计在 kernel 层的现场侧写。
+
 ## 四、KDA 两连击：barrier 与隐藏拷贝
 
 KDA（Kimi 的线性注意力变体）是新架构，新架构的工程坑也最典型：

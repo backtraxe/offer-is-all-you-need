@@ -4,7 +4,7 @@
 > 细节，Infra 岗问 EP 并行、all-to-all 和 DeepEP。一句话总结：**MoE 用"每次只
 > 激活一小撮专家"的条件计算，把模型总参数（知识容量）和每 token 的算力开销解耦，
 > 同等算力下把容量做大数倍。** 本文按「直觉 → 演进线 → 负载均衡 → 训练 EP →
-> 推理 DeepEP → 面试追问」组织，题目标注自
+> 推理 DeepEP → LatentMoE 新方向 → 面试追问」组织，题目标注自
 > [高频面试真题汇总](../高频面试真题汇总.md)。
 
 ## 一、为什么要有 MoE：容量和算力解耦
@@ -45,7 +45,7 @@ token 推理成本大致和 30B 级 dense 模型一个量级。
 
 ▶ 面试题：为什么以前旗舰是 70B+ dense，现在前沿全是 MoE？——**中高**
 
-三个数字要会同时解释：**总参数在暴涨**（1T、2.4T）、**激活参数
+三个数字要会同时解释：**总参数在暴涨**（1T、2.4T、2.8T）、**激活参数
 在竞赛式下探**（37B→22B→10B）、**dense 在收缩**（72B→27-32B）。
 三件事是同一条「存算解耦」逻辑的侧面：
 
@@ -216,7 +216,72 @@ DeepSeek 开源的 DeepEP 干脆承认矛盾，**prefill 和 decode 用两套内
   冗余复制"——把被打爆的专家在其它卡上多放几个副本，再按启发式（优先把
   同组、常共激活的专家放近）做放置，用显存换负载均匀。
 
-## 六、高频面试追问清单（本主题）
+## 六、LatentMoE：把路由专家压进潜空间（Kimi K3，2026-10）
+
+▶ 面试题：听过 LatentMoE 吗？它省的到底是哪笔钱？——**低频高区分度**（2026-10 新）
+
+前五节的主线是「把模型做大、把 token 搬快」，2026-10 的 Kimi K3 给出一条
+新轴：**让被搬运的东西本身变窄**。一句话版本：路由专家不在全宽隐藏态上算，
+先降维进一个约半宽的潜空间里算——模型每层接口不变、容量照涨，跨卡 dispatch
+的「货」宽度先砍半。
+
+**口径自注**：以下数字为 Kimi K3 技术报告的转述口径（多源交叉：报告翻译、
+知乎/CSDN 解读与技术博客），本仓未读 arXiv 原文，引用数字以原文为准。K3
+背景：总参数 2.8T、1M 上下文、首个开放 3T 级权重的模型（OpenMDW 许可），
+架构三件套 = KDA（Kimi Delta Attention）+ Attention Residuals + Stable
+LatentMoE——前两件管注意力侧，LatentMoE 管 MoE 侧。
+
+### 6.1 机制三层拆解
+
+1. **隐藏层保持全宽**：每层输出维度 d = 7,168，MoE 层对外接口不变；
+2. **路由专家进潜空间**：token 先过降维投影 7,168 → 3,584（约 2 倍
+   瓶颈压缩），路由打分、专家 FFN、加权求和全部发生在 3,584 维潜空间，
+   再用升维投影 3,584 → 7,168 还原回全宽；
+3. **共享专家不进潜空间**：永远激活的共享专家保留全宽 7,168——通用知识
+   密度高、压不得；专精知识稀疏、扛得住压。两拨专家区别对待，是这套设计
+   里最值得学的平衡点。
+
+```text
+    全宽隐藏态 x（d = 7168）
+      ├── 共享专家：全宽 FFN(7168)，永远激活（通用知识不压缩）
+      │
+      └── W_down：7168 → 3584（进潜空间，路由在这里选专家）
+            路由专家 FFN_i 在 3584 维计算 ←—— 计算与 dispatch 同走半宽
+          W_up：3584 → 7168（出潜空间）
+    按路由权重加权求和 ⊕ 共享专家输出 → 送进下一层
+```
+
+### 6.2 为什么省的恰好是通信钱
+
+第四节的结论：EP 的命门在 all-to-all 字节流量。LatentMoE 恰好把流量公式
+里的两个因子一起压小：
+
+- **搬运的激活减半**：dispatch 的对象从 7,168 维向量变成 3,584 维向量，
+  跨 GPU/跨节点的通信字节量同比例下降；
+- **要读的权重也减半**：路由专家的 FFN 权重按潜空间维数 3,584 存储，
+  decode 时每个被激活专家的权重读取带宽同比例下降——对 decode 这种
+  memory-bound 的场景是实打实的收益。
+
+和量化省带宽是一对互补品：DeepEP 的 FP8 dispatch 压**单个数值的位宽**，
+LatentMoE 压**向量本身的高度**，两者叠加、互不替代。
+
+### 6.3 稳定性从哪来：定位准了才叫 Stable
+
+**潜空间 MoE 不是 Moonshot 首创**——NVIDIA 早有同思路的 LatentMoE 研究
+在先。K3 报告的卖点在于：把这套压缩路由**规模化推到 2.8T 总参，和 KDA、
+MTP、1M 上下文一起训稳跑通**。压缩必然丢信息，规模越大路由越容易抖，
+稳定性工程才是难点——所以名字里带 Stable。面试被追问「首创性」时定位
+要摆对：别把「提出潜空间 MoE」记成 Moonshot 的功劳，它的功劳是规模化加
+稳定性，对应的考点是"怎么把一个看似省钱的 trick 做到 2.8T 还不掉点"。
+
+### 6.4 专家规模的社区两说
+
+K3 的专家数字社区口径不一：一曰「专家池 896、每 token 激活 16」，一曰
+「每 token 激活 896」。前者与 K2（384 个专家选 8 个）的设计沿革一致、
+量级也合理，本仓采信前者；后者疑似把专家池大小误读成了激活数。面试引用
+时注明转述口径即可，具体组合以报告原文为准。
+
+## 七、高频面试追问清单（本主题）
 
 | 追问 | 答题要点（3-5 句版本） |
 |---|---|
@@ -227,16 +292,19 @@ DeepSeek 开源的 DeepEP 干脆承认矛盾，**prefill 和 decode 用两套内
 | EP 的 all-to-all 为什么是瓶颈，DeepEP 怎么解？ | token 要按路由跨卡搬家，通信量随 EP 规模与 token 数膨胀；机内 NVLink 与机间 RDMA 带宽差 ~3 倍，跨机是洼地；且通信内核占 SM 抢计算。DeepEP 分治：prefill 用 Normal 内核做 NVLink→RDMA 分级转发提吞吐，decode 用 Low-Latency 内核纯 RDMA + IBGDA hook 零 SM 占用 + 双微批重叠压延迟；dispatch FP8 / combine BF16 非对称精度再省带宽。 |
 | MTP 和 MoE 是什么关系（V3）？ | 两者正交：MTP（Multi-Token Prediction）是训练目标/附加模块——主模型之外挂几个共享 embedding 的轻量模块连猜后续多个 token，提升数据效率；推理时可复用这些模块做 self-speculative decoding 提约 1.8× 解码速度。MoE 管"模型长什么样"，MTP 管"一次猜几个词"，只是恰好都在 V3 上。 |
 | 训练时 token Dropped（容量溢出）是怎么回事？ | Switch/GShard 时代每个专家有 capacity 上限，路由超员的 token 直接被丢掉（残差连接兜底、跳过该层 MoE），靠 capacity factor 调头部空间；代价是少量 token 学得浅。DeepSeek 系通过细粒度均衡 + 无辅助损失路由把溢出率压到接近零，推理时更不容忍丢 token（会被用户感知），主要靠 EPLB 冗余副本削峰。 |
+| 听过 LatentMoE 吗？省的是哪笔钱？ | Kimi K3（2.8T，2026-10）把路由专家先降到约半宽潜空间（7,168→3,584）再算，共享专家保持全宽；dispatch 搬运的激活字节减半、专家权重读取带宽同比例降，与 FP8 压位宽是叠加互补关系。潜空间 MoE 非首创（NVIDIA 研究在先），K3 的贡献是 2.8T 规模训稳并量产，故名为 Stable；专家池 896/激活 16 为社区口径，引用时报转述。机制详见本篇第六节。 |
 
 ## 延伸阅读
 
 - DeepSeek-AI. *DeepSeek-V3 Technical Report*（架构、aux-loss-free、DualPipe、FP8 训练一篇读完）
 - DeepSeek-AI. *DeepSeek-V2: A Strong, Economical, and Efficient Mixture-of-Experts Language Model*（细粒度专家 + shared expert 的出处）
 - GitHub: `deepseek-ai/DeepEP`（双内核 dispatch/combine 实现与文档）
+- Moonshot AI. *Kimi K3 Technical Report*（Stable LatentMoE 与 KDA 的出处；本仓按多源转述收录，未读原文）
 - 苏剑林（kexue.fm）："MoE 环游记"系列与《无辅助损失（Aux-loss-free）的负载均衡》——负载均衡章节的推演思路
 
 ---
 
 *相关阅读：[Transformer 与 Attention](./transformer与attention.md)（MLA 与 KV Cache）·
 [三维并行](../distributed-training/三维并行.md)（EP 与 DP/TP/PP 的组合）·
+[Vera Rubin 调优实录](../inference/vera-rubin调优实录专题.md)（K3 的 kernel 级实战）·
 [vLLM 与推理加速核心](../inference/vllm与推理加速核心.md) · 上一页 [模块导航](./README.md)*
