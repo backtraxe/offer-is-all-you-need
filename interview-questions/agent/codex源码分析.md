@@ -298,9 +298,112 @@ deny 行为的来源层。
 Ch06 核心循环、Ch07 Prompt 组装与 Skill 注入（`core/gpt_5_codex_prompt.md`
 是 prompt 本体）、Ch12–15 安全四面（Seatbelt/bwrap+Landlock/Windows
 WFP/execpolicy）、Ch16 hooks、Ch19 持久化、Ch22 Code Mode V8——
-最后这章是「模型写代码进 V8 runtime 执行」，与 dsh PTC、
-context-mode 的 Think in Code 同属 2026「代码即工具调用」一族，
-建议三案对读。
+其中 Ch07 与 Ch22 本仓已吸收为下节「增二」。
+
+## 六·增二、章节级深挖：Prompt/Skill 双通道 × Code Mode V8（Ch07/Ch22）
+
+> 本节读的是报告 Ch07（Prompt 组装与 Skill 注入）与 Ch22（TUI 与
+> Code Mode V8）的正文，机制描述均带报告给出的「文件:行号」口径；
+> 报告成稿为 2026-05，feature 开关等时效性结论以当时快照为准。
+
+### A. Prompt 组装：三级选择 + 四源风险
+
+- base instructions 三级选择（session/mod.rs）：`config.base_instructions`
+  覆盖 → 会话历史回放的 `base_instructions` → `model_info` 按模型目录
+  兜底——优先级顺序明确写死在代码里；
+- 「多源并存」风险：仓内 `gpt_5*_prompt.md` 快照（68–80 行的可读资产）、
+  模板运行时拼装、`models-manager` 内嵌 `models.json`（release workflow
+  定时从 `/models` 接口刷新）四源共存，**没有对账机制**——报告建议的
+  改进（快照 hash 进 trace）目前未实现。读 prompt 快照≠读运行时事实，
+  这是面试里「为什么线上行为和对不上 prompt 文件」的标准排查起点；
+- skills 定位：独立 crate（core-skills 约 15 文件 / 7256 行），
+  报告定性为「流程工程资产化」——承载「怎么做事」的团队记忆，
+  不是 prompt 花活。
+
+### B. Skill 双通道注入：developer 管目录，user 管正文
+
+```text
+skills 可用列表  → developer 角色段注入（描述 + 路径，策略与可见性）
+被显式选中的正文 → user 角色段注入（<skill> 包裹 name/path/contents）
+
+意义：模型在采样时能区分「我可以使用什么」与「这次任务应该用什么」；
+审计只回看 user 段即可还原本次 turn 真正激活了哪些 skill。
+```
+
+三个工程细节（都是面试可追的坑）：
+
+1. **预算三层退化**（render.rs）：默认 budget 8000 字符（另取
+   context window 的 2% 档）——全量描述放得下就全保留；放不下但
+   「最小行」放得下，就**逐字符轮转分配**（短描述先停止增长、余量
+   让给长描述，避免「每个 skill 一样砍」的均贫不公）；连最小行都放
+   不下才丢 skill 并 warning。注意语义：**描述被截断 ≠ 看不见 skill**，
+   中间层里所有 skill 仍在目录中，只是描述变短；
+2. **显式命中的保守规则**：`$name` 文本命中必须同时满足「名字在
+   skills 列表中唯一」且「不与任何 connector slug 冲突」，否则**不注入**
+   （防误触发的默认姿势）；结构化 `UserInput::Skill { path }` 路径精确
+   匹配优先（坑：symlink 与真实路径之差会匹配失败）；
+3. **implicit 只观测不注入**：模型在 shell 里跑了 skill 脚本或读了
+   SKILL.md，链路只发 telemetry（`codex.skill.injected`），
+   **不反向把正文注回当前 turn**——「跑过 ≠ 上下文补齐」是产品文案
+   最容易误导的一点。
+
+加分项：MCP 依赖闭环——skill 声明的 MCP server 未安装时弹出
+`RequestUserInputQuestion`（Install / Continue anyway），确认后写配置、
+触发 OAuth 刷新。**skill 由此从「文本流程包」升级为「可执行能力包」**，
+执行环境接线被纳入主流程治理，而不是甩给文档。
+
+### C. Code Mode V8：把离散 MCP 折叠成一个 `exec`
+
+社区俗称的「Code Mode V8」，机制骨架（Ch22 口径）：
+
+```text
+模型不再逐次 JSON tool call，而是写一个 async ES module，
+交给 code-mode 的 V8 isolate 执行；模块内用
+  await tools.mcp__<namespace>__<tool>(...)  程序化编排工具 ——
+即「Code Mode 不替代 MCP，它把 MCP 工具按 namespace 包进 JS」。
+```
+
+四个承重设计：
+
+1. **exec / wait / cell_id 三件套**：`yield_time_ms` 到点就把本批
+   `content_items` 连同 cell_id 先交回模型（outcome = Yielded），
+   模型决定 `wait(cell_id)` 续跑还是 terminate——
+   **把长任务做成可恢复短任务**；三结局 Yielded/Terminated/Result；
+2. **隔离与线程模型**：每个 cell 一个 isolate + 一个 **OS 线程**
+   （故意不是 tokio task——V8 同步阻塞会把 reactor 冻住）；
+   `terminate_execution` 走 thread_safe_handle 硬打断；
+   `stored_values` 是 service 级 KV（进 isolate clone 初值、
+   出 isolate 合并 writes），cell 间可交换数据但不能互读 heap；
+3. **启动与开关的渐进姿态**：V8 初始化是 `OnceLock` 惰性（纯 chat
+   用户零开销）；`code_mode`（与 JSON tool call **共存**的 augment）
+   与 `code_mode_only`（替换）是两个独立 feature，报告时点均为
+   UnderDevelopment 默认关闭——这是对「省 token vs JS 样板反而更长」
+   社区争议的工程妥协：先共存，不押替换；
+4. **边界坑**：v8↔JSON 桥接（value.rs 仅 224 行）不处理 BigInt /
+   Symbol / 循环引用——模型脚本里 store 一个循环引用对象，直接拿到
+   `failed to serialize tool response` 类错误。
+
+附一笔 TUI 侧的同源洞察（报告把两轨并为一章的理由）：TUI 是把
+「事件流翻译成给人看的稳态视图」，Code Mode 是「翻译成给模型读的
+稳态视图」——流式 markdown 用 newline-gated（PR #1920 官方理由：
+markdown 是块级语法）、表格用 TableHoldbackScanner 整表压回 mutable
+tail、帧用 DEC mode 2026 原子提交；历史行写进**真实终端 scrollback**，
+与 Claude Code 全屏 alt-screen 双缓冲是相反的路线。
+
+### D. 「代码即工具调用」一族四案对读（2026 主线）
+
+| | 执行宿主 | 隔离姿势 | 工具暴露 | 落地姿态 |
+|---|---|---|---|---|
+| dsh PTC | 插件进程内 | 子调用重入守卫管线 | `run_code` 传输工具 | 内置 |
+| codex Code Mode | rusty_v8 isolate（in-process） | 每 cell 一 isolate 一线程 + service KV | namespace 分段 `tools.mcp__ns__tool()` | 双 feature 默认关，渐进开启 |
+| context-mode ctx_execute | MCP server 沙箱 | 工具级沙箱 | 原生工具直调 | 默认路由强制 |
+| Cloudflare Codemode | DynamicWorker（spawn 进程） | 进程隔离 | 平铺 `codemode.*` | 平台托管 |
+
+话术内核（Cloudflare 官方表述，报告转引）：LLM 见过百万行真实代码、
+只见过人造的 tool-calling 样例——**写代码比点名调工具是它的母语**。
+反方也要会答：简单场景里 JS 样板（`const r = await tools.foo(...)`）
+比一次 JSON tool call 更长，简单任务别硬上 Code Mode——这正是
+codex 选择 augment 共存而非替换的原因。
 
 ## 七、▶ 面试挂钩
 
@@ -348,6 +451,26 @@ Initialize、新 API 只进 v2）、in-process 门面统一握手分发且关键
 靠『都进同一个 in-process 服务』保证，而不是靠各自 import 同一份
 库代码——库调用保证的是逻辑同源，协议层保证的是事件序、
 握手语义与生命周期也同源。这是平台工程思路和单体思路的分界。」
+
+**问题 7：skill 注入为什么要分 developer / user 两个角色段？**
+「职责不同：developer 段是『策略与可见目录』（本次可以用什么），
+user 段是『被显式选中的执行上下文』（这次该用什么）。分 role 让模型
+采样时就区分两档信息，也让审计变得便宜——trace 里只回看 user 段
+就知道本 turn 真激活了哪些 skill。配套的预算退化也只在目录段做
+（8K 字符 / context window 2%，全量→字符轮转→丢目录），
+描述被压缩不等于 skill 不可见；正文段一旦被命中就是全文注入，
+不参与裁剪。再加一条防误触规则：文本 `$name` 命中必须唯一且无
+connector 冲突，否则宁可不注入。」
+
+**问题 8：Code Mode 真的省上下文吗？什么时候反而亏？**
+「省在『编排密度』，亏在『样板开销』。省的场景：多步数据管线——
+一次 exec 里 for 循环调十个工具、中间结果在 isolate 内消化，
+只有最终结论回上下文（对比十轮 JSON tool call，每轮结果都进窗）。
+亏的场景：单步调用——`const r = await tools.foo(...)` 的 JS 样板
+比一次 JSON tool call 还长。所以成熟设计的姿态都是共存而非替换：
+codex 的 code_mode 是 augment 默认关，dsh 保留 run_code 传输工具，
+context-mode 只对大输出工具强制路由。答题别忘边界坑：
+值桥不接 BigInt/循环引用，store 复杂对象会序列化失败。」
 
 ## 九、延伸阅读
 

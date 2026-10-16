@@ -49,6 +49,11 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-16：Codex 分析再补（章节级深挖 Ch07/Ch22）——Skill 双通道注入
+  （developer 目录/user 正文 + 预算三层退化逐字符轮转 + implicit 只观测
+  不注入 + MCP 依赖弹窗闭环）与 Code Mode V8（exec/wait/cell_id 可恢复
+  协议、每 cell 一 isolate 一 OS 线程、namespace 分段不替代 MCP、
+  「代码即工具调用」四案对读表）+ 面试问题 7/8；引用源改指上游原仓
 - 2026-10-16：Codex 源码分析大补（吸收三方深读报告 codex-source-analysis）
   ——新增 §六增（规模治理快照、入口与 app-server 协议层三分工、
   network-proxy 第四道闸门、hooks/skills/memories 坐标、集成易错六条、
