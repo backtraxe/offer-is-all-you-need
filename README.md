@@ -49,6 +49,10 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-17：推理线补丁——kv-offload 篇新增 §4.1·增「CacheBlend 缝合术」
+  （EuroSys 2025 最佳论文：chunk 级任意位置匹配+边界选择性重算突破前缀
+  天花板；多轮 QA 吞吐 14x/RAG +4.5x/TTFT 1.9–8.1x/成本 -90%；口径校准：
+  「首Token快14倍」系转述把吞吐挪给了 TTFT）+ agentic-serving 处互链
 - 2026-10-17：微信尾部目录挖掘批——SGLang Vera Rubin 文的 8 条往期
   全量查重，仅 1 真缺口：kernel-agent 竞赛篇新增 §五增「SGLang 把
   工程经验编码成 Skill」产业案例（B200 单算子 1.13x~2.75x、
