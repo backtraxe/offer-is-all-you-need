@@ -49,6 +49,10 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-16：Codex 源码分析大补（吸收三方深读报告 codex-source-analysis）
+  ——新增 §六增（规模治理快照、入口与 app-server 协议层三分工、
+  network-proxy 第四道闸门、hooks/skills/memories 坐标、集成易错六条、
+  AGENTS.md 根判定合并规则）+ 面试问题 6（协议层为何是产品边界）
 - 2026-10-16：dsh 分析大补（吸收三方深读报告 deepseek-harness-deep-dive）
   ——新增 §七 深读增量（论文时空两轴通俗拆解、fiber 内核三件套 epoch
   快照/反序幂等撤销/inertia 串行化、AI 主力开发的工程纪律五件套、

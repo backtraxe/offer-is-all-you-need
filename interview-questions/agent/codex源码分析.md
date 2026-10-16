@@ -209,6 +209,99 @@ model hash——和 dsh 的 `compaction/summary` envelope 思路一致：
 **最佳分工**：面试被问「读过什么 agent 源码」——pi 讲循环本质，
 dsh 讲插件化与事件溯源，codex 讲安全纵深与工程化细节。
 
+## 六·增、深读增量：协议层 × 易错清单 × 网络策略（三方报告）
+
+> 来源：[puer99miss/codex-source-analysis](https://github.com/puer99miss/codex-source-analysis)
+> （fork 自 xiaonancs 同名仓，与本篇 §六增在 dsh 篇引用的是同一
+> 「Agent Harness 源码深读系列」；25 章约 51 万字，CC BY-SA 4.0；
+> 源码基线注明本地路径可复核、规模数字为 2026-05-27 复核口径）。
+> 本节事实均按报告给出的「文件:行号」口径转述，本仓未逐行复核。
+> 另注意其写作流水线是多模型三阶段（GPT-5.3 Codex 首稿 →
+> Opus 4.7 源码引用核验 → GPT-5.5 终检）——引用时按「AI 生成、
+> 经模型互审」口径处理，不与人工精读同权。
+
+### A. 规模与治理快照
+
+- 量级：约 120 crates、约 116.8 万行 tracked 文本、4,655 个 tracked
+  文件、>400 contributors（star 为 8.5 万量级浮动指标）；
+- 治理：`docs/contributing.md` 两条——外部贡献 **invitation-only**、
+  提 PR 前必须签 **CLA**。报告判断为「产品化开放核心」：
+  源码可见度高但演进节奏官方收拢。
+- 与 dsh 摆出另一极：dsh 是「coding agent 主力开发 + 制度件约束 AI」，
+  codex 是「人主导 + 收窄贡献入口」——两种治理没有高下，
+  对应的是「演进速度」与「主线一致性」的不同取舍。
+
+### B. 入口与协议层：产品边界在协议，不在实现
+
+```text
+入口三分工：
+  codex-cli/bin/codex.js  只做 OS/arch 识别 → resolveNativePackage
+                          → spawn 原生二进制并转发信号（零业务逻辑）
+  codex-rs/cli            MultitoolCli；arg0 按 argv[0] 分发子能力，
+                          单一可信执行域，一碗水端平
+  SDK                     TS = CLI 子进程 stdin/stdout JSONL 事件流；
+                          Python = app-server JSON-RPC v2 over stdio
+
+app-server 三层：
+  transport   显式四枚举：Stdio / UnixSocket / WebSocket / Off
+  protocol    v1/v2 并存；v1 allowlist 只剩 Initialize，
+              AGENTS.md 明令「新 API 只进 v2」
+  client      in-process 门面：统一握手/请求分发/事件回传，
+              关键通知采取「必须投递」策略（TUI 文本不损、turn 完成不丢）
+```
+
+面试白话：**多 surface 行为一致，靠「都进同一个 in-process 服务」，
+不是靠「各 surface 都 import 同一份逻辑」。** CLI/IDE/SDK/Cloud 行为
+漂移这个品类的问题，是用协议层结构消灭的。
+
+### C. 网络策略：三层防线之外的第四个面
+
+§三的三层之外还有一道独立闸门：`network-proxy` crate
+（HTTP/SOCKS/**MITM** 代理）+ `network_policy`（Deny/Ask）。
+顺此修订一个常见误判（报告易错清单第 2 条）：
+
+**`SandboxType::None`（沙箱关掉）≠ 没安全**——execpolicy 与
+network policy 依然生效；把「沙箱」当安全总开关，会直接误判
+deny 行为的来源层。
+
+于是本文 §三的话术精确版是：**规则挡惯例、审批挡个案、
+沙箱挡万一、出网另设一门。**
+
+### D. hooks / skills / memories / 持久化的 crate 级坐标
+
+- `codex-rs/hooks`：PreToolUse / PostToolUse / Compact / Stop
+  生命周期事件族（`hooks/src/schema.rs`）；
+- `core-skills`：skill 注入链核心在 `core-skills/src/injection.rs`——
+  与 §四 capture_step_context「按需唤醒」一环对应；
+- `memories` 拆三个 crate（read / write / mcp），运行态在
+  `state/src/runtime/memories.rs`——codex 的记忆是一等服务而非配置项；
+- 持久化双轨分工：**rollout JSONL = 事件序列（重放真相源）**；
+  **state SQLite = 线程元数据、动态工具等结构化状态**（thread-store
+  独立成 crate）——备份/审计少一条轨就失真。
+
+### E. 易错清单（面试官问「集成 codex 踩过什么坑」的直接素材）
+
+1. **mcp-server 当 app-server 用**：前者是 stdio 单通道 JSON-RPC，
+   后者是多 transport + v1/v2 演进的统一服务——角色不同，不可互换；
+2. **沙箱关掉就等于裸奔**：见 §增-C，execpolicy/network policy 仍在；
+3. **v1/v2 混用**：按 v1 形态加新方法会与上游冲突（allowlist 只剩
+   Initialize）；
+4. **rollout JSONL 当唯一真相**：丢 SQLite 结构态，审计失真；
+5. **在 npm 包里找业务逻辑**：codex.js 只是启动器，排查直奔
+   native 二进制；
+6. **AGENTS.md 随手一放**：「项目根」由 `project_root_markers`
+   判定（默 `.git`），从根到 cwd **沿路径合并**——monorepo 子目录里
+   放一份不一定生效，先搞清根判定。
+
+### F. 值得跳读的六章（资源导航）
+
+Ch06 核心循环、Ch07 Prompt 组装与 Skill 注入（`core/gpt_5_codex_prompt.md`
+是 prompt 本体）、Ch12–15 安全四面（Seatbelt/bwrap+Landlock/Windows
+WFP/execpolicy）、Ch16 hooks、Ch19 持久化、Ch22 Code Mode V8——
+最后这章是「模型写代码进 V8 runtime 执行」，与 dsh PTC、
+context-mode 的 Think in Code 同属 2026「代码即工具调用」一族，
+建议三案对读。
+
 ## 七、▶ 面试挂钩
 
 **问题 1：三个框架的 agent loop 本质上有什么不同？**
@@ -247,8 +340,20 @@ execpolicy——在 `beforeToolCall` 钩子里挂一个规则文件评估器；
 最后抄审批——`beforeToolCall` 返回 block 时转成用户询问。
 pi 的钩子孔位正好够插这三层，不用改 loop。」
 
-## 八、延伸阅读
+**问题 6：CLI 之外为什么还要 app-server？直接库调用不行吗？**
+「协议层是产品边界不是内部细节：transport 可替换
+（Stdio/UDS/WebSocket/Off）、协议版本并存迁移（v1 冻结只剩
+Initialize、新 API 只进 v2）、in-process 门面统一握手分发且关键
+事件必须投递。CLI/IDE/SDK/Cloud 多 surface 的行为一致性，
+靠『都进同一个 in-process 服务』保证，而不是靠各自 import 同一份
+库代码——库调用保证的是逻辑同源，协议层保证的是事件序、
+握手语义与生命周期也同源。这是平台工程思路和单体思路的分界。」
 
+## 九、延伸阅读
+
+- 三方深读报告（本文 §六增来源）：
+  [puer99miss/codex-source-analysis](https://github.com/puer99miss/codex-source-analysis)
+  （25 章约 51 万字 + 149 张架构图，多模型三阶段产出，CC BY-SA 4.0）。
 - 一手仓库：[openai/codex](https://github.com/openai/codex)；
   核心文件 `codex-rs/core/src/session/turn.rs`（采样循环）、
   `core/src/safety.rs`（patch 安全判定）、`protocol/src/protocol.rs`
