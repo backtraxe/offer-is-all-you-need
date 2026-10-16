@@ -100,6 +100,46 @@ Agent-Assisted 的保留加速比轨迹不是平滑爬坡，而是**长时间平
   这正是「高分区方案的共性不是盲目尝试更多 kernel，而是先吃透
   负载分布」作者的总结。
 
+## 五·增、产业界的工程化版：SGLang 把工程经验编码成 Skill
+
+2026 年 SGLang 团队公开了「用 agent 优化自家引擎」的实践
+（多源转述其官方博客口径：AI圈的9527 微信文、腾讯云开发者社区
+文章、知乎调研帖，本仓未直接核对 SGLang 官方原文），与本文的
+竞赛数据正好组成**竞赛 vs 生产**双案例：
+
+**做了什么**：把团队的 kernel 工程经验沉淀成 Agent Skills——
+`debug-cuda-crash`（CUDA 崩溃排查）、`llm-torch-profiler-analysis`
+（性能分析）、`sglang-sota-humanize-loop` 等结构化技能，让 agent
+按「Profile 抓取（torch.profiler / NCU / SGLang tracing）→
+任务拆解（如识别多余中间结果写显存，触发 Op Fusion）→ 生成
+（csrc/ 下 CUDA C++ 或 Triton + AOT 扩展绑定）→ 验证回流
+（编译/基准/NCU 指标迭代）→ 沉淀（Kernel Hub / AOT wheel /
+get_kernel）」的流水线自跑——**闭环验证（RLCR / Judge 机制）**
+是它区别于「一次性生成」的关键：依据「访存受限还是算力受限」
+自主决定下一步。
+
+**数字锚（均为团队自报，未复测）**：B200 上单算子
+（qknorm_rope / norm_infer 等）加速 1.13x~2.75x；
+Qwen3-Next 端到端吞吐 +71.4%、TTFT 456ms→168ms；
+Diffusion 侧（Z-Image / Qwen-Image）吞吐与 TTFT 同步改善。
+
+**生态对照**：KDA（Kernel Design Agents，MIT Han Lab 等开源）
+专做 FlashInfer/SGLang 体系内的多轮证据驱动优化；CUDA Agent
+走大范围 Agentic RL，KernelBench 上超 torch.compile 基线。
+
+**反例同框（口径纪律）**：同赛道的 Sakana AI CUDA Engineer
+（闭源：PyTorch 翻译成 CUDA 再进化优化、LLM verifier 判正确性）
+其对外宣称的大幅加速被 Answer.AI 等团队质疑——与本文 §四
+「Full-Agent 跌破指纹」同根：**没有接地、没有公平基线、verifier
+不硬，加速倍数就只是营销数字**。引用 SGLang 数字时建议主动
+带这一条对比，显示口径意识。
+
+**与竞赛结论互表**：本文 §二~§三说「高质量参考实现 + 轨迹记忆 >
+从零探索」，SGLang 的实践是它的工业注脚——它的「经验」不是
+凭空喂 prompt，而是**固化成 skill 文件 + 绑定真实 profiling
+工具 + 沉淀 AOT 产物库**三件套。harness 的可检索历史资产，
+在生产侧对应的就是 skill 库与 kernel 库的持续积累。
+
 ## 六、▶ 面试题与追问
 
 **Q1【高】给一个「让 agent 写 kernel」的需求，你会先建什么？**
@@ -137,6 +177,16 @@ Agent4Kernel 搜索。**「先 harness 后训练」**是这篇的一致口径。
 与 [DSv4.1 实录](../inference/dsv41-vllm优化实录专题.md) 的
 TP4/DEP2 配方完全同构）。
 
+**Q7【中】生产团队也这么干吗？有实例吗？**
+「SGLang 把工程经验编码成 Skill 让 agent 自优化（§五增）——
+B200 单算子 1.13x~2.75x、Qwen3-Next 吞吐 +71.4%、TTFT 456→168ms
+（自报口径）。它的可信之处恰恰在管线不是口号：profiling 工具
+绑定、RLCR 闭环验证、AOT 产物沉淀三件套齐活；反例是 Sakana AI
+CUDA Engineer 的加速宣称被 Answer.AI 质疑——差别就在**基线公平、
+verifier 硬度、可复现产物**这三件事上。竞赛篇和产业篇结论一致：
+赢的从来不是『让 agent 从零写』，是『把人踩过的坑变成 agent 的
+起跑线』。」
+
 ## 七、串联阅读
 
 - [Harness 工程实战](./harness工程实战.md)：晋升规则/评估闭环的
@@ -156,6 +206,9 @@ TP4/DEP2 配方完全同构）。
   算子加速比（29.68/18.05/13.70/1.62/1.12× 等）为团队本地 Modal
   B200 评估、作者明示「非官方计分、GPU 频率未完全锁定」；未独立
   复测。
+- §五增的 SGLang 数字（1.13x~2.75x / +71.4% / 456→168ms）为多源
+  二次转述的团队自报口径（本仓未核对 SGLang 官方原文）；Sakana AI
+  被质疑一事为社区公开争议口径，引用时标注「社区质疑、未终裁」。
 - LoongFlow / OpenEvolve / KernelEvolve / KernelBench / FlashInfer-
   Bench 的引用均为综述与 writeup 口径；「高分区方案先吃透负载
   画像」为作者总结，不是官方评分规则。

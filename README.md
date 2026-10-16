@@ -49,6 +49,12 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-17：微信尾部目录挖掘批——SGLang Vera Rubin 文的 8 条往期
+  全量查重，仅 1 真缺口：kernel-agent 竞赛篇新增 §五增「SGLang 把
+  工程经验编码成 Skill」产业案例（B200 单算子 1.13x~2.75x、
+  Qwen3-Next 吞吐 +71.4%、TTFT 456→168ms 自报口径；RLCR 闭环三件套；
+  Sakana AI 被质疑反例同框）+ 面试 Q7 + 口径条目；Mooncake 一篇
+  经查重已被 kv-offload 专题覆盖，跳过不留痕
 - 2026-10-17：agent 新篇「Hermes 与 OpenClaw 生态专题」——90k star
   增长拆因子（自进化叙事+migrate 迁移池+Nous 品牌+MIT 数据主权）、
   「OpenClaw Python 重实现 + EvoMap 嫁接」本质判断三证据与时间线、
