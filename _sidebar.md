@@ -157,6 +157,7 @@
     - [Agent 记忆产品化专题](interview-questions/agent/agent记忆产品化专题.md)
     - [上下文压缩与记忆训练专题](interview-questions/agent/上下文压缩与记忆训练专题.md)
     - [Agent 记忆评测与遗忘治理专题](interview-questions/agent/agent记忆评测与遗忘治理专题.md)
+    - [Coding Agent 会话记忆工程专题](interview-questions/agent/coding-agent会话记忆工程专题.md)
     - [Coding Agent 架构横评专题](interview-questions/agent/coding-agent横评专题.md)
     - [Agentic 评测基准专题](interview-questions/agent/agentic评测基准专题.md)
     - [Agent 评测与观测闭环专题](interview-questions/agent/agent评测与观测闭环专题.md)

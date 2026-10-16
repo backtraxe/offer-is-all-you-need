@@ -430,3 +430,6 @@ Zep 的 94.8% vs 93.4% / +18.5% / −90%，Memobase 的「固定 3 次调用、�
   在多 Agent 体系里继续展开。
 - [长上下文推理与kv体系](../inference/长上下文推理与kv体系.md)：前缀缓存的
   机制底座，理解本篇 §六 的四条规避需要先懂它。
+- [coding-agent会话记忆工程专题](./coding-agent会话记忆工程专题.md)：本篇讲
+  服务端记忆产品（mem0/Zep/Letta），它讲 coding agent 会话侧的第三条线——
+  context-mode 沙箱、claude-mem 摘要注入、Hindsight 仿生四类记忆。

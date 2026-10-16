@@ -49,6 +49,12 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-16：GitHub 调研批——agent 新增「Coding Agent 会话记忆工程专题」
+  （trending 月榜三案拆解：context-mode 工具输出沙箱四件套与 98% 算账、
+  claude-mem 观察-压缩-注入三段管线和 progressive disclosure、Hindsight
+  四类仿生记忆与 retain/recall/reflect；「记忆进窗的是能力不是内容」、
+  fail-open 默认、98% 自报口径审计三步；IQ README 记忆行补齐产品化与
+  评测治理两个漏登记入口）
 - 2026-10-16：查漏补缺批——coding 新增手撕「手写 Speculative Decoding」
   （贪心 verify 20 行 + rejection sampling 采样版 + 期望加速比三要素口算；
   2026 投机主线化后的预备现场题），coding README/频次表/真题汇总三处
