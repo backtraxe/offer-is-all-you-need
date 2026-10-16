@@ -49,6 +49,11 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-16：dsh 分析大补（吸收三方深读报告 deepseek-harness-deep-dive）
+  ——新增 §七 深读增量（论文时空两轴通俗拆解、fiber 内核三件套 epoch
+  快照/反序幂等撤销/inertia 串行化、AI 主力开发的工程纪律五件套、
+  Koishi→Cordis→dsh 血缘链）+ 面试问题 5（热装卸正确性）+ 延伸阅读，
+  证据沿用报告 [verified]/[inferred]/[claimed] 三档口径
 - 2026-10-16：GitHub 调研批——agent 新增「Coding Agent 会话记忆工程专题」
   （trending 月榜三案拆解：context-mode 工具输出沙箱四件套与 98% 算账、
   claude-mem 观察-压缩-注入三段管线和 progressive disclosure、Hindsight

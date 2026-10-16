@@ -203,7 +203,109 @@ dsh 进一步把「锁、范围、摘要调用的完整证据」全部事件化�
   workflow（JS 编排 fan-out）、schedule（cron）、Agent Teams（实验性，
   默认禁用）等几十个。
 
-## 七、▶ 面试挂钩
+## 七、深读增量：论文两轴 × fiber 内核 × AI 工程纪律（三方报告）
+
+> 本节的增量来自社区第三方报告
+> [xiaonancs/deepseek-harness-deep-dive](https://github.com/xiaonancs/deepseek-harness-deep-dive)
+> （2026-10 时点约 44 star 的小仓，**非官方**；基线为 rc.5 快照
+> `47f943859b`、2026-08-13、12,293 commits，rc.5→rc.7 增量另有逐条追踪）。
+> 它的价值不在 star 数，而在两件可抄的东西：给每条结论标证据档
+> （`[verified]` 文件:行号 / `[inferred]` 合理推断 / `[claimed]` 二手口径，
+> 与本仓「官方/自报/未复测」口径同构）、以及把论文形式化逐条对回源码。
+> 本节机制性结论均为其对 fiber.ts 等文件的 [verified] 读码口径，
+> 本仓未逐行复核；涉及动机处按其 [inferred]/[claimed] 标注降级处理。
+
+### 7.1 论文两轴：「时空可组合」到底在哪两根轴上组合
+
+首节说的 Cordis 配套论文《A Programming Paradigm for Spatiotemporal
+Composability》，报告给出的通俗拆解（报告口径，论文为北大 × DeepSeek-AI
+联合产出，共同作者 Tianyi Cui 是 dsh 头号提交者）：
+
+```text
+时间轴 = reversible effect（可逆副作用）
+         安装任何副作用时同时交出它的撤销键；
+         组合算子的逆 = 各分量逆的反序组合
+         →「做过的动作都能撤销」
+
+空间轴 = reactive coeffect（响应式依赖）
+         依赖用 inject 声明，框架在服务就绪/消失时主动推通知，
+         插件不轮询、启动顺序不手工编排
+         →「我需要什么由我声明，框架自动喂给我」
+```
+
+报告把整条技术主线浓缩成一句口号：**「万物皆服务，万物皆可撤销」**——
+前半句是「一切皆插件」的服务化表达，后半句是可逆 effect 的通俗说法。
+注意它的自我设限：口号不是被证明的定理，严格边界在论文原文。
+
+### 7.2 fiber 内核三件套：热插拔正确性的运行时答案
+
+首节的「五个概念」停在 API 面；报告对 `fiber.ts`（core 包最承重单文件，
+约 486 行）的精读补上了运行时面。fiber = 插件实例的运行时载体
+（`Plugin.Runtime` 是类，fiber 是一次实例化运行；一个 runtime 可挂多个
+fiber，还分根 fiber / 普通 fiber）。三根承重柱：
+
+**其一，epoch 字符串 = 依赖快照的单一真相源。**
+`_refresh()` 把每个依赖当前提供方的 uid 拼进 epoch；任一依赖缺失则置
+哨兵 `INACTIVE`。状态（六态：PENDING/LOADING/ACTIVE/FAILED/UNLOADING/
+DISPOSED）不另存字段，而是从 epoch 推导——热插拔最怕「状态与派生状态
+不一致」，干脆只存一份。重要推论：**依赖名字还在、但提供者换了人
+（uid 变了），epoch 同样变、照样触发 reload**。
+
+**其二，可逆 effect 的三性质。**
+`ctx.effect(fn)` 返回撤销键（disposer），且保证：
+
+```text
+反序：  卸载时 disposer 后进先出执行
+        （先建连接再注册路由，拆时必须先撤路由再断连接）
+幂等：  重复调用同一个 disposer 是无害空操作（撤销键只灵一次）
+嵌套：  effect 内创建的子 effect 改挂进父 effect 的账本，
+        撤父连带撤子，且顺序正确
+```
+
+**其三，inertia 惯性闸门：异步迁移串行化。**
+插件 callback 可能 await 半天，加载途中依赖又消失了怎么办？
+
+```text
+服务变化 → reflect.notify → 重算依赖 _store → 重算 epoch
+        → _setEpoch：新旧相等则不动（幂等）
+        → 若正在迁移中（inertia 存在）：只记 epoch 不动作
+        → 迁移末尾「回头看」最新 epoch，决定再来一轮
+收敛形态：任一时刻至多一个迁移在跑，且最终收敛到最新目标
+```
+
+报告点出的取舍：在「惯性排队」与「抢占中断」之间选了前者——完全回滚
+要求副作用始终处于已知的完整状态，中断跑到一半的 callback，已建连接、
+已注册钩子全卡在半成品，回滚点根本说不清。
+
+**自引用闭环**：装载一个插件，对父 fiber 而言就是注册一个 effect
+（子 fiber 的 dispose 登记在父的账本上）——于是「整棵插件树」天然层层
+可回滚，这正是 dsh 敢说「运行时改自己不留脏东西」的地基。
+
+### 7.3 过程哲学：当主力程序员是 AI，工程纪律是给 AI 立的法
+
+报告「过程命题」的几个硬数字（其对仓库门禁文档的引用口径）：
+
+- 仓库自述 **"This codebase is developed primarily by coding agents"**
+  （quality-gates.md:11）——不是外界推断，是自述；
+- 节奏：约 2 个月 12,293 commits（rc.5 基线口径）；
+- 制度件：约 505–507 篇 Agent Notes（ADR 决策记录，相当于给后来者的
+  「当初为什么这么定」备忘）、docs/postmortem 事故复盘、100% 单文件
+  覆盖、双语门禁、原生 stacked-PR 工作流。
+
+这组事实和本仓 `harness工程实战` 的「把不确定的模型包在确定的结构里」
+互为印证：**代码主要由不确定的 agent 写出时，确定性的东西必须外置**——
+评审纪律、决策留痕、事故复盘、门禁全在流程里而不在 agent 的自觉里。
+
+### 7.4 血缘链：元框架不是设计出来的，是演进出来的
+
+报告的血缘考证（其 git 实证口径）：Cordis 出自 4000+ 插件规模的
+Koishi 聊天机器人框架（Shigma 主导 537/550 commits、4 年演进），
+dsh 以 vendored 方式消费 Cordis。链条 = Koishi 生态 → Cordis 抽象 →
+dsh 产品。面试里被问「为什么不学 pi 极简」，这是比「理念不同」更实的
+答案：**dsh 的复杂度是带着生态遗产来的——它要继承的是 Koishi 验证过的
+插件经济，pi 没有这个历史包袱也不需要。**
+
+## 八、▶ 面试挂钩
 
 **问题 1：pi 和 dsh 都读过，架构选型上你怎么取舍？**
 「两个极端锚点。pi：agent loop 949 行一个文件，7 个钩子孔位，
@@ -237,8 +339,22 @@ pi 版本只回答『压缩了』。」
 『允许 agent 写代码』是同一个信任问题——boundary 不在『能不能』
 而在『可不可回滚、可不可审计』。」
 
-## 八、延伸阅读
+**问题 5：插件热装卸「不留脏东西」靠什么保证，不只是口号吧？**
+「下沉到 fiber 三件套：依赖快照收敛成一个 epoch 字符串
+（任一依赖缺失置 INACTIVE、提供者换人 uid 变也触发 reload，
+状态从 epoch 推导不另存字段，消灭不一致窗口）；可逆 effect 保证
+反序撤销、幂等撤销、嵌套连带撤销；异步迁移用 inertia 串行化——
+加载途中目标变了只记 epoch，迁移末尾回头看再决定下一轮，
+最终在 unleas 最新目标上收敛。支撑它的还有一篇形式化论文
+（时空可组合：时间轴可逆 effect、空间轴响应式 coeffect），
+可替换是机制兜底而不是约定自觉。答题时补一句来历更稳：
+这套语义在 Koishi 几千个插件的生态里先跑了四年。」
 
+## 九、延伸阅读
+
+- 三方深读报告（本文 §七 来源）：
+  [xiaonancs/deepseek-harness-deep-dive](https://github.com/xiaonancs/deepseek-harness-deep-dive)
+  （35 章 + 总纲 + 社区认知地图；证据三档标注法可直接抄）。
 - 一手仓库与文档：[deepseek-ai/deepseek-harness](https://github.com/deepseek-ai/deepseek-harness)、
   [架构总览](https://github.com/deepseek-ai/deepseek-harness/blob/main/docs/architecture.md)、
   [Cordis primer](https://github.com/deepseek-ai/deepseek-harness/blob/main/docs/cordis-primer.md)、
