@@ -49,6 +49,16 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-17：kernel 线产业第二案例——kernel-agent竞赛篇新增 §五·增二
+  「TokenSpeed-Kernel 把 kernel 变成一等公民」（PyTorch 官方博客一手口径：
+  分层公共 API mha_prefill/moe_apply + @register_kernel 注册表 + selector
+  三重过滤/命中缓存 + numerics/独立基准/profile 护栏；GPT-OSS 120B on
+  MI355X 实战：attention 15 测点 14 最快、1.4–2.3× vs Triton、1.1–1.3×
+  vs AITER；MoE decode warp-decode 融路由 1.7–2.1×、中批量诚实 0.9x；
+  端到端 1.6–3.6×；tokenspeed-kernel-amd 被 vLLM 反向采用；agent 落
+  kernel 的终点站=registry 观点）+ 面试 Q8 + 口径条目；推理引擎2026新
+  进展篇收敛趋势补第 8 条（kernel 层抽成可插拔一等公民子系统）并加
+  串读互链
 - 2026-10-17：MoE 线新方向——moe架构篇新增 §六「LatentMoE：把路由专家压进
   潜空间」（Kimi K3 2.8T 架构三件套之一；7168→3584 约两倍瓶颈压缩、共享
   专家保全宽；dispatch 搬运的激活与专家权重读取字节同比例减半，与 FP8 压

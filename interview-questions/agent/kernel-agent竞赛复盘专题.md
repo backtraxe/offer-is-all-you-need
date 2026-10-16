@@ -140,6 +140,91 @@ Diffusion 侧（Z-Image / Qwen-Image）吞吐与 TTFT 同步改善。
 工具 + 沉淀 AOT 产物库**三件套。harness 的可检索历史资产，
 在生产侧对应的就是 skill 库与 kernel 库的持续积累。
 
+## 五·增二、产业界的第二案例：TokenSpeed-Kernel——把 kernel 变成一等公民
+
+第一个产业案例（SGLang Skills）回答「**让 agent 怎么产 kernel**」；
+2026-06 PyTorch 官方博客发布的 TokenSpeed-Kernel 深度文（AMD Triton
+Team 与 TokenSpeed Team 联署，官方一手口径，本仓未复测）回答另一半：
+「**agent 产的 kernel 落进引擎，需要什么样的承接结构**」。纲领一句
+——「make kernels a first-class subsystem rather than a collection of
+hidden fast paths」：kernel 不是引擎里散落的隐藏快路，而是一个有
+公共 API、有注册表、有选择器、有验证基准护栏的一等公民子系统。
+
+背景一句话：TokenSpeed 是 LightSeek 基金会（非商业公司，NVIDIA/AMD
+均投工程力量）2026-05 发布的 agentic 推理引擎，目标「TensorRT-LLM 级
+性能 + vLLM 级易用」；2026-08 入选 PyTorch Ecosystem。与本篇的扣合点
+是博客原文点破的一句：这套结构 gives kernel development for AI
+agents a clearer work boundary——try a kernel, verify it, benchmark
+it, and register it without reshaping model code——**试、验、测、注
+册四步全程不碰模型代码**，正是 §三闭环想要的产业级管道。
+
+### 机制四件套（一等公民的四根柱子）
+
+```text
+   runtime（模型执行、调度、page table —— 始终平台无关）
+        │ 只描述算子问题：mha_prefill / mha_decode_with_kvcache / moe_apply
+        ▼
+   选择器：平台能力 / 格式签名 / traits 三重过滤 → priority 排序 → 命中缓存
+        │
+        ├─ tokenspeed-kernel（NVIDIA：trtllm / cuteDSL / 便携 Triton）
+        ├─ tokenspeed-kernel-amd（Gluon 写的 CDNA4 内核）
+        └─ out-of-tree 插件（同一 @register_kernel 注册，同台竞争）
+   [每条注册声明：算子族/方案/签名/traits/优先级 → 通行 numerics/基准/profile 护栏]
+```
+
+1. **分层公共 API**：runtime 只调平台无关接口，只描述「算子问题」
+   （张量、格式、模型 traits、约束），从不点名后端；
+2. **注册即声明**：`@register_kernel` 装饰器声明算子族、方案名、
+   平台能力要求、张量格式签名、traits、优先级——注册表是**唯一事实源**；
+3. **选择器**：运行时按三重条件过滤、按优先级排序、返回 callable，
+   同模型×平台×dtype×traits 组合命中后缓存；调试/基准可强制指定方案；
+4. **迭代护栏**：参考实现做 numerics 对照、独立基准不开全服务器也能
+   跑、profiling 让「选中了哪个 kernel」出现在端到端 trace；CLI 与
+   serving 复用同一套注册元数据——**注册到选择一条管道**；插件走
+   同一装饰器自带优先级，与 in-tree 内核同台竞争。
+
+补一句引擎侧架构账（面试加分项）：TokenSpeed 是**把控制面/执行面
+拆开的首个开源推理引擎**（PyTorch 基金会收录时的自述口径）——控制面
+用 C++ 写成有限状态机，请求生命周期与 KV 所有权由类型系统在编译期
+管住；执行面留 Python 保迭代速度。
+
+### 实战账：GPT-OSS 120B on AMD MI355X（官方口径）
+
+模型本身就是考场：attention 带 attention sinks + 滑动窗/全量层混合，
+MoE 是 128 专家 top-4、MXFP4 权重 + FP8 激活——这些细节全压在公共
+API 之下，模型代码不知道 CDNA4 架构。AMD 侧用 Gluon（Triton 家族
+DSL，显式控制 scaled MFMA、异步拷贝、软件流水）：
+
+- attention prefill（bf16、head_dim 64）：15 个测点 14 个最快，
+  1.4–2.3 倍于 Triton 基线、1.1–1.3 倍于 AMD 官方 AITER；
+- MoE decode 按批量分档：小 batch 用 warp-decode 把 top-k 路由**融进
+  gate/up 投影单次启动**（瓶颈是 occupancy），1.7–2.1 倍于 Triton、
+  1.1–1.6 倍于 AITER；中批量切 direct grouped GEMM（单缓冲直读换低
+  寄存器/smem 压力保 occupancy），该段 AITER 略胜、Gluon 保住 0.9x
+  ——**不是每格都赢，且公开写出来**；
+- 端到端 20 个测点全胜：输出吞吐 1.6–3.6 倍于便携 Triton 路径（TP1
+  单卡、prefix 关闭、EvalScope 口径；commit 1492030 / ROCm 7.2.1 /
+  AITER 0.1.13 配置全公开）；
+- 同一 API 的多硅对照：NVIDIA 侧同一 runtime 调用，底下是 FlashInfer
+  包装的 trtllm MHA / MoE 方案——**AMD 性能不是另起一条 serving
+  路径换来的，是 Gluon 内核注册进同一注册表换来的**。
+
+### 怎么接回本篇主线（面试收束）
+
+- SGLang 的 Kernel Hub / AOT 产物库是**横向沉淀**（谁的 kernel 都能
+  入库），TokenSpeed 的 registry+numerics+bench 是**纵向海关**（kernel
+  进 serving 的必经关卡：声明能力→校验数值→基准测量→排队被选）——
+  产业闭环的两个半环都齐了；
+- §三说评估与晋升层最难做，TokenSpeed 把这两层直接做成了引擎基础
+  设施——**agent 产 kernel 的终点站不该是 git 分支，是 kernel registry**；
+- 口径纪律同框：TokenSpeed 公开配置与全部形状矩阵（对照 §四 Sakana
+  反例的「宣称加速、语焉不详」），产业级可信的方法论就是**数字 +
+  配置 + 形状榜单三件全公开**；
+- kernel 层独立成可复用资产的注脚：`tokenspeed-kernel-amd` 单独
+  pip 发布后**已被 vLLM 采用**（官方博客口径）。引擎侧完整叙事见
+  [推理引擎 2026 新进展](../inference/推理引擎2026新进展.md) 的第八条
+  收敛趋势。
+
 ## 六、▶ 面试题与追问
 
 **Q1【高】给一个「让 agent 写 kernel」的需求，你会先建什么？**
@@ -187,6 +272,17 @@ verifier 硬度、可复现产物**这三件事上。竞赛篇和产业篇结论
 赢的从来不是『让 agent 从零写』，是『把人踩过的坑变成 agent 的
 起跑线』。」
 
+**Q8【中高】Agent 生成的 kernel 怎么「落进生产引擎」？**
+「SGLang Skill 产 kernel + Kernel Hub 沉淀」只闭环了产线一半；
+落进 serving 还要过海关：TokenSpeed-Kernel 把 kernel 做成一等公民
+子系统——`@register_kernel` 声明能力/签名/traits/优先级、numerics
+对参考实现校验、独立基准 CLI、selector 按请求分发并缓存命中、
+profile trace 可见，插件与 in-tree 同台竞争。实战口径：GPT-OSS 120B
+on MI355X，attention 1.4–2.3 倍于 Triton、端到端 1.6–3.6 倍、中批量
+0.9x 于 AITER 照实公开；tokenspeed-kernel-amd 已被 vLLM 采用。一句话
+收束：**agent 时代的 kernel 交付物不是补丁分支，是一条 registry
+元数据加一份验证基准记录**。」
+
 ## 七、串联阅读
 
 - [Harness 工程实战](./harness工程实战.md)：晋升规则/评估闭环的
@@ -198,7 +294,9 @@ verifier 硬度、可复现产物**这三件事上。竞赛篇和产业篇结论
 - [FBTriton 与稀疏算子 Kernel 实战专题](../fbtriton与稀疏算子kernel实战专题.md)：
   负载画像吃决策的同族案例（阈值才赢 5.8×）；
 - [GEMM 优化阶梯专题](../gemm优化阶梯专题.md)：要优化的东西的
-  本体——13 级阶梯是 harness 里「候选家族」的教科书。
+  本体——13 级阶梯是 harness 里「候选家族」的教科书；
+- [推理引擎 2026 新进展](../inference/推理引擎2026新进展.md)：§五·增二
+  引擎侧的全景——kernel 抽成一等公民子系统已是 2026 引擎收敛趋势之一。
 
 ## 口径与未核实说明
 
@@ -209,6 +307,12 @@ verifier 硬度、可复现产物**这三件事上。竞赛篇和产业篇结论
 - §五增的 SGLang 数字（1.13x~2.75x / +71.4% / 456→168ms）为多源
   二次转述的团队自报口径（本仓未核对 SGLang 官方原文）；Sakana AI
   被质疑一事为社区公开争议口径，引用时标注「社区质疑、未终裁」。
+- §五·增二的 TokenSpeed 数字（1.4–2.3×/1.1–1.3×/1.7–2.1×/0.9x/
+  1.6–3.6× 等）为 PyTorch 官方博客一手口径（AMD Triton Team 与
+  TokenSpeed Team 联署，2026-06-25），测量配置原文公开（commit
+  1492030、ROCm 7.2.1、AITER 0.1.13、形状矩阵逐条列出）；本仓未复测。
+  「vLLM 采用 tokenspeed-kernel-amd」为该博客自报；「首个拆开控制面/
+  执行面的开源引擎」为 PyTorch 生态收录时的自述口径，本仓未逐家排查。
 - LoongFlow / OpenEvolve / KernelEvolve / KernelBench / FlashInfer-
   Bench 的引用均为综述与 writeup 口径；「高分区方案先吃透负载
   画像」为作者总结，不是官方评分规则。
