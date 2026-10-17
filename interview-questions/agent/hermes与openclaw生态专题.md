@@ -162,6 +162,63 @@ Enhancement   以增强既有工具为核（插件/外挂型）
 
 一句话总结陈词：**开源世界的抄袭不写在许可证里，写在引用里。**
 
+## 七·增、Hermes 本体机制补全：六设计原则与自进化数据流
+
+> 本节补自同一份报告（[xiaonancs/hermes-agent-study](https://github.com/xiaonancs/hermes-agent-study)，
+> 39 篇/32 章/97 张架构图，v0.9.0 基线 + v0.10→v0.14 升级专题）的
+> **机制篇（Part I/II）**：本文原吸收的是它的生态/争议视角（Part III
+> 与总纲调研），这批补上没写过的设计原则、自进化机制本体与规模账，
+> 均按其 [verified] 读码口径转述，本仓未复核。
+
+**六大设计原则**（一句一条，可直接引）：
+
+1. **Prompt 稳定性**：系统提示词在对话中不变——除用户显式动作
+   （如切换模型），无破坏缓存的变更；Anthropic Prompt Caching
+   的有效性是**显式设计目标**，不是副产品；
+2. **可观察执行**：每次工具调用可见（CLI 进度条 / Gateway 聊天
+   推送），没有黑盒步骤；
+3. **可中断性**：API 调用与工具执行都可中途取消；
+4. **平台无关核心**：一个 AIAgent 服务全部入口，平台差异只存在
+   于入口层（CLI / Gateway / ACP / Batch / API Server）；
+5. **松耦合**：可选子系统（MCP、插件、Memory Provider、RL 环境）
+   一律注册模式 + check_fn 门控，不硬依赖；
+6. **Profile 隔离**：每个 Profile 独立 HERMES_HOME、配置、记忆、
+   会话与 Gateway PID，可并发运行。
+
+**自进化的机制本体**——Q1 说「skill 自动固化做可感知支撑」，固化
+到底怎么发生：两相闭环，都走 `skill_manage` 工具——
+
+```text
+Phase 1 经验固化    复杂任务完成（5+ 次工具调用）
+                    → 评估「值得记住？」
+                    → skill_manage(create)：写 SKILL.md + 更新索引
+Phase 2 持续进化    后续类似任务自动加载已有 skill
+                    → 走完再评估「有没有更好方法？」
+                    → skill_manage(patch) 原位更新
+```
+
+对照仓内 kernel-agent 篇的 RLCR 闭环：那边是 agent 产业线自己沉淀
+kernel，这边是 runtime 把**用户任务的执行经验**固化成 skill——同一
+思想（把踩过的坑变成起跑线），作用域不同。
+
+**工具面与两条数据流**：47 个工具在 registry.py 自注册；
+model_tools 以 **AST 静态扫描** tools/*.py 生成模型可见目录；执行期
+handle_function_call 查注册表分发。CLI 流 = 输入 → PromptBuilder
+（system prompt + skills 索引）→ RuntimeProvider 解析（api_mode /
+key / base_url）→ 三种 Transport → 工具循环 → SessionDB 落盘；
+Gateway 流 = 平台事件 → Adapter 标准化 MessageEvent → authorize
+加 session key → 携历史建 AIAgent → Delivery 按平台转回格式。
+
+**规模账（v0.9 → v0.14，报告口径）**：Python 文件 886 → 1,898
+（+114%）、411k → 912k 行（+122%）、消息平台 18 → 22、可选 skill
+子目录 14 → 82——三十日五版的另一面是**体量翻倍**；Q3 的 Transport
+ABC 重构正是体量压力下的产物。
+
+**一行档案（标题级，未读正文）**：同报告 Part III 对照组里还有两个
+本文此前未提过的项目——OpenHarness（Python，9.9k star，「三种
+Agent 哲学」之一）与 JiuwenClaw（Python，398 star）；另有
+AutoResearch 研究工作流话题（其 Part I/II 章节，社区升温中）。
+
 ## 八、▶ 面试题
 
 **Q1【高】Hermes 一个月涨几万 star，你怎么解读这种爆发？**
@@ -224,6 +281,17 @@ CREDITS/致谢文件写明血统（成本一行，避免整场声誉战）；对
 叙事避免「从零创造」的表述。工程合规做在前，比事后公关便宜
 三个数量级。
 
+**Q9【中高】Hermes 的「自进化」具体是什么机制，而不是营销词？**
+A：两相 skill_manage 闭环——复杂任务（5+ 次工具调用）完成后评估
+是否固化，值得记则 create 写 SKILL.md 进索引；后续类似任务自动
+加载已有 skill，执行完再按效果原位 patch。关键细节是**触发阈值**：
+5+ 工具调用才进入固化评估，避免把琐碎操作也固化为噪声。对照
+RLCR（agent 产 kernel）与 Claude Code 的记忆提取：三者都是
+「经验固化」，差别在固化物类型——skill 文本、kernel 代码、
+事实记忆；被追问边界时补一句：skill 的自动 patch 同样有
+reward hacking 风险，固化坏了的 skill 会自我强化，需要
+人工索引抽查兜底。
+
 ## 九、串联阅读
 
 - 源码四极与产品内幕：[Pi Agent 源码分析](./pi-agent源码分析.md)、
@@ -253,3 +321,7 @@ CREDITS/致谢文件写明血统（成本一行，避免整场声誉战）；对
    生态/争议视角，两篇互为上下半场。
 4. 报告系列为多模型流水线产出（依次经 Opus/GPT 互审），研究文本
    CC BY-SA 4.0；star 数与生态数据均为采集时点快照。
+5. §七·增 的机制细节（六原则、skill_manage 两相闭环、AST 工具
+   发现、两条数据流、v0.9→v0.14 规模账）来自同一报告的机制篇
+   （Part I/II）[verified] 读码口径，本仓未复核；OpenHarness 与
+   JiuwenClaw 仅标题级档案，AutoResearch 正文未读。

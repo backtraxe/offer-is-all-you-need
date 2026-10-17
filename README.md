@@ -49,6 +49,15 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-17：Hermes 篇机制篇补全（同一报告 hermes-agent-study 的
+  Part I/II 本体——此前只吸收了其生态/争议视角）——新增 §七·增：
+  六大设计原则（Prompt 稳定性=缓存是显式目标/可观察/可中断/平台无关
+  核心/松耦合 check_fn 门控/Profile 隔离）、自进化机制本体（两相
+  skill_manage 闭环：5+ 工具调用触发评估→create 固化 SKILL.md→
+  后续加载按效 patch；对照 RLCR 作用域异同）、47 工具自注册 +
+  AST 静态扫描发现 + 两条数据流（CLI/Gateway）逐环账、v0.9→v0.14
+  规模账（文件 886→1,898、411k→912k 行、skill 子目录 14→82）、
+  OpenHarness/JiuwenClaw 一行档案（标题级）+ Q9 自进化防营销词答法
 - 2026-10-17：pi 篇深读增补（吸收 pi-agent-source-study 32 章——27 章
   横向按 B 快照 + 28–32 章纵向按 U 快照 46c9de402/2026-09-18、一年
   6,252 commits）——新增 §七·增：读码三发现（「迁移进行中」代码库/
