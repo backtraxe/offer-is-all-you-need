@@ -49,6 +49,18 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-17：GitHub 挖掘批——十九轮小批——新锐雷达 10-17 晚二扫：新入库
+  landedjobs/ai-interview-questions（landed.jobs 官方题库，759 题按 11 角
+  色分区、372 题 reported/practice 明确分标的口径纪律；AI Infra 与 Platform
+  118 题、Frontier Labs 按实验室轮次分组——北美题面对一手来源）与
+  lss-1138/llm-scratch-code（手撕个人合集，与 coding/模型手撕 完全同构、
+  SimPO 已覆盖射程内互证）；两道数字判读题标本落专题——推理服务slo与运营
+  playbook 新增「单租户长 prompt 顶 TTFT」行（TTFT 与 queue p95 同涨而
+  token-gap 稳＝prefill 侧层差判读）、通信与网络专题 §五新增 straggler 现场
+  判读题（输入等待 140 ms 尾 rank 是短板而集合 20 ms 完成说明通信健康）；
+  追新复查：Imironman123 09-24 目录重组后零增量、wanshuiyin 群二维码行政
+  push、WeThinkIn 连更集中 AIGC 绘画与多模态排版、Junvate 与 EasyOffer 停更
+  判定不变；amanailab 类机构 PDF 引流仓按卖课口径不列
 - 2026-10-17：抖音 RAG 面词批——十八轮小批——面经合集新增三十一节
   （RAG 拆解教程区扫描，全批标题级+题组口径）：文档 ingestion 五连题组
   （Word/PDF 4599 赞、几百页 PDF 2265 赞四步链路，与 rag全链路「文档
