@@ -178,6 +178,12 @@ temp=0.6、AIME 平均 32 次的口径下（技术报告 / GitHub）：
   **SWE-Bench Verified 73.4、AIME25 94.1**；
 - **2026** MiMo-V2.5-ASR、MiMo-Code（终端编程 Agent，GitHub 13.6k star）。
 
+人物注（源流）：公众号解读帖「小米 MiMo 罗福莉：8 卡 GPU 让 1T 参数
+模型跑出 1000 TPS，FP4+DFlash+TileRT 全解」——上条 V2-Flash 时间线
+与仓内 FP4/DFlash/TileRT 推理侧记录的公众号源文之一（标题口径照录，
+1T/1000 TPS 数字未核实）；罗福莉为媒体口径的 MiMo 人物注：公开报道
+提其加入小米大模型团队，职务细节未核实，仅作人物线索、不作背书。
+
 面试用得上的一条线：**MTP 从 MiMo-7B 的「1 层训练+推理堆多层」到
 V2-Flash 的「3 层轻量 MTP 直接加速 3×」**——架构赌注延续，回报越来越硬。
 未公开/未核实项：VL 预训练 token 量、各代 GPU 总量与训练时长均未见
