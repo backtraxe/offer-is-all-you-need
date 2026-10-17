@@ -8,7 +8,7 @@
 
 | 文档 | 覆盖主题 | 核心面试题 |
 |---|---|---|
-| [Transformer 与 Attention](./transformer与attention.md) | Self-Attention 公式与 √d 缩放、MHA 结构、MHA→MQA→GQA→MLA 演进、KV Cache 显存估算（7B/13B/70B 数字）、FlashAttention | "Transformer 架构讲一遍" "**为什么除以 √d**" "MHA→MLA 每一步省什么" "KV Cache 显存怎么算" |
+| [Transformer 与 Attention](./transformer与attention.md) | Self-Attention 公式与 √d 缩放、MHA 结构、MHA→MQA→GQA→MLA 演进、KV Cache 显存估算（7B/13B/70B 数字）、FlashAttention、MLP=Hebbian 记忆与闭式知识注入 | "Transformer 架构讲一遍" "**为什么除以 √d**" "MHA→MLA 每一步省什么" "KV Cache 显存怎么算" |
 | [MLA 深度穿透专题](./mla深度穿透专题.md) | 低秩压缩完整推导、矩阵吸收的数学合法性与两种推理形态、decoupled RoPE 的由来、MHA/GQA/MLA 手撕 cache 账（64KB vs 4KB vs 1.13KB/token）、80G 卡上下文预算实战估算 | "矩阵吸收为什么合法" "RoPE 为什么不能吸收" "MLA cache 里到底存什么" "MLA vs GQA 表达力谁强" |
 | [位置编码、Norm 与 Tokenizer](./位置编码与norm.md) | 绝对/相对位置编码、RoPE 原理与长上下文扩展（NTK/YaRN）、ALiBi、Pre-Norm vs Post-Norm、LayerNorm vs RMSNorm、BPE 与 token 估算 | "RoPE 原理" "为什么大模型用 RMSNorm" "BPE 是怎么训练的" |
 | [MoE 架构与专家并行](./moe架构.md) | 稀疏激活与等效激活参数、Switch→GShard→DeepSeek V2/V3→Qwen3 演进、辅助 loss vs aux-loss-free bias、EP 并行与 all-to-all、DeepEP 双内核与 EPLB、LatentMoE 潜空间压缩（Kimi K3） | "MoE 相比 Dense 的优势" "负载均衡怎么做" "EP 的 all-to-all 为什么是瓶颈" |

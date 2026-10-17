@@ -49,6 +49,13 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-17：llm基础理论补丁——transformer篇新增 §九「FFN 存知识的理论补全：
+  MLP 是 Hebbian 记忆」（Hazy Research，arXiv:2607.10034，COLM 2026 转述口径：
+  白化后门控 MLP 与 Hebbian 记忆数学等价、B 矩阵闭式外积和赋值免训练、
+  解码间隔分析视角、信息论最优率下同事实数参数省 10–10⁴ 倍/进 Transformer
+  块省 15–63 倍、PoC 为整块换 MLP；串联 Geva 2021 与 ROME/MEMIT 与 RAG
+  三分法——微调、RAG 之外补出「写参数但不训练」的第三姿势）+ 追问表
+  加行 + rag全链路 §1.2 三分法更新 + llm基础 README 索引行
 - 2026-10-17：kernel 线产业第二案例——kernel-agent竞赛篇新增 §五·增二
   「TokenSpeed-Kernel 把 kernel 变成一等公民」（PyTorch 官方博客一手口径：
   分层公共 API mha_prefill/moe_apply + @register_kernel 注册表 + selector
