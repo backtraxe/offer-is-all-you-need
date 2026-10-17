@@ -92,6 +92,13 @@ encoder 输出，长度可以不同——上面的 forward 已经天然支持，
   靠 mask 防信息泄漏，训练和推理逻辑统一。
 - **「dropout 加在哪？」** 标准答案两个位置：attn 权重上（`attn = dropout(attn)`）
   和 W_o 输出上。白板能答出前者加分。
+- **「分头后为什么要 transpose(1, 2)？concat 之后为什么要 contiguous()？」**
+  （腾讯一面真题双连，腾讯爱考 MHA 的高频互证）头拆在最后一维时
+  [B, L, h, d] 沿头维并行不便，transpose 后 [B, h, L, d] 让头与 batch
+  两维都归整；而 transpose 只改 stride 不搬数据，后续 view/reshape
+  要拼接多头时需要内存连续——要么 contiguous() 先搬一次，要么直接用
+  reshape（连续时零拷贝、非连续时自动等价 contiguous）。此问顺势引出
+  「view 与 reshape 的区别」，问到就是白送。
 
 ## 二、numpy 手撕 attention 前向（含手写 softmax）
 

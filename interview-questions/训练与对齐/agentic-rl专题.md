@@ -305,6 +305,29 @@ rubric judge（抗 hack 但高方差，judge 本身要训练防 drift）。GLM-5
 答案是混合；K2 的答案是 rubric + self-critic 闭环，critic 用可验证信号
 持续校准。没有第四种答案，说出三角就及格。
 
+### 6.8 多轮交互式 RL 的 user simulator：环境里再站一个模型
+
+用户不停追问、按结果细化目标的开放式会话（assistant 产品、谈判式
+agent），rollout 里 user 侧再放一个模型当对手（27 届后训练岗 20 余场
+面经总结帖实录，见
+[面经合集二十六节](../../interview-experiences/小红书社招面经合集-2026h2.md)）：
+
+- **user simulator 「好」的定义与难题**：要难且真——分布要随 policy
+  变强而调整，否则训出讨好模拟器的策略（与 reward model 过优化同构，
+  Goodhart 防线原样适用）；user 侧输出不确定会让轨迹评级噪声翻倍。
+  面试锚一句话：**user simulator 就是 user 侧的 reward model**，KL、
+  ensemble、定期换代三件套直接迁移。
+- **训哪几轮的三档**：只训最后一轮（轨迹级、信号稀疏但干净）/ 多轮
+  都学（信息密，但用户消息是否进 loss 要与 observation mask 口径
+  区分，见 [agentic-rl 前沿手法专题](./agentic-rl前沿手法专题.md)
+  §2.2）/ 带 simulator 的交互式多轮（真闭环但环境噪声最大化）——
+  取舍坐标可直接复用 §6.7 的三角背法。
+- **省钱的落地**：不必每步全真模拟——离线多轮轨迹池 + 末端 RL 微调，
+  或 user 侧小模型+规则模板混合，把算力留给 policy。
+
+口径：三档框架与「user 侧 RM」类比为面经还原帖答法（自报），工程
+直觉可信，未引具体论文背书。
+
 ## ▶ 面试题
 
 **Q1（极高频）：GRPO 为什么直接搬去多轮 agent 不够用？**
