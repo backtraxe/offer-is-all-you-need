@@ -299,6 +299,87 @@ TUI 里你看到的每个工具折叠卡片都是渲染器产物，而非写死�
 面试话术：**「看过 Claude Code 的行为规范，也精读过 pi 的 agent loop——
 前者让我理解完整产品要补什么，后者让我理解核心循环最小可以小到什么。」**
 
+## 七·增、深读增量（三方纵向报告）：三发现与 harness 换代
+
+> 增量来源：[xiaonancs/pi-agent-source-study](https://github.com/xiaonancs/pi-agent-source-study)
+> 《Pi Agent Harness 源码深度研究》（32 章：前 27 章横向按 B 快照
+> `9d2ec7ffa` 覆盖 CLI 入口到 CBOR 远程协议；第 28–32 章纵向按 U 快照
+> `46c9de402`（2026-09-18）从一年 **6,252 次 commit** 提炼演进；结论
+> 带 `文件:行号` 与 verified/inferred/claimed 三档标注）。本节为其
+> [verified] 读码口径，本仓未复核；本文正文的「949 行」等数字属更早
+> 快照，两版并读时以各自基线为准。
+
+### 读码三发现：把「极简」拆成三个可审计的事实
+
+1. **这是「迁移进行中」的代码库，不是静态成品**。`agent-harness.ts`
+   是 v2 scaffold——`AgentLane` 契约与 `Result/TaggedError` 错误模型
+   已定义，但 B 快照下 `prompt/compact/navigateTree/resume` 等编排
+   方法抛 `HarnessNotImplemented`，真正落地并被测试锁定的只有纯函数
+   `reduceLaneState` 与 `validateRecordLog`。会话层同样两套并存：
+   新的事件溯源式 v4（后端中立）与遗留 v3 `SessionManager`（交互式
+   TUI 仍在全量使用），格式不互通——**读 pi 必须区分「已接线」与
+   「契约先行」**。
+2. **primitives 的代价是若干原语尚未接线**。图像生成 SDK 完整存在
+   （40+ OpenRouter 模型、与文本 API 平行的整套抽象），但全仓无任何
+   工具/命令调用它——开箱的 pi 只有多模态输入路径走通，不能生成
+   图像；`pi-server` 库级能力完整却无 shipping 代码实例化；遥测
+   span 契约公开导出但非测试路径找不到发射点。**库先行、接线后补**
+   是极简哲学的阶段性状态，读码时别把「存在」当「可用」。
+3. **「自扩展」是字面意义：用 pi 扩展 pi，且无沙箱**。扩展是 TS
+   模块经 jiti 加载，要进 `bun build --compile` 二进制必须顶层静态
+   import 加 `virtualModules`；扩展可 import 内核导出、运行时改
+   能力集，连内置 llama.cpp 都走同一扩展机制自举。代价是**以宿主
+   进程全权限运行、没有沙箱**——与「默认 bash 无限制、无内置权限
+   系统」一脉相承，也是社区最大争议点。
+
+配套数字锚：系统提示实测约 550 token（cl100k_base 分词，不注入
+日期/OS/git 环境块，只有末行 cwd 动态）；应用默认只开
+read/bash/edit/write 四工具，`grep/find/ls` 实现了但默认关闭。
+外加一行张力账：**极简 vs 生态反噬**——安全默认宽松（靠容器化
+兜底），扩展生态（lazypi 一键装 60+ skills）反而把 bloat 装了回来。
+
+### harness 三段换代：durable 执行链与「实现/接线/默认」三档
+
+纵向史的骨架（其 [verified] 提交链口径）：
+
+```text
+5月   a5b27367d  旧 harness 已有真实现：prompt() 查空闲 → 展开技能/模板
+                 → 构造系统提示 → before_agent_start → agent.prompt
+8月   44289550a  durable harness API 推广替换：旧实现与对应测试删除，
+                 prompt/compact/resume 等变为占位（HarnessNotImplemented）
+B→U   877c2d0ea 替换 legacy runtime · 9b034fc45 durable generation
+      eb1185d93 durable tool execution · 89356540f durable lane operations
+U                AgentHarness.create → createAgentHarness() →
+                 restoreSession() 建运行实例；watchSession 仍占位
+```
+
+U 的执行链五步：`Lane.prompt()` 整理操作请求 → `accept()` 取
+operation id → `drive()` 推进 → `driveOperation()` 按**持久化状态**
+分派（模型生成/工具执行/延迟任务/摘要/导航五类）→ 返回完成结果或
+明确的等待态。两条面试可直接背的判读纪律：
+
+- **「实现、接入、默认交付」是三个要分别核验的进度**——搜到类名
+  出现把类型导入/示例/测试/产品调用混在一起，不等于被产品走通；
+  U 的采用矩阵是「库有实现、实验入口有接线、默认 CLI 入口仍走
+  独立路径」；
+- **durable 的语义边界**：指关键执行状态可持久化供恢复，**不意味着
+  外部工具副作用天然可安全重放**——与 dsh 对照读：pi 选「恢复到
+  一致点」，dsh 的可逆 effect 选「撤销到从未发生」。
+
+### 一年演进的判读框架（28–32 章的方法论）
+
+报告纵向部分按「年度事实 → 架构采用 → 边界设计 → 任务成本 →
+反馈判断」五步链展开（一年窗口 6,252 commits、16 个边界事件、
+六项任务、24 个反馈病例），三条判读纪律值得直接抄进答题方式：
+
+- **产品交付与架构成熟度分开评价**——换代中期旧路径仍养着 TUI，
+  不能按「新接口未完成」倒推「产品不可用」；
+- **不把高频修复直接解释为健康收敛**——24 个病例按「修复能证明
+  什么」处理，活动不等于效果；
+- **极简的账不在功能表上，在责任分配表上**——默认用户/扩展作者/
+  集成者各两任务（含 SQLite 宿主前提这类隐式依赖），问「谁承担
+  剩余工作」比问「有什么功能」更见产品本质。
+
 ## 八、▶ 面试挂钩
 
 **问题 1：让你设计一个 coding agent，架构怎么分层？**
@@ -330,8 +411,23 @@ summary entry，原始历史不动、可审计。压缩摘要里附上文件操�
 渐进式披露。pi 的 skill name/description 还有规范级校验，
 无效条目降级为 warning 不阻塞加载。」
 
+**问题 6：「极简」框架读码时怎么避免被口号骗？**
+「拿三档证据纪律看 pi：一是区分『已接线』与『契约先行』——B 快照里
+agent-harness 的 prompt/compact 等抛 HarnessNotImplemented、只有
+reduceLaneState 落地，会话层 v4/v3 两轨并存格式不互通；二是把
+『存在』与『可用』分开——图像生成 SDK 完整但全仓零调用、遥测 span
+非测试路径无发射点；三是把『实现/接入/默认交付』三档分别核验——
+U 的 durable 执行链库里有实现、实验入口接线、默认 CLI 仍走独立路径。
+收束在责任分配：默认用户受益，扩展作者和集成者承担剩余工作。这套
+判读来自 32 章纵向研究的一年提交史，比背功能列表难，但一开口就是
+审过源码的口音。」
+
 ## 九、延伸阅读
 
+- 三方纵向深读报告（本文 §七·增 来源）：
+  [xiaonancs/pi-agent-source-study](https://github.com/xiaonancs/pi-agent-source-study)
+  （32 章：横向 B 快照 + 纵向 U 快照，verified/inferred/claimed 三档，
+  一年 6,252 commits 的演进提炼）。
 - 官方架构说明：
   [how-pi-works.md](https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/how-pi-works.md)
   与 [session-format.md](https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/session-format.md)。

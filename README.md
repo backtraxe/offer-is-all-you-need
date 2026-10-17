@@ -49,6 +49,16 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-17：pi 篇深读增补（吸收 pi-agent-source-study 32 章——27 章
+  横向按 B 快照 + 28–32 章纵向按 U 快照 46c9de402/2026-09-18、一年
+  6,252 commits）——新增 §七·增：读码三发现（「迁移进行中」代码库/
+  HarnessNotImplemented 与 v3-v4 会话两轨并存、primitives 未接线
+  （图像生成 SDK 零调用/遥测无发射点）、字面自扩展且无沙箱）+
+  系统提示 550 token 实测锚；harness 三段换代提交链（5 月真实现→
+  8 月 durable 契约替换→U 的 Lane.prompt-accept-drive 执行状态机）与
+  「实现/接入/默认交付」三档核验纪律、durable≠副作用可重放 vs dsh
+  对照；三发现之外的纵向五步判读框架（产品交付与架构成熟度分开
+  评价/修复活动≠效果/责任分配表）+ 面试问题 6
 - 2026-10-17：dsh 篇姊妹报告增补（吸收 cordis-source-analysis——Cordis
   本体 24 章逐行拆解，基线 c261dd2/core rc.10，core 仅 1891 行 9 文件）——
   新增 §7.5–7.8：epoch 字符串可抵消指纹的第一性论证（布尔/单调号各差
