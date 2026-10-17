@@ -49,6 +49,19 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-17：Projects RL 线扩容批——十六轮小批——十三轮批挖到的
+  Panda 906 赞 RL Agent 项目四件套入项目谱：projects/agent与rag实战
+  §四候选表新增三行（TinyZero 13.2k——最小预算纯 RL 复现 R1-Zero、
+  3B 级涌现 aha moment，防包装打法是把训练曲线对齐仓内 RL 训练工
+  程实战四坑逐坑留档；Search-R1 5.5k——think、search、information、
+  answer 四段语义 token、检索 token 掩码只对自生成 token 计 logprob、
+  结果奖励、verl 上 PPO 与 GRPO 双兼容，硬化打法是掩码开关消融留
+  稳定性曲线；DeepResearcher 0.8k——真实互联网环境 RL 训 browsing
+  agent、计损与不计损 token 分段，硬化打法加工具调用预算对质量的
+  曲线），star 均为 gh 搜索当日实查值；ReTool 与 MT-GRPO 判定论文
+  口径无公开仓、不入表挂链接，手法展开锚到 agentic-rl 前沿手法专
+  题；§五组合套餐新增「1 月+ RL 线」套餐行——RL 项目叙事从「跑通
+  了」升级到「复现经典坑并验证过设计」
 - 2026-10-17：TurnOPD 补读与追新复查批——十五轮小批——前批风控
   未读的腾讯混元 hy3 TurnOPD 原文补读吸收（agentic-rl前沿手法专题
   新增四·增：长程多回合下 OPD 的两道错配——固定 rollout 深度把算力

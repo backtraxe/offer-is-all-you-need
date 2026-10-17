@@ -103,7 +103,17 @@ RAG 是知识检索、Function calling 是工具调用，但它们都只是零�
 | [assafelovic/gpt-researcher](https://github.com/assafelovic/gpt-researcher) | 30k | 多 agent 分工的 deep research + citation 追踪 | 多 agent 编排 vs 单 agent 递归对比；引用校验 | 加「引用幻觉检测」：每个 claim 是否在 retrieved chunks 找到支撑 | 4 |
 | [langchain-ai/langgraph](https://github.com/langchain-ai/langgraph) | 43k | 图编排事实标准（state graph + checkpoint + HITL） | checkpointer = 断点续跑与记忆分层标准答案；interrupt/resume = HITL 兜底 | 用它重构一个 deep research，讲「手写 loop → 图编排」的工程判断 | 4 |
 | [OpenHands/OpenHands](https://github.com/OpenHands/OpenHands) | 90.4k | 最大开源 coding agent：事件流 + Docker 沙箱 | 事件溯源支持中断恢复、历史事件压缩、沙箱隔离 | 只挑一个子系统下钻（event stream compaction 或 runtime 沙箱）写成源码精读 | 3 |
+| [Jiayi-Pan/TinyZero](https://github.com/Jiayi-Pan/TinyZero) | 13.2k | 最小预算复现 R1-Zero：纯 RL 无 SFT、3B 级涌现 aha moment | 「为什么这任务不需要 SFT」＋奖励只有格式与正确性两栏时的 entropy 走向 | 把训练曲线对齐仓内 [RL 训练工程实战](../interview-questions/训练与对齐/rl训练工程实战.md) 四坑逐坑留档：pass@1 与输出模板漂移的同期记录 | 5 |
+| [PeterGriffinJin/Search-R1](https://github.com/PeterGriffinJin/Search-R1) | 5.5k | RL 乘搜索引擎：think、search、information、answer 四段语义 token 分段＋结果奖励，verl 训练 | **检索 token 掩码**（检索返回只进上下文不算损失、只对模型自生成 token 计 logprob）＋统一输出模板＋PPO/GRPO 双兼容 | 做 mask 开/关消融留稳定性曲线——把「我验证过掩码为什么必要」变成叙事，比「跑通了」高一档 | 5 |
+| [GAIR-NLP/DeepResearcher](https://github.com/GAIR-NLP/DeepResearcher) | 0.8k | 真实互联网环境里 RL 训 web browsing agent，计损与不计损 token 分段 | 沙箱内真实搜索交互的阶段化轨迹（think、search、browse、answer）与长期任务塌缩观察 | 加成本护栏实验：工具调用预算对质量的曲线，别止步「跑通 GAIA 子集」 | 4 |
 | **垂直 RAG 链路（自研）** | — | 自选垂直语料：混合检索(BM25+向量)→rerank→citation 校验→eval 回归 | 四维度全覆盖：超时降级/多轮 query rewrite/rerank 只对 top-k/RAGAS 回归 | **别找现成「生产模板」**——社区没有高 star 权威，手写反而可信 | 5 |
+
+**RL 线补注（2026-10 深读批吸收）**：这三件与仓内 agentic-rl 专题的
+GiGPO 理论、[前沿手法专题](../interview-questions/训练与对齐/agentic-rl前沿手法专题.md)
+的 OPD/Self-Distill 构成「实操-理论-手法」三段线；ReTool（字节,
+冷启动 SFT 标注解释器调用时机＋交错执行 rollout）为论文口径、无公开
+仓，手法展开见前沿手法专题，不在候选表里挂链接。多轮信用分配实操可
+对照仓内 GiGPO 节与 MT-GRPO（Panda 项目推荐的第三件，同属论文口径）。
 
 **评估/追踪组件（给任何项目副着加分）**：
 langfuse（35.6k，三行接入，trace + 成本看板直接覆盖「成本预算」与
@@ -118,6 +128,7 @@ precision 等指标——**必问，说不出指标定义反而扣分**）。
 | 1 周 | OpenManus 硬化 + langfuse | 工具容错 + 成本护栏 + 全链路 trace |
 | 2 周 | 自写 MCP server + 垂直 RAG（混合检索 + rerank + RAGAS） | MCP 权限/工具设计 + 评测驱动迭代 |
 | 1 月+ | 上两行 + LangGraph 重构 deep research + OpenHands 子系统精读 | 编排/记忆/恢复 + 大型 agent 工程理解 |
+| 1 月+（RL 线，2026-10 增） | TinyZero 四坑注脚 + Search-R1 掩码消融 + DeepResearcher 成本护栏 | RL 叙事从「跑通了」升级到「复现经典坑并验证过设计」 |
 
 **通用三板斧（任何项目都有）**：① 至少一个自己设计的对比实验/
 量化指标（成本-质量曲线、范式 A/B、检索召回率）；② 至少一处失败
