@@ -153,6 +153,21 @@ decode 怎么混在同一批？vLLM 用的是 chunked prefill（把长 prompt �
 | 多轮对话 | 每轮请求重命中历史轮的共同前缀 | 天然贴合——对话历史就是一条从根走下去的路径 |
 | 额外亮点 | 简单，工程改动小 | RadixAttention + cache-aware 调度（把命中最高的请求优先排），号称 tree 结构对 Agent 多轮/分支 rollout 尤其有利 |
 
+**「Prefix Cache 的过期策略」四步答法**（2026-10 增；题面出自字节一面：vLLM
+中 Prefix Cache 的过期策略是什么——只回一句「引用计数加 LRU」不够过面试，
+要能展开成链）：
+
+1. **怎么存**：APC 复用的不是整段序列，是把可复用 KV 按固定 block 切开、
+   逐块算哈希当「身份」——块表维护 hash 到物理块的映射；
+2. **什么时候一条都不能动**：每个 block 挂引用计数，ref_cnt 大于零表示被
+   活跃请求引用，淘汰扫描直接跳过；
+3. **请求结束不等于立即失效**：结束后先引用计数减一，减到零才挂进空闲队
+   列——block 从「活跃」变「空闲」，在被覆盖前一直可命中；
+4. **谁先被淘汰**：空闲队列按 LRU 排，队头最久未用、显存吃紧时最早覆盖。
+
+（来源口径：抖音 AgentAlpha 字节一面题卡全文图解 OCR，47 赞 10-6 新帖；帖为
+社区引流卡混排，题面与答法吸收、引流页不录。）
+
 <div class="diagram-embed">
 <iframe src="assets/diagrams/prefix-cache-compare.html" width="100%" height="700" style="border:none;border-radius:12px" loading="lazy"></iframe>
 <p><a href="assets/diagrams/prefix-cache-compare.html" target="_blank" rel="noopener">↗ 交互大图：新窗口打开（可缩放、悬停看注释、切暗色、导出 PNG/SVG）</a></p>
