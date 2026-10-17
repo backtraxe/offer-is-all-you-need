@@ -130,9 +130,10 @@ Hermes 报告里的对比口径：**Gateway 控制面 vs Hermes 的
 ExecutionLoop**——OpenClaw 把「多平台接入、频道、技能市场」做成
 控制面核心（对应其 27 章研究里 Gateway 控制面 / Context Engine /
 Skill 体系与 ClawHub / Tools Canvas 的章节骨架）；Hermes 则把
-重心放在执行循环与自进化。OpenClaw 本体的机制级深读本仓尚未
-吸收（其 27 章研究含 2 个月 23,014 commits、1,200 PR、fork 生态
-四因等数据面内容，后续单独成批）。
+重心放在执行循环与自进化。OpenClaw 本体的机制级深读已单独成篇：
+[OpenClaw 源码机制专题](./openclaw源码机制专题.md)——Gateway
+三类 role、MD-first 记忆、per-session 沙箱与四环纵深，吸收自其
+27 章研究（2 个月 23,014 commits、1,200 PR 的量化基线）。
 
 报告 Part III 给的分类学值得直接进弹药库——全网 Harness 四范式：
 
@@ -246,8 +247,9 @@ CREDITS/致谢文件写明血统（成本一行，避免整场声誉战）；对
 2. Hermes 数字（90k star / 11,487 行 / -61.6% 等）为报告 2026-04
    至 2026-05 时点读数；项目 30 天 5 版节奏下数字快速漂移，
    引用带时点。
-3. OpenClaw 部分仅达章节级定位，其 Gateway 控制面 / Context
-   Engine / fork 生态等机制细节待后续批次吸收 openclaw-study
-   27 章研究后成篇。
+3. OpenClaw 机制细节（Gateway 控制面 / Context Engine / fork
+   生态）已由 [openclaw源码机制专题](./openclaw源码机制专题.md)
+   承接（2026-10-17 批次吸收 openclaw-study 27 章研究）；本篇保持
+   生态/争议视角，两篇互为上下半场。
 4. 报告系列为多模型流水线产出（依次经 Opus/GPT 互审），研究文本
    CC BY-SA 4.0；star 数与生态数据均为采集时点快照。

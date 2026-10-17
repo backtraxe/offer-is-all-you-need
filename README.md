@@ -49,6 +49,16 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-17：agent 源码系列第五极新篇「OpenClaw 源码机制专题」——
+  兑现生态篇预留的机制欠账，吸收 openclaw-study 27 章深读报告
+  （基线 v2026.4.15/23,014 commits/1,200 PR 数据集）：Gateway 三
+  role 单控制面（WS 18789 + pre-connect challenge 修 CVE-2026-25253）、
+  per-session 沙箱「身份优先」安全观与四环纵深（main/non-main）、
+  MD-first 记忆装配线（先 flush 后 compact、Dreaming 建议池、
+  memory-wiki 可审计 claim、三档压缩）、六顶层子系统与飞书十步链路、
+  四判断（个人 AI OS 初形/护城河 voice+channel+mobile node）三预测
+  两难题、六道面试题 + 口径条目；生态篇欠账声明改指新篇、IQ README
+  源码路线行升级五极话术
 - 2026-10-17：RL 线观点补丁——rl奖励设计篇新增 §6.4「把不可验证域变
   可验证」（2026 行业观点主线：优化器成熟后瓶颈上移到奖励信号生产，
   三条任务改造路线——清单化 RaR arXiv:2507.17746「K=1 退化为 RLVR」
