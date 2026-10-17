@@ -49,6 +49,22 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-17：尾部目录缺口批二（溯源官方原文后双篇吸收）——transformer
+  篇新增 §十·增 KDA「精准编辑被压缩的记忆」（K3 报告 §2.1.1：
+  S_t=(I−βkkᵀ)Diag(α)S_{t-1}+βkvᵀ 先擦后写；三分视角闭环串联
+  §九 Hebbian 外积编辑面/§八 线性注意力「状态有界精度有损→改可
+  编辑容量按相关性再分配」/§十 AttnRes 深度轴对偶；工程三件事
+  chunkwise UT 变换、lower-bounded decay 把负 Softplus 无界
+  衰减用 g_min=−5 scaled sigmoid 钉下界 → off-diagonal tiles
+  走 Tensor Core、full-rank 输出门；MLA 层全 NoPE 扩上下文
+  免 retune）；lora 篇新增 §六·增 Context Tuning（arXiv:
+  2507.04221，ICML：PEFT 第四格「动演示激活出的 KV 表示」，
+  ICL 起手初始化+梯度精修两步走、CT-Prompt/CT-KV 两变体、
+  摘要口径胜 ICL 与传统 prompt 类且与 TTT 精度相当效率更高、
+  与 RAG/KV-offload 缓存经济/部署链三线串联）；同批查重结论：
+  ezyang 极限分析已被训练光速手算专题覆盖（其副题即第 3 章
+  转述）、AI圈9527 面试题-1 六题中五题已覆盖跳过、TileRT 移
+  出（暂无可溯源一手材料，微信正文被 captcha 拦）
 - 2026-10-17：微信尾部目录再扫描批——25 篇文章【传送门】全量
   提取、22 个关联主题逐条查重（16 个已覆盖跳过），真缺口溯源到
   Kimi K3 官方技术报告（arXiv:2607.24653，2026-07-27）后五篇

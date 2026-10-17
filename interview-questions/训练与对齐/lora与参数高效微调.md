@@ -150,6 +150,45 @@ LoRA 支路仍是 FP16/BF16 计算，主干 4-bit 只参与前向——**推理�
 答法要点：**LoRA 和 QLoRA 是目前唯一"参数高效 + 实现简单 + 效果接近
 全量"同时成立的方案**，Adapter 和 P-Tuning 已被边缘化但概念题还要能讲。
 
+## 六·增、第四格：Context Tuning——不训权重，把 KV 训成可复用工件
+
+PEFT 谱系按「动什么」分三代：Adapter 动结构、LoRA 动权重（低秩）、
+P-Tuning 动输入软提示。Context Tuning（arXiv:2507.04221，
+Lu/Teehan/Yang/Ren，ICML，微信目录「把 KVCache 变成可训练记忆」
+的原正主）补出第四格：**动「演示激活出来的 KV 表示」**——两步走：
+
+```text
+① 任务感知初始化: 不用随机token起手
+   拿任务演示示例,借模型自身ICL能力一次forward
+   把演示"读"成记忆表示(prompt/prefix版: 随机起家)
+         ↓
+② 梯度精修该表示(模型权重全程冻结)
+   CT-Prompt: 精修输入级软提示
+   CT-KV:    冻结LLM,逐层演示激活出的KV cache
+             本身变成可训练表示
+```
+
+设计动机是对两条旧路线各修半边：ICL 单次前向能形成演示的记忆
+表示**但不会精修**（表示不足时干瞪眼）；prompt/prefix 系方法
+能梯度优化**但初始化与演示无关**（随机或通用 token 起家）。CT
+用 ICL 做初始化、用梯度做精修。论文摘要口径：CrossFit /
+UnifiedQA / MMLU / BIG-Bench Hard / ARC 上优于 ICL 与传统
+prompt 类适配，与 Test-Time Training 精度相当**但训练效率显著
+更高**；CT-KV 的线性时间变体系转述口径（papernotes 摘要，
+本仓未读原文）。
+
+三线串联：与 RAG 比，这是把演示**蒸馏进 KV**而不是检索文档
+进上下文；与推理侧前缀缓存比（[KV-offload 专题](../inference/kv-offload与分层存储专题.md)），
+训好的 KV 前缀是天然的可挂 cache 前缀工件，跨请求复用正好
+踩在缓存经济上；与部署链（本篇 §七）比，只训 KV 不动权重，
+连权重合并/适配器热插拔都省了。面试用法：被问「不训练权重的
+微调还有什么」——P-Tuning v2 只改输入、TTT 测试时训练、
+Context Tuning 用 ICL 起手再梯度精修，三代递进一句话收束。
+追问预案：「CT-KV 和 P-Tuning v2 的逐层 prefix 有什么区别」——
+答：初始化来源（演示激活 vs 随机）与训练对象约定（KV cache
+本体 vs 显式 prefix 参数）不同，KV 是从运行时产物升格为可学习
+工件，语义上是「记忆」而非「软提示」。
+
 ## 七、合并推理与工程部署
 
 ▶ 面试题：LoRA 推理要不要拆开算？部署注意什么？——**中高**
