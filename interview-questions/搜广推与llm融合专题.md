@@ -170,8 +170,13 @@ Prediction（session token + 无位置约束的 item token 集合）改造电商
 
 > 来源：小红书 kk 帖一手面经（一面已过、71 赞 5 小时新），40 题全录在
 > [面经合集三十二节第一节](../interview-experiences/小红书社招面经合集-2026h2.md)。
-> 此处只挂题面与本专题的对接地图——OneRec 系（帖面原文记作 OneReason
-> 与 OpenOneRec，名称按原文收录待核）工程栈被一场一面完整盘了一遍。
+> 此处只挂题面与本专题的对接地图——OneRec 系工程栈被一场一面完整盘了
+> 一遍（OneReason 与 OpenOneRec 已实核为快手 OneRec 团队官方名：gh 直
+> 查 Kuaishou-OneRec 组织下 OpenOneRec 为开放基座+基准 950 星、
+> OneReason_Eval_Benchmark 为官方评测基准新仓；OneRec-Think（282 星）
+> 为 Itemic Alignment、CoT 微调与推荐专属 reward 三组件框架，
+> 底座 Qwen3-1.7B；另有 MiniOneRec（1901 星）最小复现——项目准备侧
+> 可当生成式推荐线的 TinyZero 用，口径 2026-10-17 晚 gh 直查）。
 
 - **RFT 与 Target Mask**：成功轨迹以 GT 命中定义，但「SID 命中不等于
   CoT 质量」会追问 CoT 本身怎么评——与本节长尾难点同根；Target Mask

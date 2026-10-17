@@ -49,6 +49,21 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-17：抖音 CUDA 面词批+实核批——二十一轮——面经合集新增三十三节：
+  峰哥寒武纪 AI Infra 三轮全录（186 赞 10 图 OCR：NeuWare 五件套调用
+  链 CNNL/CNRT/CNCL/MagicMind/BANGC 不背定义说清调用链、A100 迁
+  MLU370 吞吐反低分层排查、算子不支持时等官方写 BANG C 拆图绕路三选
+  一、不用 nvidia-smi 看 MLU 卡况、CNCL 与 NCCL 异同、三生态平台层抽
+  象、私有化信创交付、SLA 99.9 与芯片驱动崩的责任划分、手撕 INT8 对称
+  量化与 Gang Scheduling 与优先级抢占调度；帖内辅导引流卡照录口径注；
+  三面判断题区为本帖独有增量）；快手三轮帖按新判别式判题单化模板打
+  折（存 DAG 全拓扑序列手撕变体一道）；千问基模组面「KV Cache 利用率
+  怎么算」单题线入主表（块表占用、前缀命中、池水位三解）；OneRec 系名
+  称实核结案：OpenOneRec 950 星开放基座与基准、OneReason_Eval_Benchmark
+  官方评测基准（快手 OneRec 团队官方户），OneRec-Think 282 星（Itemic
+  Alignment+CoT 微调+推荐专属 reward，Qwen3-1.7B）、MiniOneRec 1901 星最
+  小复现当生成式推荐线的 TinyZero——三十二节与搜广推专题两处待核注
+  就地升级
 - 2026-10-17：小红书复调批——二十轮——面经合集新增三十二节：**字节推荐大
   模型一面 40 题全录**（生成式推荐方向一手帖、一面已过、5 小时新 71 赞、19
   图全文 OCR：四域 SID 词表与码本、Think 与 No-Think 双路各 32 候选与
