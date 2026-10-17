@@ -49,6 +49,22 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-17：抖音 Agentic RL 面词批——十三轮实务工批——抖音
+  「Agentic RL 面试」关键词 29 卡、图文 OCR 逐张还原：追觅科技 AI
+  Agent 全栈三轮 40 题+HR 7 问全录（一面 GIL/asyncio 与 Spring
+  Boot 对接/Redis 限流/对话日志索引，二面 LangGraph Checkpointer
+  与 harness 生产追问、死循环掐断三件套，三面敢不敢做减法与效果量
+  化四指标、Eval Harness 回归集，DAG 拓扑排序手撕为新题型已入频次
+  表；楼主总评「这岗不养闲人光背题混不过去」）；算法博主五板斧
+  12 小时新帖（环境真实掉 API 延迟与失败注入、self-play 历史
+  checkpoint 对抗课程原全仓零覆盖已补 agentic-rl 专题 §6.9）；
+  Panda 906 赞 RL Agent 项目四件套（Search R1 检索 token 掩码、
+  ReTool 交错执行、TinyZero 最小复现、DeepResearcher 真实互联网，
+  其三全仓零覆盖记项目件）；阿里 Agent 一面用户插话三式 desc 全
+  录（interrupt/steer/排队与 harness 专题队列口径互证）；Skill
+  冲突四步答法原全仓零覆盖补 skills 专题问题 4；海云 RL 四坑帖查
+  重发现即 rl 训练工程实战的仓内展开结案跳过；行为崩塌三卡与 rl
+  双篇互证；主表并入 5 条新信号+导航行更新
 - 2026-10-17：抖音多模态面词批——多模态赛道首采十二轮——抖音「多模
   态大模型 面试」关键词首扫 20 卡、图文 Vision OCR 逐张还原；最高值
   为 4838 赞七家人才计划多 offer 帖：筋斗云一面手写 GRPO（楼主评论
