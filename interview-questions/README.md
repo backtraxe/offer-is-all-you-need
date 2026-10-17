@@ -81,16 +81,16 @@
 | 工具调用 / Function Calling / MCP | 极高 | ★[agent/工具调用与mcp](agent/工具调用与mcp.md) + [mcp与工具调用深度对比](agent/mcp与工具调用深度对比.md) | JSON 兜底三件套（[模拟面试](../resources/模拟面试与口语化表达.md)） | 滴滴连问 4 道 MCP |
 | Skills 机制 | 新高 | [agent/agent-skills详解](agent/agent-skills详解.md) | — | 字节追 Skills 底层 |
 | 记忆分层 / 上下文工程 | 高 | ★[agent/记忆与上下文工程](agent/记忆与上下文工程.md) + [上下文压缩与记忆训练专题](agent/上下文压缩与记忆训练专题.md) + [agent记忆产品化专题](agent/agent记忆产品化专题.md) + [agent记忆评测与遗忘治理专题](agent/agent记忆评测与遗忘治理专题.md) + [coding-agent会话记忆工程专题](agent/coding-agent会话记忆工程专题.md)（context-mode/claude-mem/Hindsight） | 模考卷 A 第 3 题 | 「第二十轮丢信息」排查链 |
-| Harness / 评测 / 观测闭环 | 高（爬升） | ★[agent/harness工程实战](agent/harness工程实战.md) + [agent评测与观测闭环专题](agent/agent评测与观测闭环专题.md) + [agent线上排障手册](agent/agent线上排障手册.md) + [agent线上稳定性运营专题](agent/agent线上稳定性运营专题.md) + [评测体系实战专题](评测体系实战专题.md)（从 0 搭业务评测） + [kernel-agent竞赛复盘专题](agent/kernel-agent竞赛复盘专题.md)（竞赛实证） | 模考卷 A 第 9 题 | 字节实习面六连问、某厂画架构 |
+| Harness / 评测 / 观测闭环 | 高（爬升） | ★[agent/harness工程实战](agent/harness工程实战.md) + [agent评测与观测闭环专题](agent/agent评测与观测闭环专题.md) + [agent线上排障手册](agent/agent线上排障手册.md) + [agent线上稳定性运营专题](agent/agent线上稳定性运营专题.md) + [评测体系实战专题](评测体系实战专题.md)（从 0 搭业务评测） + [评测题专项](评测题专项.md)（benchmark 分区盘点+指令跟随四套集） + [kernel-agent竞赛复盘专题](agent/kernel-agent竞赛复盘专题.md)（竞赛实证） | 模考卷 A 第 9 题 | 字节实习面六连问、某厂画架构 |
 | 安全 / 红队 / Guardrail | 高（新题块） | [agent/agent安全与防护](agent/agent安全与防护.md) + [guardrail系统专题](agent/guardrail系统专题.md) | — | 2026 安全攻略 18 题 |
 | Coding Agent 源码路线 | 高（爬升） | [agent/pi-agent源码分析](agent/pi-agent源码分析.md) + [agent/deepseek-harness分析](agent/deepseek-harness分析.md) + [agent/codex源码分析](agent/codex源码分析.md) + [agent/claude-code源码机制专题](agent/claude-code源码机制专题.md) + [agent/hermes与openclaw生态专题](agent/hermes与openclaw生态专题.md)（争议与增长拆账） + [agent/openclaw源码机制专题](agent/openclaw源码机制专题.md)（Gateway/Context Engine 机制面） + [coding-agent横评专题](agent/coding-agent横评专题.md) | — | 「读过什么 agent 源码」五极话术（pi/dsh/codex/claude-code/openclaw）、开源伦理三立场 |
 | 多 Agent 协作与状态仲裁 | 中 | [agent/多agent与评测](agent/多agent与评测.md) | 模考卷 A 第 10 题 | 面试官追问链、抖音场景题 |
 | Agentic RL | 高（爬升） | [训练与对齐/agentic-rl专题](训练与对齐/agentic-rl专题.md) + [agentic-rl前沿手法专题](训练与对齐/agentic-rl前沿手法专题.md)（Search-R1/ReTool/OPD）+ [rl环境工程专题](训练与对齐/rl环境工程专题.md) | [coding/手写grpo-loss](../coding/模型手撕/手写grpo-loss.md) | 字节 agent RL 三面、美团 M17 教程 |
 | **训练与对齐** ||||
-| PPO / DPO / GRPO 差异与推导 | 极高（算法岗） | ★[rlhf与对齐](训练与对齐/rlhf与对齐.md) + [经典rl地基专题](训练与对齐/经典rl地基专题.md)（MDP→贝尔曼→PPO 全程映射 RLHF）+ [rl训练工程实战](训练与对齐/rl训练工程实战.md) | [coding/手写grpo-loss](../coding/模型手撕/手写grpo-loss.md) + [对齐与并行代码](../coding/模型手撕/对齐与并行代码.md) | 滴滴四连追问、GRPO 13 关 |
+| PPO / DPO / GRPO 差异与推导 | 极高（算法岗） | ★[rlhf与对齐](训练与对齐/rlhf与对齐.md) + [经典rl地基专题](训练与对齐/经典rl地基专题.md)（MDP→贝尔曼→PPO 全程映射 RLHF，含 AlphaGo 案例锚）+ [rl训练工程实战](训练与对齐/rl训练工程实战.md) | [coding/手写grpo-loss](../coding/模型手撕/手写grpo-loss.md) + [对齐与并行代码](../coding/模型手撕/对齐与并行代码.md) | 滴滴四连追问、GRPO 13 关、米哈游 DPO 实战改法与长度漂移 |
 | SFT / OPD / RL 选型 | 新高 | [post-training蒸馏生产线专题](训练与对齐/post-training蒸馏生产线专题.md) | [coding/手写蒸馏kl](../coding/模型手撕/手写蒸馏kl.md) | 滴滴选型五连问、字节多模态 |
 | SFT 数据侧：loss mask / 端到端实战口径 | 高 | [多轮对话loss-mask专题](训练与对齐/多轮对话loss-mask专题.md) + [从零训练小模型实战专题](训练与对齐/从零训练小模型实战专题.md) | loss÷mask之和手算（专题内） | 「你训过模型吗」分水岭题 |
-| Reward 设计 / 防长度 hack / 熵坍缩 | 高 | [rl奖励设计专题](训练与对齐/rl奖励设计专题.md) | rl训练工程实战 | 字节 agent RL 三面、字节多模态 |
+| Reward 设计 / 防长度 hack / 熵坍缩 | 高 | [rl奖励设计专题](训练与对齐/rl奖励设计专题.md)（含 Reward-Bench 四分类） | rl训练工程实战 | 字节 agent RL 三面、字节多模态、米哈游 RM 四分类 |
 | 训推不一致 / 异步 rollout | 高（RL infra） | [rl训练工程实战](训练与对齐/rl训练工程实战.md) + [verl深度拆解](训练与对齐/verl深度拆解.md) + [训推逐位一致专题](distributed-training/训推逐位一致专题.md)（diff=0 五要素+逐算子 recipe+Agent skill） | — | 字节 agent RL 三面、面试官接缝复盘 |
 | LoRA 与参数高效微调 | 极高 | [训练与对齐/lora与参数高效微调](训练与对齐/lora与参数高效微调.md) | 对齐与并行代码 LoRA 节 | 各类算法岗通考 |
 | 模型合并 / 基模合版 | 中（新信号） | [模型合并专题](训练与对齐/模型合并专题.md) | — | 字节 agent RL 三面 |
