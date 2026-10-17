@@ -49,6 +49,24 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-17：claude-code 篇深读增补（吸收姊妹报告
+  xiaonancs/claude-code-source-analysis 30 篇/23 子系统/179 图，
+  基线同为 v2.1.88；20 个概念探针对旧 417 行正文查重后锁定五条
+  零覆盖线）——新增 §六·增：冷启动四策略（面向 ~135ms 模块求值的
+  并行隐藏窗：MDM/keychain 子进程插在 import 语句之间；HEAD 预连接
+  因 BoringSSL 首握手锁证书存储被迫后移的教训；earlyInput 三方
+  交接；0.5% 采样双模式 Profiler）、对话循环七层防御（529 只重试
+  前台的容量雪崩账/fallback 须 stripSignatureBlocks/413 三级恢复
+  不跑 stop hooks 防死亡螺旋/输出截断 8k→64k→续写 3 次/stop hook
+  标志位曾致烧数千次调用/tombstone 与孤儿 tool_use 协议补齐/
+  assistant content 不可原地改的 200 倍缓存红线）、Thinking 四层
+  正交控制面（ultrathink 只注入附件不改 effort 参数/Advisor 常发
+  beta header 的解析边界/thinkingClearLatched 单向锁存器）、权限
+  七步管线（用户 ask 规则先于 bypass 判定）+ Auto Mode 两阶段 XML
+  分类器（Stage1 64 token 偏向拦截/连续拒绝熔断/Fail-Closed 双
+  兜底）、Settings 5+1 优先级链（远程策略 Fail-Open 哲学 + 跨语言
+  checksum 对齐坑）与 Hooks 27 事件（matcher 语义随事件变/三级
+  管控防用户禁管理钩子）
 - 2026-10-17：Hermes 篇机制篇补全（同一报告 hermes-agent-study 的
   Part I/II 本体——此前只吸收了其生态/争议视角）——新增 §七·增：
   六大设计原则（Prompt 稳定性=缓存是显式目标/可观察/可中断/平台无关

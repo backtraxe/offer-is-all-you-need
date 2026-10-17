@@ -322,6 +322,172 @@ worker。编排逻辑**不是代码**（没有状态机/DAG 调度/任务队列�
 
 ---
 
+## 六·增、深读增量（姊妹报告）：五条零覆盖线的逐章查缺
+
+> 增量来源：[xiaonancs/claude-code-source-analysis](https://github.com/xiaonancs/claude-code-source-analysis)
+> 《Claude-Code-Harness 技术深度分析》（30 篇 / 23 子系统 / 179 张图，
+> 基线同为 v2.1.88、1,884 个 TS/TSX 文件）。本仓用 20 个概念探针
+> 对原 417 行正文查重后锁定五条零覆盖线：冷启动细节、循环错误恢复、
+> Thinking 控制面、权限管线纵深、Settings/Hooks。本节为其读码口径
+> （带 `文件:行号`），本仓未复核；与正文重复的权限/上下文内容
+> 只做深化不重述。
+
+### 6.增.1 冷启动：四策略把 135ms 模块求值「藏」进用户感知盲区
+
+13 条快速路径瀑布分流（`--version`/`--dump-system-prompt`/daemon/ps 等
+各自只动态 import 所需模块），`cli.tsx` 全文件仅 1 个静态 import。
+正文第二节讲过三阶段启动，这里补四个具体策略：
+
+- **侧效果前置**：`main.tsx` 前 20 行把 `profileCheckpoint`、
+  `startMdmRawRead()`（`plutil`/`reg query` 子进程）、
+  `startKeychainPrefetch()`（macOS keychain 两次读取）**插在 ~200 个
+  import 语句之间**——JS 模块求值同步串行，子进程却并行跑完，
+  import 花掉的 ~135ms 就是它们的隐藏时间窗。报告口径：keychain
+  不预取时同步 spawn 每次启动多 ~65ms。
+- **API 预连接**：`init()` 阶段发一个 `HEAD` 请求提前做 TCP+TLS 握手
+  （100–200ms），后续 SDK 复用暖连接。教训级细节：最初在
+  `cli.tsx` 调用过早——`settings.json` 里的自定义 CA 还没加载，
+  更糟的是 Bun 的 BoringSSL 首次握手会**锁定证书存储**，预连接
+  反而毒死后续请求，被迫后移到 `init.ts`（`apiPreconnect.ts:13` 注释）。
+- **早期输入捕获**：用户习惯敲完 `claude` 立刻打字，而 REPL
+  就绪前 stdin 无人接管。`earlyInput.ts` 在 import main.js **之前**
+  接管 stdin 缓冲按键，三方交接：Ink 首次 `setRawMode(true)` 时停止
+  捕获、REPL 用 `useState(() => consumeEarlyInput())` 的 lazy
+  initializer 精确在首次挂载消费、停止时不重置 raw mode 交给 Ink。
+  Backspace 按 grapheme cluster 删（不是按 code unit）。
+- **双模式 Profiler**：`CLAUDE_CODE_PROFILE_STARTUP=1` 全量时间线
+  + 外部用户 0.5% 采样上报 Statsig（注释写 0.1% 与常量 0.005 不一致，
+  报告以代码为准）；未采样用户 `profileCheckpoint` 首行 return，
+  50+ 检查点近零开销。
+
+### 6.增.2 对话循环七层防御：每类错误一条独立恢复路径
+
+正文第三节只给了九阶段流水线的 happy path，错误态才是工程密度所在：
+
+```text
+withRetry 网络层(第1层) ── 529只对前台源重试：后台查询(标题/摘要)
+  在容量雪崩中立即放弃，注释原话"each retry is 3-10x gateway
+  amplification"──个体理性重试=集体雪崩
+  ↓连续3次529
+FallbackTriggeredError(第2层) ── 换 fallbackModel 重来：
+  stripSignatureBlocks() 必须先剥离 protected-thinking──签名绑定
+  模型，A 模型的 thinking block 回放给 B 触发 400
+  ↓413 Prompt-Too-Long(第3层) 成本递增三级
+  Level1 Context Collapse Drain(零API成本) → Level2 Reactive
+  Compact(一次摘要调用) → Level3 报错给用户；失败路径不跑 stop
+  hooks──"error→hook blocking→retry→error" 死亡螺旋
+  ↓max_output_tokens 截断(第4层) 两阶段
+  8k默认上限→直升64k纯重试 → 注入恢复消息续写(上限3次)，措辞
+  "no apology, no recap"──不加约束模型会重播全文烧 token
+  ↓stop hook blocking(第5层) ── hasAttemptedReactiveCompact 必须保留
+  不重置：历史 bug 曾把标志位清掉触发无限循环，注释自认
+  "burning thousands of API calls"
+  ↓token budget 续行(第6层) ── 连续3次 delta<500 token 判递减收益
+  ↓无人值守模式(第7层) ── 429/529 无限重试，退避封顶5分钟 +
+  每30s yield 心跳防宿主判死
+```
+
+配套协议层细节两条：**Tombstone**——fallback 时已 yield 的 assistant
+消息成孤儿（thinking 签名会 400），yield `{type:'tombstone'}` 让
+UI/转录移除，不改已产出对象；**yieldMissingToolResultBlocks**——
+API 要求每个 `tool_use` 必有配对 `tool_result`，异常退出路径为所有
+孤儿 tool_use 合成 `is_error:true` 的结果块，在 fallback/异常/中断
+三处调用。另有一条性能红线：assistant content 对象**不能原地改**
+——一字节不匹配就打碎 prompt cache（200K 场景 $0.003 vs $0.60，
+差 200 倍），需要改时只做浅克隆。
+
+工具执行是双模式：Batch 默认（`partitionToolCalls` 按工具的
+`isConcurrencySafe(input)` 逐条判定分批，最大并发
+`CLAUDE_CODE_MAX_TOOL_USE_CONCURRENCY=10`）+ Streaming 实验
+（Statsig `tengu_streaming_tool_execution2`，tool_use block 一到就
+入队，API 还在吐流工具已开跑）；Memory/Skill 走预取-消费模式，
+把原来阻塞关键路径的「97% 空操作」排查后移入并行预取，不再
+占每轮往返的时间。
+
+### 6.增.3 Thinking 四层正交控制面：能不能想/想多深/这句想多深/请更强的人想
+
+```text
+L1 ThinkingConfig(会话级)   adaptive | enabled+budget | disabled
+L2 Effort(会话+turn级)      low / medium / high / max ── 想多深
+L3 Ultrathink(单turn级)     关键词触发──这一句想得更深
+L4 Advisor(请求级)         server_tool_use──请更强模型审阅
+     └─ 四层代码路径互相独立：hasThinking 分支与
+        configureEffortParams() 各自直写 API 参数，不嵌套
+```
+
+三个面试级细节：其一，`adaptive` 取代 budget 是方向——旧接口
+`getMaxThinkingTokensForModel()` 已标 Deprecated，客户端猜思考
+预算「猜少截断猜多浪费」，新模型自己决定；源码三处 `IMPORTANT`
+警告改默认值「须通知 model launch DRI and research，否则 bashing
+(用户在社媒骂模型变笨)」——一个字面值就是生产事故的活例子。
+其二，**Ultrathink 不改 API 参数**：`ultrathink` 关键词只通过
+Attachment 注入一条 meta 指令（`"reasoning effort level: high,
+apply to this turn"`），真正写 `output_config.effort` 的是独立的
+`resolveAppliedEffort()` 链路；其间接效果是 ultrathink 启用时默认
+effort 降到 medium。细节彩蛋：`matchAll(/\bultrathink\b/gi)` 每次
+新建正则字面量——共享实例会从上次 `.test()` 的 lastIndex 泄漏状态。
+其三，**Advisor 是 server-side tool**：beta header 只要启用就常发
+（否则历史里的 advisor block 连 compact 都解析不了会 400），server
+tool 只在 agentic query 注入；advisor 用量从 `usage.iterations` 里
+`type==='advisor_message'` 的条目独立计费；`advisor_redacted_result`
+支持加密返回防蒸馏。
+
+Thinking 与缓存的协作补一章：`thinkingClearLatched` 是会话级**单向
+锁存器**——空闲超 1h 缓存必过期，此时清空 thinking 转为「保留最后
+1 个 turn」；锁定后不回翻，因为回翻会再次打碎刚重建的缓存，只有
+`/clear` 与 `/compact` 走 `clearBetaHeaderLatches()` 复位。
+
+### 6.增.4 权限管线深化：七步序 + 两阶段 AI 分类器（正文权限节的下游）
+
+正文权限节只画了分层，这里的增量是**判定顺序**本身：内层管线
+`hasPermissionsToUseToolInner()` 七步，关键在**步骤 1f/1g 排在
+2a（bypass 检查）之前**——用户显式配的 `ask` 规则（如
+`Bash(npm publish:*)`）和 safetyCheck（护 `.git/`、`.claude/`）
+在 `--dangerously-skip-permissions` 下依然触发确认，注释直言
+「must be respected even in bypass mode」。规则是 8 来源 ×
+3 行为（allow/deny/ask），所有来源 flatMap 后按序扫描、第一个
+匹配即返回——优先级由数组顺序定义而非显式 rank。
+
+`auto` 模式（编译期 feature('TRANSCRIPT_CLASSIFIER') 门控，外部
+构建 DCE 物理移除）用**两阶段 XML 分类器**替代用户确认：先用三个
+快速通道（acceptEdits 模拟/20+ 安全工具白名单）避免 API
+调用，未中才走分类器。Stage1 `max_tokens=64` + `stop_sequences:
+['</block>']` 只出一个 yes/no，提示后缀「Err on the side of
+blocking」；判 block 才进 Stage2 `max_tokens=4096` 做 CoT——同
+system prompt 前缀吃满 1h 缓存 TTL，Stage2 几乎全 cache hit。
+防呆三层：**Reasoning-Blind**（分类器看不到主模型推理，只看
+transcript）+ **熔断**（连续 3 次或累计 20 次拒绝后回退人工/
+headless 直接 abort）+ **Fail-Closed**（分类器 API 挂了默认
+`deny`，flag `tengu_iron_gate_closed` 30 分钟刷新——分类器与
+flag 双重兜底，默认拒绝）。「bypass 之前先 ask」+「AI 判不了
+就拒绝」这两条原则可以直接当 agent 安全答辩素材。
+
+### 6.增.5 扫尾两线：Settings 5+1 优先级链与 Hooks 27 节点
+
+- **Settings 合并序**：Plugin 基底（内存注入、白名单字段）→
+  user → project → local（gitignored）→ flag（`--settings`）→
+  policy（企业管控），`SETTING_SOURCES` 数组顺序即合并顺序、后者
+  覆盖前者。远程策略的资格检查**Fail-Open**：外部注入 token 缺
+  元数据时宁可多问一次——「误判的代价是一次往返，漏判的代价是
+  企业策略完全失效」；ETag + SHA-256 checksum 缓存增量更新，
+  checksum 必须与服务端 Python `sort_keys=True, separators=(",", ":")`
+  字节级一致——跨语言 JSON 规范化是隐形坑（`jsonStringify` 不传
+  缩进参数才对得上）。
+- **Hooks 全景**：`HOOK_EVENTS` 以 `as const` 声明 27 个事件，
+  七大类（工具/会话/权限/协作/上下文/环境感知/隔离与 MCP）；
+  六种 hook 类型 = 4 种持久化（command/prompt/agent/http）+ 2 种
+  内存级（callback 进程级、function session 级，后者用于强制
+  Agent Stop 时必须产出结构化结果）。**matcher 语义随事件类型
+  变**：`"Write|Edit"` 在 PreToolUse 匹配工具名，在 SessionStart
+  匹配的是 source（startup/resume/clear）——容易被忽视的设计
+  点。安全三级管控：非管理设置的 `disableAllHooks` **不能**禁
+  policy Hook（只是升级为 managedOnly），只有 policy 自己能全禁
+  ——管理员钩子不可被用户配置绕过。Workspace Trust 是集中式
+  防御，注释留了两个历史漏洞案底（用户拒绝对话框后 SessionEnd
+  仍执行、子 Agent 先于信任完成时 SubagentStop 仍执行）。
+
+---
+
 ## 七、▶ 面试题
 
 **Q1【高】闭源产品怎么做源码级技术分析？可信度怎么把？**
@@ -399,6 +565,10 @@ following，风险是概率性违约（双写冲突、跳过综合）。
 - 压缩/前缀缓存/token 三方账底座：[记忆与上下文工程](./记忆与上下文工程.md)
 - 记忆产品线对照（mem0/Zep/Letta）：[Agent 记忆产品化专题](./agent记忆产品化专题.md)
 - 会话侧第三条线（context-mode/claude-mem）：[Coding Agent 会话记忆工程专题](./coding-agent会话记忆工程专题.md)
+- 本文 §六·增 来源（姊妹报告，同库 xiaonancs/claude-code-source-analysis，
+  30 篇/23 子系统/179 图，基线同为 v2.1.88）：正文与 §六·增 的正交读法
+  同 pi/dsh 两篇的「横向正文 + 纵向 ·增」双层模式；同一系列四个姊妹仓
+  （codex / hermes / openclaw / pi）已分别落进四篇源码机制专题。
 
 ---
 
@@ -415,3 +585,10 @@ following，风险是概率性违约（双写冲突、跳过综合）。
    转述口径。
 4. Coordinator Mode / KAIROS / TeamMem 等均为实验面，
    feature flag 默认状态与对外可见性随时可能变化。
+5. §六·增 为姊妹报告《Harness 技术深度分析》的读码口径，
+   未经本仓复核；行为涉及的具体数字（~65ms keychain 同步读取/
+   ~135ms 模块求值/0.5% 采样/连续 3 次 529 熔断/恢复上限 3 次/
+   连续 3 次 delta<500/熔断 3 次与 20 次/27 事件/20+ 白名单工具）
+   与引语（gateway amplification、bashing、burning thousands of
+   API calls 等）均为报告转引的源码注释或代码常量口径。20 个概念
+   探针的查重基于本仓旧版 417 行正文，只代表当时的覆盖面。
