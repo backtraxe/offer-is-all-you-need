@@ -305,6 +305,92 @@ dsh 产品。面试里被问「为什么不学 pi 极简」，这是比「理念
 答案：**dsh 的复杂度是带着生态遗产来的——它要继承的是 Koishi 验证过的
 插件经济，pi 没有这个历史包袱也不需要。**
 
+### 7.5 姊妹篇（二）：epoch 指纹为什么「可抵消」，rc.10 为什么补双分量
+
+第二份三方报告：《Cordis 源码深度解析》
+[xiaonancs/cordis-source-analysis](https://github.com/xiaonancs/cordis-source-analysis)
+（基线 `c261dd2`、core `4.0.0-rc.10`、2026-10-10；core 全部 **1891 行
+9 个文件**、9 包 5037 行 TS；与 dsh 报告同款 verified/inferred/claimed
+三档证据纪律）。它在 §7.2 三件套之上，补出四个「为什么非这么设计
+不可」的硬答案，先记两个：
+
+**epoch 字符串的第一性论证**：为什么不用布尔 active 标志、不用单调
+版本号？布尔表达不了「同名换提供者」；单调计数器会把每次依赖变化
+都变成必须 reload 的不可抵消事件。字符串指纹（rc.10 起以 `_revision`
+起头，再拼各依赖提供者 uid，如 `'0:3:5'`）**可相等比较**——依赖
+「拆了又装回同一个 uid」时 epoch 兜回原值，**在途加载直接继续有效，
+一次 reload 被指纹相等自动抵消**（其 fiber 测试的 inertia lock 2
+用例逐帧坐实）。rc.10 在指纹外补一个单调分量：`restart()` 只做
+`_revision++`。两个分量回答两种语义——**依赖抖动允许抵消，显式
+重启必须重做**，A→B→A 的配置抖动不再被吞掉（rc.9 曾被此坑过）。
+
+**FAILED 是「干净的」态**：加载抛错不止停在半路——先 `_error` gate
+把之后所有 epoch 驱动的重入**锁死**（防止反复撞同一个错），再拨回
+INACTIVE 接力一次 `_unload`，把抛错**之前**已注册的 effect 反序清空。
+于是 FAILED = 「副作用已清干净、可安全停留」，唯一复活口是 `update()`
+清 `_error` 后按新 revision 重载。
+
+### 7.6 姊妹篇（二）：disposer 的「二合一」契约与四态归一器
+
+- **二合一 wrapper**：`effect()` 返回的撤销键**既是可调用函数、又是
+  thenable**。同步消费者直接调用它——setup 还没跑完时，清理自动
+  `task.then(dispose)` 排到 setup 之后；`await` 它则拿到一个「setup
+  已落定」的纯同步 disposer。要解的是**异步 setup 与同步 teardown
+  的语义错配**：永远返回 Promise，「没装完就想拆」无从表达；永远
+  返回同步函数，又表达不了「还没装完」这一个事实。
+- **五形态归一**：execute 返回 function / null / thenable /
+  Iterable / AsyncIterable 五种形态，`_execute` 收敛成同一条收集
+  路径；其中**异步迭代器分支每取一个值前查 epoch 守卫**——依赖翻转
+  或中途手动撤销都让跑到一半的生成器**就地中止**，尚未 yield 的
+  副作用根本不产生。
+- **反序的两个粒度**：effect 内部严格反序且串行；fiber 级是反序
+  **发起**、并发执行，单个 disposer 抛错只记日志不中断兄弟。范围外的
+  诚实声明：**反序是「后者搭在前者上」的注册序近似，不是拓扑序**——
+  无显式依赖图，交叉依赖下 LIFO 不保最优（报告标注 inferred）。
+- **可逆的边界（面试高阶观点）**：disposer 只回收「经 `ctx.effect`
+  登记、系统边界以内」的状态。**已发出的网络消息、已提交的支付、
+  已写进共享文件的字节——越界即不可逆**，只能靠插件作者的幂等设计
+  或补偿事务。一句话：「可逆」卖的是边界内完全回滚，不是时光机——
+  这也是它横向对照 Effect-TS Scope（monad 上建）与 VS Code
+  Disposable（靠约定回收）时的差异化定位：Cordis 不引 monad、不靠
+  自觉，把可逆 effect 与响应式 coeffect 缝进同一套 Context。
+
+### 7.7 姊妹篇（二）：HMR 三阶段与「失败前移」的事务化
+
+dsh 的热重载把「不重启进程换代码」拆成三步，**只有第一步是事务**：
+
+```text
+阶段① 导入新模块     ← 合法性检查被前移到这里：此刻只动过模块缓存，
+                        什么插件都还没碰 → 全有或全无，失败=无事发生
+阶段② 同步卸载旧 fiber（走 §7.2 的反序清账本）
+阶段③ 逐 fiber 重建   ← 此段失败与冷启动加载失败同语义：停 FAILED、
+                        保留 ctx 与配置陈列、下次文件变更自动重试，
+                        因此「完全不需要回滚」
+```
+
+配套**四集合分类**，且每次 reload 在依赖图上重算（不是启动定死）：
+`externals`（框架自身依赖树，改了只能整进程重启）、`stashed`（debounce
+窗口攒批）、`accepted`（变更文件+其上游依赖者，重载）、`declined`
+（externals 及被全拒的纯下游）。rc.10 把配置热重载泛化成
+`hmr.watch(path, cb)` 并反转依赖方向——include 插件自己
+`ctx.inject(['hmr'])` 后注册回调，HMR 不再需要知道 include 的存在。
+
+### 7.8 姊妹篇（二）：「Cordis Fiber = React Fiber」为什么是错的等式
+
+社区最高频的类比，报告逐维拆开（外部 React 侧为 claimed 口径）：
+
+| 维度 | React Fiber | Cordis Fiber |
+|---|---|---|
+| 对象 | 渲染工作单元：child/sibling/return、alternate 双缓存、lanes 优先级 | 插件生命周期载体：uid/state/inject/_store/disposer 账本 |
+| 变化粒度 | deps 变只重跑**那一个** useEffect，组件仍然挂载 | epoch 一变即**整个 consumer fiber 卸载重载**，粒度粗得多 |
+| 触发方向 | 拉取式：render 之后浅比较 deps | 推送式：provide/dispose 主动 notify 到链 |
+
+唯一共性是「都把 effect 记到一个生命周期节点上」。顺手把选型坐标
+也立起来：静态 DI 容器（NestJS/Angular/tsyringe）在**启动/构造期一次性**
+解析依赖、基本不支持运行时增删服务；Cordis 的卖点从来不是「解析快」，
+而是**依赖可在运行时反复解析 + 组件移除时副作用能完整反向撤销**——
+这两件事合起来才叫热插拔。
+
 ## 八、▶ 面试挂钩
 
 **问题 1：pi 和 dsh 都读过，架构选型上你怎么取舍？**
@@ -350,11 +436,43 @@ pi 版本只回答『压缩了』。」
 可替换是机制兜底而不是约定自觉。答题时补一句来历更稳：
 这套语义在 Koishi 几千个插件的生态里先跑了四年。」
 
+**问题 6：epoch 为什么用字符串指纹，不用布尔标志或版本号？**
+「三层递进：布尔表达不了『同名换提供者』（uid 变才算依赖变化）；
+单调版本号把每次依赖变化都变成不可抵消的 reload；字符串可相等
+比较——依赖拆了又装回同一 uid 时 epoch 兜回原值，在途加载直接
+继续，一次 reload 被自动抵消。rc.10 再补单调分量 _revision 专给
+restart 用：『依赖抖动允许抵消、显式重启必须重做』是两类语义，
+所以两个分量分开编码。这是把『状态 = 写入的货架』改成『状态 =
+可推导的指纹』的完整版答案。」
+
+**问题 7：「Cordis Fiber 就是 React Fiber」这话对吗？**
+「同名不同物，三点全差：React Fiber 是渲染工作节点（树指针/
+alternate 双缓存/lanes 优先级），Cordis Fiber 是插件生命周期载体
+（uid/inject/disposer 账本）；变化粒度上 React 只重跑单个 useEffect、
+组件仍挂载，Cordis 的 epoch 一变是整个 consumer fiber 卸载重载，
+粒度粗一个量级；触发方向上 React 拉取式比 deps，Cordis 推送式
+notify。唯一共性是 effect 都记在生命周期节点上。收束一句：类比
+可作直觉、不可作等式，跨框架判断永远回到『变化粒度＋触发方向』
+两个可测维度。」
+
+**问题 8：热重载（HMR）怎么做到失败也不留半成品？**
+「把『换代码』拆三段、把检查前移：阶段①只动模块缓存、插件未碰，
+合法性检查放这里，天然全有或全无；阶段②同步反序卸载旧实例；
+阶段③逐 fiber 重建，此时失败与冷启动同构——停 FAILED、保留 ctx
+与配置、下次变更自动重试，所以第三段不需要回滚。配套四集合在
+依赖图上每次重算（externals 整进程重启/stashed 攒批/accepted 连
+上游/declined 拒绝），比前端『丢了就整页刷新』的 HMR 语义严谨一档
+——它把失败处理当设计目标而不是兜底。」
+
 ## 九、延伸阅读
 
-- 三方深读报告（本文 §七 来源）：
+- 三方深读报告（本文 §七 7.1–7.4 来源）：
   [xiaonancs/deepseek-harness-deep-dive](https://github.com/xiaonancs/deepseek-harness-deep-dive)
   （35 章 + 总纲 + 社区认知地图；证据三档标注法可直接抄）。
+- 姊妹篇（本文 §7.5–7.8 来源）：
+  [xiaonancs/cordis-source-analysis](https://github.com/xiaonancs/cordis-source-analysis)
+  （Cordis 本体 24 章逐行拆解：fiber 状态机/可逆 effect/事件五派发/
+  HMR 事务热重载/core 逐行；基线 c261dd2 / core 4.0.0-rc.10）。
 - 一手仓库与文档：[deepseek-ai/deepseek-harness](https://github.com/deepseek-ai/deepseek-harness)、
   [架构总览](https://github.com/deepseek-ai/deepseek-harness/blob/main/docs/architecture.md)、
   [Cordis primer](https://github.com/deepseek-ai/deepseek-harness/blob/main/docs/cordis-primer.md)、

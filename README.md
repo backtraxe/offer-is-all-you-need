@@ -49,6 +49,15 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-17：dsh 篇姊妹报告增补（吸收 cordis-source-analysis——Cordis
+  本体 24 章逐行拆解，基线 c261dd2/core rc.10，core 仅 1891 行 9 文件）——
+  新增 §7.5–7.8：epoch 字符串可抵消指纹的第一性论证（布尔/单调号各差
+  一层）与 rc.10 双分量（_revision 只管显式重启，依赖抖动允许抵消）、
+  FAILED 干净态（错误连带反序回滚+error 锁+update 唯一复活口）、
+  disposer 二合一契约（可调用+thenable 解异步 setup/同步 teardown 错配）、
+  五形态归一器与 epoch 守卫、反序两粒度与可逆边界（越界只能幂等/补偿）、
+  HMR 三阶段「失败前移」事务化+四集合分类+hmr.watch 依赖反转、
+  React Fiber 同名不同物三点澄清；面试问题 6/7 + 延伸阅读补姊妹篇
 - 2026-10-17：agent 源码系列第五极新篇「OpenClaw 源码机制专题」——
   兑现生态篇预留的机制欠账，吸收 openclaw-study 27 章深读报告
   （基线 v2026.4.15/23,014 commits/1,200 PR 数据集）：Gateway 三
