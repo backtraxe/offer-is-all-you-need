@@ -49,6 +49,28 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-17：GitHub 巡检批——三缺口吸收（gh 检索命中
+  BigKunLun/Agent-Interview-100，433★ MIT 题库；对其 100 题逐题
+  查重后 8 个候选缺口收敛出 3 个真缺口：自动化 Prompt 优化/
+  Eval Harness 生态/法域合规，12-Factor、A2A、MCTS 等已覆盖
+  跳过）——路线图篇新增 §二·增 L1 深水区（DSPy 编程化 vs 元提示
+  APE/OPRO/PromptBreeder 两流派对照图：优化对象是结构化组件
+  还是字符串、BootstrapFewShot 自举/MIPROv2 贝叶斯搜索/SIMBA、
+  OPRO 上百次 PromptBreeder 上千次调用成本账、指标过拟合与
+  绕护栏风险、缓存视角「不优化也是决策」反例弹药）；
+  评测基准篇新增 §七·增考场生态（Harness ≠ Benchmark 四原语
+  Task Loader/Solver/Sandbox/Scorer、lm-eval-harness 与 Inspect
+  AI 与 HELM 三足鼎立 + METR Time Horizon 范式、METR 弃自研
+  Vivaria 迁 Inspect 的生态收敛信号、max_sandboxes=2×cpu 并发
+  瓶颈、Anthropic 三起评测隔离事故「prompt 声明的隔离不是
+  隔离」、题库「20+ 分差距」经本仓 TB 双 harness 实测校准为
+  6–12pp、选型一行版）；
+  安全防护篇新增 §九·增法域合规（EU AI Act 四级风险「判定看
+  用途不看技术」、2026-08-02 高风险义务生效/€35M 或 7% 罚款、
+  GPAI 10^25 FLOPS 系统性风险线、Provider/Deployer 两顶帽子、
+  Agent 特有三大难题的工程答案：结构化 trace 审计/HITL 卡点
+  与防线共用骨架/memory×GDPR 日志只存哈希、多法域最高水位线
+  策略）；配套口径条目 3 处（含法条未复核声明）
 - 2026-10-17：claude-code 篇深读增补（吸收姊妹报告
   xiaonancs/claude-code-source-analysis 30 篇/23 子系统/179 图，
   基线同为 v2.1.88；20 个概念探针对旧 417 行正文查重后锁定五条

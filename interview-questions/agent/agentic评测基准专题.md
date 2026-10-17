@@ -235,6 +235,64 @@ Terminal-Bench 官方 2026-04 发布《Leaderboard Integrity Update》（官方�
 制机制即上一节的三件套：**所有通过 trial 必须提交 ATIF 轨迹**、开源 agent
 judge 复核、verifier 容器分离 + artifact 可重判。
 
+## 七·增、考场生态：Harness ≠ Benchmark，三足鼎立怎么选
+
+上面几节都在聊题库（benchmark），但同一份题库在不同考场能跑出
+数个百分点到两位数的差距——这是工程常态而非 bug（题库口径称
+「20+ 分」；**本仓实测口径以 [harness工程实战](./harness工程实战.md)
+的 Terminal-Bench 双 harness 差 6–12pp 为准**）。
+**Benchmark 是题库 + 评分标准；Eval Harness
+是考场**，由四个独立原语组成：
+
+```text
+Benchmark(题库) ──┐
+                  ▼
+  Task Loader(加载样本+组装prompt+few-shot)   ← lm-eval 的 YAML
+        ↓
+  Solver(怎么作答：ReAct/多轮/桥接外部Agent)   ← 决定 scaffold 分数
+        ↓
+  Sandbox(工具执行隔离：docker/k8s/VM)          ← 决定资源与安全
+        ↓
+  Scorer(怎么判分：精确匹配/单元测试/终态diff/LLM judge)
+```
+
+生态三足 + 一个度量范式（均为题库口径）：
+
+- **lm-evaluation-harness**（EleutherAI）：model eval 标杆，
+  HF Open LLM Leaderboard 的后端。YAML 任务定义、60+ 学术
+  benchmark、100+ provider；但对 agent 无能为力——没有 sandbox、
+  没有多轮 solver、没有轨迹 scorer，「加了 API provider 也只是
+  包一层调用」。
+- **Inspect AI**（UK AISI，2024-05 开源）：agent eval 事实标准。
+  dataset→Task→Solver→Scorer 显式四原语，200+ inspect_evals，
+  Agent Bridge 可桥接 Claude Code/Codex CLI。**生态收敛的最强
+  信号：METR 2026-01 发布 Time Horizon 1.1 时弃用自研 Vivaria
+  全面迁到 Inspect，且 7 个月翻倍趋势迁移后复现**。
+- **HELM**（Stanford CRFM）：多维度全景派——同一 scenario 同时
+  报 7 个维度（accuracy/校准/鲁棒/公平/bias/毒性/效率），
+  2025-03 Capabilities 改用 mean score 取代 mean win rate。
+- **METR Time Horizon**：不是 harness 而是度量范式——50% 成功率
+  任务时长每 7 个月翻一番，天然抗污染的外推曲线。
+
+三个带进面试的细节：其一，**sandboxes 是 agent eval 真正的并发
+瓶颈**——Inspect 默认 max_sandboxes = 2 × cpu_count；docker 启动
+~1s 是主流，k8s 管 >100 并发，高风险评测（CTF/sandbox escape）
+必须 VM 内核级隔离。其二，**考场本身是攻击面**：Anthropic 2026-07
+复盘三起网络安全评测事故——评测环境自称隔离实际连着真实互联网，
+prompt 里一句「你在模拟环境、没有网络」不构成任何隔离，模型按
+被喂的世界模型在真实系统上执行了「演习」操作；结论是把
+defense-in-depth 从生产延伸到评测基础设施，隔离承诺要与实际
+网络拓扑对账。其三，**Agent eval 与 model eval 统计设计不同**：
+评估对象是轨迹+终态、多条有效路径并存、必须多 trial——pass@1
+（均值）+ pass@k（乐观上界）+ pass^k（悲观下界）三线并报，
+衔接本篇 §八第 4 条与 [多 Agent 与评测](./多agent与评测.md)
+的 pass^8 数字。
+
+选型一行版：学术单轮 → lm-evaluation-harness；agent 多轮+沙箱 →
+Inspect；要 bias/毒性全景 → HELM；要能力外推 → METR 范式 +
+Inspect 跑任务。自建时把 sandbox 类型、资源配额、scaffold 版本
+**写进 eval 报告**——这些全是结果的一部分。
+
 ## 八、自建内部评测五要素
 
 从 TB 与 SWE-bench-Live 的工程实践里抽出的可迁移清单：
@@ -300,6 +358,13 @@ judge 复核、verifier 容器分离 + artifact 可重判。
   （arXiv:2311.12983，2023-11），官方榜实测最高提交为七六点四（SU AI
   Zero，2025-04-23）；正确表述应为「官方榜头部约七十六，人类基线九十
   二」。本篇以上文 4.3 节为准。
+- **七·增来源**：BigKunLun/Agent-Interview-100（433★，MIT，
+  2026-10 持续更新）#111 Eval Harness 篇。其生态数字
+  （Inspect 200+ evals、METR 2026-01 弃 Vivaria 迁 Inspect、
+  Anthropic 2026-07 三起评测隔离事故、Inspect max_sandboxes
+  默认值）为题库转述口径，本仓未复核；「同 benchmark 不同
+  harness 20+ 分差距」经本仓 harness工程实战实测校准为
+  TB 双 harness 6–12pp。（github.com/BigKunLun/Agent-Interview-100）
 - **未核实单列**（以下条目仅作存档，正文未当事实引用）：
   - HLE 2026 年最新头部分数——official leaderboard 为 JS 渲染、Scale 页
     403，本次未能核实；2025 年锚点 Deep Research 带工具二六点六见仓内既有
