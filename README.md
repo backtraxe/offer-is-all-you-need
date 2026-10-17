@@ -49,6 +49,18 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-17：小红书复调批——二十轮——面经合集新增三十二节：**字节推荐大
+  模型一面 40 题全录**（生成式推荐方向一手帖、一面已过、5 小时新 71 赞、19
+  图全文 OCR：四域 SID 词表与码本、Think 与 No-Think 双路各 32 候选与
+  Pass@64 四域加权、RFT 成功轨迹与 Target Mask 到 Loss 层、CVR 后验
+  Reward 的曝光偏差与 credit assignment、SID-to-PID 冲突与商品上下架动态
+  更新、手写 Beam Search 生成三级 SID 与残差量化伪代码、反问环节自带组
+  方向）；搜广推与llm融合专题新增 §4.1·增（生成式推荐面试题面五块对接地
+  图：RFT 与 Target Mask/评测口径/Reward 三问即推荐侧 OPE/SID 在线工
+  程/手撕双题）；成电摆子哥 Multi-Agent 八股 8 问入三面，楼主自标三处
+  「面试多次提到」（Token 开销、状态与文本转换、知识沉淀）为多 Agent 追
+  问题眼排序；通识题单样本与「题单×面经混用」判别式加一维（正文有个人
+  情境变量才算面经）；已录观察帖复现零新料注记
 - 2026-10-17：GitHub 挖掘批——十九轮小批——新锐雷达 10-17 晚二扫：新入库
   landedjobs/ai-interview-questions（landed.jobs 官方题库，759 题按 11 角
   色分区、372 题 reported/practice 明确分标的口径纪律；AI Infra 与 Platform

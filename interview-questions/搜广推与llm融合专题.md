@@ -166,6 +166,37 @@ textual ID（可解释），**19 个数据集训练 / 6 个零样本测试（论
 Prediction（session token + 无位置约束的 item token 集合）改造电商生成式检索，
 在淘宝数据上看到 scaling 趋势。
 
+### 4.1·增：生成式推荐面试题面（字节推荐大模型一面 40 题，2026-10）
+
+> 来源：小红书 kk 帖一手面经（一面已过、71 赞 5 小时新），40 题全录在
+> [面经合集三十二节第一节](../interview-experiences/小红书社招面经合集-2026h2.md)。
+> 此处只挂题面与本专题的对接地图——OneRec 系（帖面原文记作 OneReason
+> 与 OpenOneRec，名称按原文收录待核）工程栈被一场一面完整盘了一遍。
+
+- **RFT 与 Target Mask**：成功轨迹以 GT 命中定义，但「SID 命中不等于
+  CoT 质量」会追问 CoT 本身怎么评——与本节长尾难点同根；Target Mask
+  直问到 Loss 层实现（CoT token 与 SID token 分别计不计损、Mask 之后
+  SID 是否仍在输入序列）；R1 式拒绝采样微调迁移到推荐可能失效，归因
+  在任务目标与监督信号差异——把「R1 训法有 task 边界」从口诀变成现
+  场推演题。
+- **评测口径**：Think 与 No-Think 两路各 32 候选、每级 Beam 32 的保留
+  规则、Pass@64 四域加权、R2 Score、SA 多样性与精度权衡——生成式推
+  荐把 LLM 评测词汇（pass@k、think 双路）整体搬进推荐 benchmark，答
+  题按解码算法与评测口径两层讲。
+- **Reward 三问**：CVR 是后验反馈，未曝光候选的 reward 从哪来；拿预
+  测 CVR 当 reward 是否仍带历史曝光策略偏差；分层 reward 与更细粒度
+  credit assignment——本质是推荐侧 off-policy 评估问题，可与 §3.3
+  OneRec-V2「真实用户反馈做 RL」口径连读：线上反馈绕开模型预测
+  reward 的偏差链。
+- **SID 在线工程**：SID-to-PID 多对一冲突与推荐结果去重（对上本节碰
+  撞去重考点）、商品不断上下架的动态更新（新商品挂已有 SID 还是重生
+  成、与模型训练数据的关系）、物料增长下的码本容量——本节「码本需
+  随物料增长重训」的面试可执行版本。
+- **手撕双题**：Beam Search 生成三级 SID（Beam 32 与独立采样 32 次的
+  forward 次数和 KV cache 账）加 SID 残差量化生成伪代码（逐级残差更
+  新）——把 §3.1 的「生成」与本节 RQ-VAE 直接卷进 coding 轮，比传统
+  手写 attention 多一层业务包装。
+
 ## 五、LLM 增强推荐的三种接法（并行比较）
 
 | 接法 | 位置 | 代表作 | 机制 | 落地性 |
