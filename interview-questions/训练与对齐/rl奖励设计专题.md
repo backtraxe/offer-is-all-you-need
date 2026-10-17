@@ -403,6 +403,48 @@ Search-R1 把解释器/检索接进 rollout（见
 题怎么变成会判的」——奖励工程的重心正从「proxy 打分」移向
 「verifier 构造」，这几乎是奖励设计岗位的 2026 版岗位描述。
 
+## 六·增、K3 后训练范式：3×3 矩阵 RL 与 MOPD 合九为一
+
+Kimi K3 技术报告（arXiv:2607.24653，2026-07-27，官方口径，本仓
+未复核）把后训练写成一页范式，值得单独背下来——它同时回答了
+「effort 分档怎么训」和「专项专家怎么合体」两个本篇悬题：
+
+```text
+阶段1 SFT 冷启动
+  XTML chat模板（XML树强制分think/response/tools通道）
+  + 从SFT起全程QAT（MXFP4权重×MXFP8激活）
+        ↓
+阶段2 矩阵式 RL：3域 × 3档 = 9个专家并行训练
+  域：general tasks / general agents / coding agents
+  档：low / high / max（推理努力度）
+  per-problem预算控制：τ·b0(x) 超限整条轨迹奖励记-1 ——先训
+  max档(大τ封顶防过度思考)再anneal出high/low档专家
+        ↓
+阶段3 MOPD 多教师on-policy蒸馏：合九为一
+  per-token OPD奖励 = clip( sg(logπ_teacher(d,e)/π_θ), ±Rmax )
+  9名教师各管(领域,effort)一格 → 统一模型API保留reasoning_effort
+  开关按格复现对应专家的思考路径
+```
+
+三个面试级细节：其一，**RL 里也做预算课堂**——把本篇 §三的
+「长度惩罚」升级成 curriculum：不同 effort 档不是三套超参而是
+从 max 档 anneal τ 得到的谱系，同源不同温；其二，**AGRM 强制
+协议**——非可验证任务用生成式裁判，但不给自由发挥：必须
+「读产物→生成 rubric→逐候选打分→scorepad 记录」四步留痕，
+配合冗长度预算（超过 σ·ℓ0 自动输掉二元对比）防越
+写越长刷分母；其三，
+**蒸馏奖励天然兼容 partial rollout**——per-token 密集信号直接
+挂进 RL 框架，9 教师合体与长程轨迹跨迭代恢复（见
+[RL 环境工程](./rl环境工程专题.md) §六·增）共享同一套基建。
+报告同时自陈：更细粒度的 top-k 蒸馏目标在收敛速度与最终
+性能上均无优势——「per-token clip + 九教师」已是甜点位。
+
+与前文的拼接：本篇 §6.4 三条「不可验证变可验证」是题怎么做；
+K3 这套是**专家怎么组织**——域 × effort 笛卡尔积各自出专家再
+MOPD 收敛，等于把「能力矩阵」显式变成训练拓扑。同源参照
+[mimo 训练栈复盘](./mimo训练栈复盘.md) 里 MOPD 一行带过处，
+此节是其官方全貌。
+
 ## 七、组内优势符号学：截断轨迹的三种会计口径
 
 GRPO 的组内优势（不要 value model，用同组奖励自当 baseline）：
@@ -645,6 +687,11 @@ K=1 时数学退化为 RLVR，是它的严格超集，摘要口径）、环境�
    Zero 的「零数据自博弈」为摘要/AI 检索概览口径，正文数字均未复核；
    2026-09/10 四篇（RLVR²/EvoRS/SkillRubric/Judging the Judges）仅核对
    题名与日期，引用细节前必读原文。
+10. §六·增 全部内容（XTML 模板、3×3 矩阵 RL、per-problem 预算
+    curriculum、AGRM 四步协议、MOPD 公式）来自 Kimi K3 技术报告
+    arXiv:2607.24653 v1（2026-07-27）正文与附录 F，官方口径，本仓未
+    逐式复核；「2.5× scaling 效率」为摘要表述、KDA/LatentMoE/AttnRes/
+    Muon 四件套共同贡献，勿单归因到后训练。
 
 ## 十一、串联阅读
 

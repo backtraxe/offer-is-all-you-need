@@ -287,6 +287,38 @@ Echo Trap 不稳定模式（reward 方差悬崖 + 梯度尖峰），rollout 侧�
    reward 曲线分布一致）+ **单条轨迹可回放**（轨迹+镜像+种子齐全时重放
    环境侧交互，LLM 侧用落盘 token 序列替代实时生成回放）」。
 
+## 六·增、AgentENV 与 Partial Rollout：百万 token agentic RL 的两张底牌
+
+K3 技术报告（arXiv:2607.24653，官方口径，本仓未复核）给出了一组
+重新标定本篇坐标系的事实——microVM 沙箱从「高风险评测选项」升级
+为「agentic RL 生产刚需」，rollout 调度从「等齐再优化」升级为
+「凑够比例就优化」：
+
+**AgentENV（开源 github.com/kvcache-ai/AgentENV，与 KVCache.ai
+合作）**，Firecracker microVM 三层设计：
+
+- **隔离保真**：传统容器运行时跑 agentic RL 曾被 agent 乱操作打出
+  内核 panic/死锁（报告原文级案例）；microVM 一刀隔离，但不牺牲
+  探索——agent 可 mount 磁盘、跑嵌套容器、甚至起虚拟机。
+- **生命周期三操作**：增量 checkpoint 只存脏页，**checkpoint 133ms、
+  resume 49ms**；**Pause** 后零内存零 CPU（agent 等模型推理的时间
+  占沙箱生命周期 ~98%，暂停等推理是最大头）；**Fork** 从精确状态
+  克隆一份继续跑原体——判奖无副作用的正解；**Snapshot** 定期存
+  档做错误恢复。
+- **密度账**：OverlayBD 镜像 + 自研 ublk 驱动 + 存储层共享 + P2P
+  传输 → 万级异构镜像秒级拉起；COW + page-cache 优化实测
+  **6.5× 内存超卖**。总规模：**51,219,741 个沙箱 / 1,505,678 镜像**
+  ——微信公众号「五千万沙箱」的原文出处，面试报数字带这个坐标。
+
+**Partial Rollout**（部分展开）：每迭代 N prompt × K completion，
+完成 **λ·N×K 条即开始策略优化**不等长尾；未跑完的轨迹在沙箱里
+**原位暂停、入队、下轮恢复**——单条长程轨迹天然跨迭代，引入
+极端 off-policy 数据陈旧，靠 K2.5 算法的 per-token 正则约束在
+局部邻域内兜 stability。与本篇 §五 sandbox 选型表对读：
+「microVM 慢、重」的旧账在 133ms checkpoint 面前重写；
+与 §六 的调度题对读：straggler 不再靠同步点吃掉，而是被
+降级成「下一轮的预置队列」。
+
 ## 七、成本量纲（工程估算，非引用）
 
 一条 agentic rollout step = LLM 调用 + 工具/环境调用 + 验证调用三类成本
@@ -401,6 +433,11 @@ verifier 断言的对象已非题目原意；WebArena 官方明确要求 812 例
 - 第七节「≥90% 成本由 LLM 推理与长尾闲置组成」：结构性工程估算，非引用。
 - Voyager「非 RL」定性：保留论文自述原措辞（黑盒 GPT-4 查询、不微调
   参数），倍数数字已从 arXiv 摘要核实。
+- §六·增 全部数字（checkpoint 133ms/resume 49ms、等待推理占生命周期
+  98%、内存超卖 6.5×、51,219,741 沙箱/1,505,678 镜像、λ 比例触发）
+  来自 Kimi K3 技术报告 §5.3（arXiv:2607.24653 v1，2026-07-27）官方
+  口径，本仓未复核；AgentENV 开源址 github.com/kvcache-ai/AgentENV，
+  容器运行时内核 panic 为报告自述早期实验观察。
 
 ## 串联阅读
 

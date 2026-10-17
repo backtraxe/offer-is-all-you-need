@@ -49,6 +49,30 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-17：微信尾部目录再扫描批——25 篇文章【传送门】全量
+  提取、22 个关联主题逐条查重（16 个已覆盖跳过），真缺口溯源到
+  Kimi K3 官方技术报告（arXiv:2607.24653，2026-07-27）后五篇
+  联动吸收——rl奖励设计篇 §六·增（3×3 矩阵 RL：general/
+  agentic/coding 三域 × low/high/max 三档=9 专家、per-problem
+  预算 curriculum 从 max 档 anneal 出谱系、AGRM 强制四步协议+
+  冗长度预算、MOPD per-token 蒸馏合九为一、报告自陈 top-k 无
+  增益）；rl环境工程篇 §六·增（AgentENV Firecracker microVM：
+  133ms/49ms 增量 checkpoint-resume、等待推理占沙箱 98% 生命
+  周期 Pause 零资源、Fork 判奖无副作用、OverlayBD 亚秒级拉起
+  6.5× 超卖、5112 万沙箱/150 万镜像；Partial Rollout λ 比例
+  触发+长尾原位暂停、极端 off-policy 由 per-token 正则兜底）；
+  组合并行篇 §六·增（MoonEP 完美均衡 EP：每 rank 恰 S×K tokens、
+  E/R 冗余专家上界定理及 tightness、ILP 参照+近优 GPU 规划、
+  通信 buffer S×K×R 降为 S×K、静态 shape 免层间同步；对照
+  ECHO/UltraEP cap 路线三毒）；transformer 篇 §十 AttnRes（残差
+  各层等权十年假设换成深度轴注意力：伪查询+RMSNorm 核防大层
+  垄断、O(L²d) 算力可接受真开销在 O(Ld) 内存与 PP 跨段通信 →
+  Block 形式、2.5× scaling 效率四件套之一勿单归因）；kv-offload
+  篇 §五·增（KDA state 与 MLA KV 统一页池同字节：全组 pin 先于
+  分配/当步块拷贝落地前不匹配/checkpoint 全组原子化三条一致性
+  规则、PD re-layout 零 GPU 重排、cache-aware 亲和+预算准入）；
+  配套口径条目 4 处。微信 portal 链接已验证需 captcha，后续吸收
+  统一走「尾部目录→标题→原始论文/Blog 溯源」路线
 - 2026-10-17：GitHub 巡检批——三缺口吸收（gh 检索命中
   BigKunLun/Agent-Interview-100，433★ MIT 题库；对其 100 题逐题
   查重后 8 个候选缺口收敛出 3 个真缺口：自动化 Prompt 优化/
