@@ -109,6 +109,17 @@ token 推理成本大致和 30B 级 dense 模型一个量级。
 - **softmax → sigmoid**：V3 把路由打分从 softmax 换成 sigmoid。softmax 强制
   所有专家归一竞争，得分互相抑制；sigmoid 让各专家独立打分，和 top-k 加偏心
   的偏置（bias）路由配合更自然，分数尺度也更稳定。
+- **Top-K 之外还有一条 Expert Choice 路线**：上表全线是 token 选专家
+  （token-choice）；Expert Choice 反过来——每个专家固定容量、在 batch
+  里反向挑自己要的 top-c 个 token，**均衡是白送的**：容量先验直接消
+  除路由塌缩、不需要辅助 loss。**代价**：路由粒度升到 batch 级（专家
+  打分要看整 batch 的 token，因果语言模型要处理未来 token 可见性，
+  训练管线复杂化）、通信模式随容量切分改变；主线 LLM（Switch→
+  Mixtral→DeepSeek→Qwen3）最终全员 token-choice。**面试对比题一句话**
+  答法：「谁有容量决定权」——token 选专家把容量风险留给负载均衡系
+  统（aux loss/EPLB），专家选 token 把容量刚性提前进路由本身（题面
+  立档见
+  [面经合集 · 三十九节](../../interview-experiences/小红书社招面经合集-2026h2.md)）。
 
 ## 三、负载均衡：从辅助损失到无辅助损失（面试最高频深挖点）
 
