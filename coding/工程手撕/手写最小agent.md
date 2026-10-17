@@ -188,6 +188,11 @@ def run_agent(task: str) -> str:
   就是老手。
 - **多用户并发时 trace / seen 怎么隔离？** 每个会话一份状态，agent 循环要写成
   无共享的实例（本文的 `seen/trace/messages` 都是局部变量），别放全局。
+- **接真实模型调用时为什么要设 stop（截断在 Observation 之前）？** ReAct 文体
+  是自回归续写：不设 stop，模型会顺着上一条 Observation 自己「接演」下一条工具
+  结果，循环全程跑在编造的观测上——本地 mock（假 llm）感知不到，接真 API 必炸。
+  根子是「工具结果只能由环境产生」：结构化输出 / 原生 Function Calling 把这一点
+  交给 API 层保证（见题目二），stop 只是 Prompt 文体路线上最实在的补丁。
 
 ## 题目二：升级——Function Calling JSON 模式版
 
@@ -314,6 +319,68 @@ def compress_history(messages, budget: int, keep_recent: int = 3, summarize=None
   摘要会调用 LLM、慢且可能再引入失真；先把"大头"卸掉，后续摘要面对的文本也更干净。
 - **token 怎么精确计数？** 生产上 tiktoken / 各家 tokenizer；面试近似就明说"近似即可，
   保 budget 是'不许超'，不是'必须贴满'"。
+
+## 题目四：Plan-and-Execute 三角色最小版
+
+▶ 真题：手写一个先规划再执行的 Agent——Planner 拆步骤、Executor 执行单步、Replanner 决定收尾还是改计划——**中，2026 新方向**（抖音 Ra 哥手撕手册 Agent 篇五题之一；大疆一面同款选择题：航线规划这类步骤冗长、顺序约束强的任务优先 Plan 系而非 ReAct）
+
+### 题意拆解
+
+1. **Planner**：把任务拆成 JSON 字符串数组，一次性产出全计划——数组顺序就是
+   执行顺序。
+2. **Executor**：只执行"当前第一步"，最简版再调一次 LLM 就行；工程版把题目一
+   的 ReAct Agent 当单步执行器嵌进来（规划给骨架、ReAct 给腿）。
+3. **Replanner**：每步执行后判断——任务能收尾就输出 final，否则修正剩余计划；
+   final 与 plan 二选一的单 JSON 对象，解析容错同题目二。
+
+### 默写版代码
+
+```python
+def first_json(raw: str):
+    """剥掉模型废话取 JSON（数组或对象取最小实现），同题目二思路"""
+    s = min(i for i in (raw.find("["), raw.find("{")) if i != -1)
+    e = max(raw.rfind("]"), raw.rfind("}"))
+    return json.loads(raw[s:e + 1])
+
+def _fmt(done):
+    return "\n".join(f"- {s}：{r}" for s, r in done) or "无"
+
+def plan_and_execute(task: str, llm, execute, max_steps: int = 8) -> str:
+    # 1. Planner：全局拆步骤
+    todo = first_json(llm(
+        f"把任务拆成可按顺序执行的步骤，输出 JSON 字符串数组，"
+        f"不要输出其他内容。\n任务：{task}"))
+    done = []
+    for _ in range(max_steps):                        # max_steps 保险丝
+        if not todo:
+            break
+        step, todo = todo[0], todo[1:]
+        # 2. Executor：只执行当前第一步
+        result = execute(f"总任务：{task}\n已完成步骤及结果：\n{_fmt(done)}\n"
+                         f"当前要执行的步骤：{step}\n请完成当前步骤并输出结果。")
+        done.append((step, result))
+        # 3. Replanner：能收尾给 final，否则修正剩余计划
+        decision = first_json(llm(
+            f"总任务：{task}\n原计划剩余步骤：{todo}\n已完成步骤及结果：\n{_fmt(done)}\n"
+            f"若任务已经可以完成，输出 {{\"final\": \"最终答案\"}}；"
+            f"否则输出 {{\"plan\": [新的剩余步骤数组]}}。"))
+        if "final" in decision:
+            return decision["final"]
+        todo = decision.get("plan", todo)
+    return done[-1][1] if done else "未能完成任务"
+```
+
+### 面试官追问
+
+- **ReAct 和 Plan-and-Execute 怎么选？** 步骤少、环境反馈主导（搜索类）→ ReAct
+  一步一纠；步骤冗长、顺序约束强、整体结构价值高（多阶段流程类）→ PnE。大疆
+  原题口径：点位排序、避障、空域校验、返航这类航线规划优先 Plan 系。
+- **每步都 Replan 的成本账？** 每步多一次 LLM 调用，长任务调用次数翻倍。打折
+  两招：只在执行结果偏离预期或步骤失败时才触发重规划；或把 Replan 与下一步
+  执行合并成同一次调用（计划方正不重复劳动）。
+- **Replanner 改计划改到跑偏怎么办？** final 与 plan 二选一格式强约束，解析失
+  败当"一步失败"处理走重试兜底（格式错误即 Observation 口径同题目一）；
+  max_steps 依旧是最外层保险丝。
 
 ---
 

@@ -23,7 +23,7 @@
 
 | 文档 | 覆盖真题 | 来源 |
 |---|---|---|
-| [手写最小 agent.md](工程手撕/手写最小agent.md) | 脱框架最小 ReAct Agent、Function Calling JSON 模式、滑动窗口摘要 | 2026 新高频（应用岗） |
+| [手写最小 agent.md](工程手撕/手写最小agent.md) | 脱框架最小 ReAct Agent、Function Calling JSON 模式、滑动窗口摘要、Plan-and-Execute | 2026 新高频（应用岗） |
 | [cuda 算子手撕.md](工程手撕/cuda算子手撕.md) | RMSNorm / Softmax / Online Softmax / SwiGLU（CUDA + Triton 备选） | 滴滴 AI Infra 一面原题 |
 | [通用手撕清单.md](工程手撕/通用手撕清单.md) | LRU、Top-K、链表三件套、DP 选型、岗位备考权重表 | 通用 |
 
