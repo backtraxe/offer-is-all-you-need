@@ -49,6 +49,37 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-17：微信尾部深读批——目录考古六真缺口溯源吸收（十四轮）——
+  旧 panel 存量页已清空，改走考古路线：从新旧两份会话事件日志归一出
+  40 篇公众号 URL，静态抓取 26 篇真题名逐一对账（全部已在既有专题
+  射程内），锁定空壳与参数错误页为待读集，经用户 Chrome 登录态补读
+  五篇正文（Context Tuning、K3 AttnRes 解析、K3 后训练 Infra、
+  TileRT 解读、12 阶 GEMM——逐篇查重全部已覆盖结案），但其尾部
+  《往期文章》目录吐出 11 个仓内零覆盖词，深读六篇溯源吸收：agentic-rl
+  专题新增 §3.5 Polar（NVIDIA Any-Harness 的 Agentic RL——Agent 与
+  模型 API 边界插 Proxy 记 logprobs 重建轨迹，四池异步编排让 Runtime
+  预热不占关键路径，Qwen3.5-4B 加朴素 GRPO 跨四种 Harness 一次训练
+  +22.6/+4.8/+0.6/+6.2 个百分点）；rl环境工程专题新增 §4.4
+  Dockerless（字节 Agent-as-Verifier：两阶段验证性问题生成加只读
+  shell 子 Agent 找证据，81.0 AUC 超最强开源验证器 14.3 点，当 SFT
+  筛与当 RM 跑 GRPO 双用、端到端 62.0% 仅比真执行低 0.4——RLVR
+  验收从真执行换成可信信号的闭环）；kv-offload 专题新增五·增二
+  TriAttention（KV 驱逐两引擎级卡点——FlashAttention 不落分数、
+  paged 块回收不动；Pre-RoPE 几何评分加每 128 token 物理压缩，AIME
+  32.9% 对 R-KV 近翻倍、吞吐 2.5 倍内存省 10.7 倍）；数据工程专题
+  新增四·增 CausalMix（数据混合重构成状态条件因果边际回报估计、DML
+   双残差剥混杂、0.5B 代理直接外推 7B 与新数据池、CATE 解释器实证
+  知识与推理技能冲突）；kernel-agent 竞赛复盘新增国产注脚 MusaCoder
+  （首个国产 MUSA 全栈 kernel 生成模型：MooreEval 四关含禁 PyTorch
+  回调反作弊、PrimeEcho 加 Buffered Dynamic Retry 加 MirrorPop 三
+  项 RL 稳定机制、KernelBench Pass@8 93.2% 声称超 Opus 4.7、64 台
+  MTT S5000）；rl奖励设计新增 RubricEM 块（rubric 升级贯穿全程共享
+  接口、四阶段结构化推理、SS-GRPO 阶段级信用分配、反思元策略经验
+  复用、8B 1400 步均分 55.5 逼近 OpenAI Deep Research）。查重结案
+  注：MoonEP3（冗余专家定理已被组合并行专题覆盖）、SAO（GLM-5 异步
+  三件套已点名）、A/F 分离、CXL、DSpark、AttnRes、MOPD、LongCat-2.0、
+  KVCache 缝合、Firecracker、流水线解码、Rubric 无一全仓漏网；
+  TurnOPD 触发风控未读，留下批候选
 - 2026-10-17：抖音 Agentic RL 面词批——十三轮实务工批——抖音
   「Agentic RL 面试」关键词 29 卡、图文 OCR 逐张还原：追觅科技 AI
   Agent 全栈三轮 40 题+HR 7 问全录（一面 GIL/asyncio 与 Spring

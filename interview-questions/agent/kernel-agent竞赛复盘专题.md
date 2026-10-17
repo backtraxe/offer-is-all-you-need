@@ -127,6 +127,24 @@ Diffusion 侧（Z-Image / Qwen-Image）吞吐与 TTFT 同步改善。
 专做 FlashInfer/SGLang 体系内的多轮证据驱动优化；CUDA Agent
 走大范围 Agentic RL，KernelBench 上超 torch.compile 基线。
 
+**国产注脚（MusaCoder，2026-10 解读帖转录，自报口径）**：摩尔线程把
+kernel 生成模型的全栈训练第一次落在国产 MUSA 上——SFT 三阶段（任务
+扩展与基础算子正确性 → 加显式张量元数据与六步推理模板压形状、索引、
+边界类失败 → 合成 reviewer、性能分析、优化重写、多轮修复数据）、保
+多样性的 RFT（同 prompt 的正确实现聚类、训练时随机采样监督目标，防
+过早塌缩进固定模板、给 RL 留探索空间）、再到执行反馈 RL。验证环
+MooreEval 是本条含金量所在：编译与执行彻底解耦（CPU 侧编译资源、
+GPU 侧验证各自独立扩缩）；四关校验——可解析可编译、随机输入的
+shape 与数值对齐 PyTorch 参考、**静态规则加运行时 profiling 双查
+ModelNew.forward 里回调 PyTorch 或 aten 算子的反作弊**、warmup 后
+CUDA event 重复计时降方差；三项 RL 稳定机制（PrimeEcho 锁定首轮生
+成质量、Buffered Dynamic Retry 把全失败组变成可学习样本、MirrorPop
+更准估计离策略漂移稳定更新）。自报数字：MusaCoder-27B-RL 在
+KernelBench 严格协议 Pass@8 93.2%、Avg@8 88.6%，声称超 Claude
+Opus 4.7，全程跑在 64 台 MTT S5000 上。与本课题口径纪律的互文：
+它把「verifier 要硬、反作弊要明、基线要公」三件事都做在了台面
+上——正面版的可信自报模板。
+
 **反例同框（口径纪律）**：同赛道的 Sakana AI CUDA Engineer
 （闭源：PyTorch 翻译成 CUDA 再进化优化、LLM verifier 判正确性）
 其对外宣称的大幅加速被 Answer.AI 等团队质疑——与本文 §四

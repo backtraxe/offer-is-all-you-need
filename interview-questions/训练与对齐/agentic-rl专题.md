@@ -191,6 +191,34 @@ scale 单轮 Code RL（自动扩测试用例），再做 long-horizon Agent RL**
 2 万个并行独立环境（依托阿里云）跑 SWE 式多轮交互训练，把这句话变成了
 产能。
 
+### 3.5 Polar（NVIDIA）：不动 Harness 的 Agentic RL——模型 API 边界就是训练接口
+
+口径：NVIDIA 论文 Polar: Agentic RL on Any Harness at Scale（2026-10
+公众号解读帖全文转录，官方一手未读，数字转述）。
+
+一句话：**能不能不打开盒子就训 Agent**。常规路线要么把 Agent 执行
+嵌进 RL 设施（SkyRL-Agent/PRIME-RL），要么要求 Agent 遵循标准追踪
+接口（Agent Lightning/rLLM）——每接入一个 Harness 就一次专用集成，
+闭源二进制分发的框架更无从下手。Polar 反过来在 **Agent 与推理服务
+之间插一个 API 兼容 Proxy**：转发模型调用、记录 prompts、采样 token
+与 logprobs，在 Harness 外部重建训练就绪的轨迹——Agent 是黑盒但仍
+可训。
+
+- **架构两件**：Rollout Server（收 TaskRequest 扩 N 个独立 session、
+  管生命周期与异步端点）+ Gateway Node（起 Runtime、跑 Harness 命令、
+  从捕获的 completions 重建轨迹、评估、回收，兼宿 Proxy 端点）。
+- **四池阶段隔离**：INIT Pool 起 Runtime → READY Buffer 缓冲已初始化
+  Runtime → RUNNING Pool 跑 Agent → POSTRUN Pool 重建轨迹+评估+回收。
+  Runtime 预热与评估器预热都不在关键路径——CPU 密集的环境准备与
+  GPU 密集的 rollout 解耦，跑当前任务的评估器在后台预热下一个。
+- **数字**：Qwen3.5-4B 加朴素 GRPO，SWE-Bench Verified 上四种 Harness
+  分别 +22.6（Codex）、+4.8（Claude Code）、+0.6（Qwen Code）、
+  +6.2（Pi）个百分点——一次训练跨四种 Harness 复用；Codex 档的
+  22.6 说明模型学到了原本不熟的执行协议本身。
+- **与本篇的接法**：Proxy 只需 API 兼容加记录够重建的信息，不需要
+  理解 Harness 怎么规划、调工具、决定停止——与 §6.2 的 on-policy
+  旋钮连读（重建轨迹的 on-policy 程度成为新的控制面）。
+
 ## 四、工具调用训练分工：SFT 教格式，RL 教策略
 
 一句话分工：**格式归 SFT——学「调用长什么样」；策略归 RL——学「何时调、
