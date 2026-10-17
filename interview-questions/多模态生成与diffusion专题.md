@@ -130,6 +130,34 @@ rectified flow / flow matching 把传输路径直线化：曲率小，低阶 sol
 SD3/Flux/Wan/HunyuanVideo 全部跟进——「为什么 flow matching 28 步就够」
 是面试高频题（见第七节第 7 条）。
 
+### 3.2·增、Flow Matching 公式两分钟版（商汤「公式理解」正主）
+
+商汤 AIGC 一面直接问「Flow Matching 的公式理解」（见
+[小红书面经合集二十四节](../interview-experiences/小红书社招面经合集-2026h2.md)）。
+两分钟答法三件套：**路径、目标、采样**（Lipman et al.，arXiv:2210.02747
+摘要口径：simulation-free 训练连续正则化流，回归固定条件概率路径的
+向量场）：
+
+```text
+路径:   x_t = (1−t)·x_0 + t·x_1        ← 噪声x_0到目标x_1的线性插值
+目标:   u_t(x | x_1) = x_1 − x_0        ← 条件速度场,与t无关的常向量
+损失:   E‖ v_θ(x_t,t) − (x_1−x_0) ‖²   ← CFM 回归边缘化的速度场
+采样:   dx/dt = v_θ(x_t,t), ODE 从t=0积到1  ← 不是SDE,无噪声项
+```
+
+与 DDPM 的对照一句话即可：DDPM 学的是噪声/score（离散化 SDE 括号
+里抽噪重建），FM 学的是速度场（确定性 ODE）——**同一条概率流 ODE
+的两个训练视角**，但线性插值路径让 |v| 沿途近似常值、轨迹接近
+直线，低阶 solver 也敢走大步，这就是上面 28 步叙事的公式根源。
+追问储备两条：其一 rectified flow（arXiv:2209.03003）用 reflow
+迭代把弯轨迹进一步拉直——「直」不是免费的是练出来的；其二少步
+化的极限不在求解器而在分布非线性，所以生产组合（第七节 Q5）是
+**flow matching 底模 + DMD 蒸馏 + 稀疏 attention**，FM 是地基不是
+终点。谱系补一枚谱系钉：LCM 有三个设计缺陷（潜空间高分辨率+
+文本条件场景下界受限），**Phased Consistency Model / PCM**
+（arXiv:2405.18407）分阶段一致性映射改进低步数质量——商汤面试
+帖口径「在一致性模型基础上进一步改进低步数生成」，两源互证。
+
 ### 3.3 第三代：蒸馏压到 1–8 步
 
 谱系要分清历史线与当前线：
@@ -362,6 +390,10 @@ component-residency 四档、conditioning cache、LoRA、ComfyUI 插件与多
    4.3 的 H100 有效吞吐（约 400 TFLOP/s、MFU 约 40%）为推导假设；
    Wan2.1-14B 端到端出片表官方未发布，8–9 分钟仅作量级锚并标注未核实。
 2. Wan 2.5/2.6 仅陈述「开源加闭源 API」的事实分层，不引规格参数。
+3. §3.2·增公式三件套为 Flow Matching（arXiv:2210.02747）与
+   Rectified Flow（arXiv:2209.03003）摘要口径，公式为社区通行
+   记法转述；PCM 三缺陷定位（arXiv:2405.18407 摘要）与商汤面经
+   帖口径互证，「分阶段一致性映射改进低步数质量」为摘要转述。
 3. Sora 2 模型规格未公开；Peebles 任 Sora lead 标为人员谱系推断；Veo 3
    首发日期标社区高置信共识；Seek-omni 系闭源产品线不引任何数字；
    Movie Gen 6144 卡训练规模未核实，正文不引。
