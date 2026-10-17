@@ -272,6 +272,36 @@ MLPerf 实测 backbone 从 **31ms 压到 6ms**（约 5×，PyTorch blog，
 - 谁最受益：大量短 kernel 的 workload——**decode 循环每层几十
   个小 kernel**，这正是推理引擎全面接入 CUDA Graph 的原因。
 
+### 5.3+ TileRT 标本：1000 TPS 尺度下的常驻执行模型（2026-10 MiMo 联合披露）
+
+§5.2/5.3 只是把 launch 开销压到「一次」；MiMo×TileRT 的 UltraSpeed
+（8 卡通用 GPU 跑 1T MoE 突破 1000 tokens/s，声明不走 Cerebras 晶圆
+级/Groq 纯片上 SRAM 的专用硬件路线）把叙事推到下一档——**单算子
+生命周期进入微秒级后，算子边界本身失效**：每次 kernel 启动、硬件
+同步、全局内存往返都在微秒节拍里打断执行流，瓶颈从「Attention
+kernel 不够快」变成 RMSNorm、RoPE、KV 写入这些外围细碎开销——
+MTP 每层 LM Head 几十微秒，在 1000 TPS 下已重到拖累端到端。TileRT
+执行模型三板斧：
+
+- **常驻内核**：整条计算流水线驻在 GPU 内持续运行，不再逐算子
+  启动；核心收益是全链路持续预取——当前 Tile 还在 Compute Core
+  计算时，后续数据已沿寄存器→Shared Memory→Global Memory 多级
+  提前流动；
+- **Tile 级流水线**：把数据搬运、张量计算、通信细化为物理 Tile，
+  在芯片内部深度重叠；
+- **Warp Specialization + Heterogeneous Worker**：不同 Warp 组各
+  司其职，并把这种分工从单 SM 内部扩展到整张 GPU。
+
+模型侧配套（同一篇披露的 codesign 两件）：只对 MoE Expert 做
+MXFP4 量化+QAT（Expert 参数占比最大、量化容错最高，其余模块保
+原精度，官方口径能力基本持平）；DFlash 块级并行 draft（SWA draft
+常数算力，见投机解码 2026 专题 §3.7 实测口径）。面试挂钩——与
+§5.3 收束成三段话术：**融合消 kernel 内访存、CUDA Graph 消 kernel
+间 launch、常驻内核消执行边界**，三层正交可叠加；被问速度上限再
+补一句 Speed Scaling：速度本身在重新定义能力边界（同样等待时间可
+并行数十条推理路径）。口径：小米 MiMo 官方博客（mimo.xiaomi.com）
+与 TileRT 官方博客，2026-10 发布口径，本仓未复测。
+
 ### 5.4 什么时候不融合（反向加分项）
 
 - 寄存器 / SMEM 占用升高可能**拉低 occupancy**，融完反而更慢；

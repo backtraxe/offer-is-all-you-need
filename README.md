@@ -49,6 +49,26 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-17：微信公众号尾部目录三轮批——旧会话 31 篇存量文章
+  URL 考古重扫（30 页正文抓回），19 条尾部目录+全部页标题全仓查重，
+  唯一真缺口 TileRT 溯源吸收：小米 MiMo×TileRT UltraSpeed（8 卡
+  通用 GPU 跑 1T MoE 突破 1000 tokens/s，声明不走 Cerebras 晶圆级/
+  Groq 片上 SRAM 专用路线）官方博客披露。cuda与kernel专题新增
+  §5.3+ TileRT 常驻执行模型标本——单算子生命周期进微秒级后算子
+  边界失效：RMSNorm/RoPE/KV 写入等外围细碎开销成主瓶颈、MTP 每层
+  LM Head 几十微秒已拖累端到端；三板斧＝常驻内核（全链路持续预取，
+  寄存器→SMEM→GMEM 提前流动）+ Tile 级流水线（搬运/计算/通信芯片
+  内重叠）+ Warp Specialization 与 Heterogeneous Worker；与 §5.2/
+  5.3 收束三层正交话术：融合消 kernel 内访存、CUDA Graph 消 launch、
+  常驻内核消执行边界；codesign 两件配套＝MoE-Expert-only MXFP4+QAT、
+  DFlash 块级并行 draft。投机解码2026专题补 MiMo×DFlash 实测口径
+  （draft 全 SWA 常数算力、Muon 二阶优化器+自蒸馏、mask 块限 8、
+  mask 信号下沉 GPU 本地分片单步数万级独立信号、实测接受长度 Coding
+  6.30/Math 5.56/Agent 4.29 每轮 8 个吞 6-7 个、通用对话尚低——
+  并行块 draft 要选块状性强的场景）。查重结案：DCP 解码上下文并行、
+  Megatron bitwise 确定性训练、12 阶 GEMM/MI355X、FastH3、TensorFold、
+  NVFP4、Mojo、Cerebras、Groq 等 30 篇存量与尾部条目全部已被既有
+  专题覆盖；旧批「TileRT 无一手材料移出队列」至此闭环入库
 - 2026-10-17：小红书「大模型校招」关键词十轮批——面经合集新增
   二十六节。腾讯大模型算法岗实习双面全录（255 赞：一面 14 题
   Agentic RL 深水区连问——多轮工具 RL loss 设计、GSPO 改进、OPD
