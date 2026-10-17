@@ -49,6 +49,21 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-17：小红书八轮调研批（webbridge 实抓 6 帖+评论区深挖，
+  面经合集新增二十四节，主表按唯一事实源规则并入 7 条新信号）——
+  拼多多 AI infra 一面 33 题全录：「禁 PPT 考临场」流程信号、
+  昇腾 A5(950DT)×H20 迁移对比 22 连问成新题块(NZ 权重布局全仓
+  零覆盖已排队)、电商业务链 11 题含 TTFT/TPOT/吞吐×CTR/CVR/GMV
+  翻译题与「多优化叠加如何判断收益」，评论区 infra 入行窗口
+  收窄行情；海外 RS/RE 六题型帖(340 赞)：AI-assisted coding 成
+  今年新面试形态(自带 coding agent+题目超人手极限)、ML sys design
+  六段式、Mistral 二轮 DDP dataloader/packing 楼中楼爆料；商汤
+  AIGC 一面(评测三件套/Flow Matching/LCM/PCM+面试官建议转图像
+  视频加速，Flow Matching 全仓零覆盖排队)；蔚来训练 infra 三连
+  问(自研理由/Radix 适合 agent 长对话/为何不外接 vLLM)+GQA 伪
+  代码追问分组与维度对齐+面试官点破转训练补课项；649 赞社招
+  复盘观点账(性能建模最值钱/算子框架两端串联判断力/agent infra
+  不必硬转/maas 更偏上层/定薪看流水)
 - 2026-10-17：尾部目录缺口批二（溯源官方原文后双篇吸收）——transformer
   篇新增 §十·增 KDA「精准编辑被压缩的记忆」（K3 报告 §2.1.1：
   S_t=(I−βkkᵀ)Diag(α)S_{t-1}+βkvᵀ 先擦后写；三分视角闭环串联
