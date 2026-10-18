@@ -28,6 +28,7 @@ Transformer、什么是 token。零基础直接读会撞墙——新概念里套
 | 05 | [术语词典：常见黑话一页通](./05-术语词典.md) | 遇到 embedding/epoch/logits 不再现查 | 已完成 |
 | 06 | [训练是怎么发生的](./06-训练是怎么发生的.md) | 讲清预训练/SFT/RLHF 三段各给模型带来了什么 | 已完成 |
 | 07 | [推理部署第一印象](./07-推理部署第一印象.md) | 说清一次请求的旅程与推理优化四支柱 | 已完成 |
+| 08 | [CUDA Kernel 入门](./08-cuda-kernel入门.md) | 讲清 thread/block/grid 与 warp，备好 thread id 公式和 SIMD vs SIMT 两道实录答法 | 已完成 |
 
 ## 怎么用好这个模块
 

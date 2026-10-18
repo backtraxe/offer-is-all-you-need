@@ -418,7 +418,9 @@ eager 模式跑不满 GPU"的标准答案。
 - 代码手撕：[coding/工程手撕/cuda算子手撕.md](../coding/工程手撕/cuda算子手撕.md)
   （RMSNorm / Softmax / Online Softmax / SwiGLU 可默写骨架）；
 - 硬件直觉：[basics/04-gpu与算力入门.md](../basics/04-gpu与算力入门.md)
-  （SM/SMEM/带宽三件套，roofline 的第一课）；
+  （FLOPS/带宽/roofline 三笔宏观账）、
+  [basics/08-cuda-kernel入门.md](../basics/08-cuda-kernel入门.md)
+  （thread/block/grid、warp 与 SIMT 执行模型、三层显存——本篇的地基）；
 - 引擎侧视角：[inference/vllm与推理加速核心.md](./inference/vllm与推理加速核心.md)
   （kernel 之上：scheduling/batching 怎么再吃一层收益）；
 - 2026 动态：[inference/推理引擎2026新进展.md](./inference/推理引擎2026新进展.md)

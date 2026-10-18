@@ -14,6 +14,7 @@
   - [05 术语词典](basics/05-术语词典.md)
   - [06 训练是怎么发生的](basics/06-训练是怎么发生的.md)
   - [07 推理部署第一印象](basics/07-推理部署第一印象.md)
+  - [08 CUDA Kernel 入门](basics/08-cuda-kernel入门.md)
 
 - **学习地图**
   - [学习路线图](resources/学习路线图.md)

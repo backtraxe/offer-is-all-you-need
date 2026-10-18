@@ -5,6 +5,8 @@
 > ——中高（滴滴一面原题）"。每题给：题目来源 → 思路（访存/reduce 模式）→
 > PyTorch 参考 → 可默写的 CUDA 骨架 → 常见追问。**时间不够背 CUDA 的同学备一份
 > Triton 版**（Infra 岗 JD 里 Triton 出现频率极高，能默写 Triton 骨架也是解法）。
+> 代码里的 `blockIdx` / `threadIdx` / `__syncthreads()` / warp 若不眼熟，
+> 先读 [basics/08 CUDA Kernel 入门](../../basics/08-cuda-kernel入门.md)。
 
 通用答题节奏：先讲数学（特别是数值稳定）、再讲访存与并行划分、最后上代码骨架。
 面试官听的是"为什么这样切分 parallel pattern"，代码完整与否是其次。
