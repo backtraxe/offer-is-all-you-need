@@ -121,6 +121,20 @@ class PagedKVCache:
             vs.append(block.v[:block.length])
         return np.concatenate(ks, axis=0), np.concatenate(vs, axis=0)
 
+    def fork_prefix(self, n_blocks: int) -> "PagedKVCache":
+        """只共享前 n_blocks 个完整 block，用于分叉前缀命中。"""
+        if n_blocks < 0 or n_blocks > len(self.block_table):
+            raise ValueError("n_blocks out of range")
+        child = PagedKVCache(self.manager)
+        child.length = n_blocks * self.block_size
+        for bid in self.block_table[:n_blocks]:
+            block = self.manager.blocks[bid]
+            if block.length != self.block_size:
+                raise ValueError("fork_prefix only supports full blocks")
+            self.manager.fork([bid])
+            child.block_table.append(bid)
+        return child
+
     def fork(self) -> "PagedKVCache":
         """复制一个请求的 cache（用于共享前缀）。
 

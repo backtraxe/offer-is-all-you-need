@@ -35,6 +35,7 @@
     - [02 KV Cache 与 prefill/decode](projects/从零实现推理引擎/02-kv-cache与prefill-decode.md)
     - [03 连续批处理与调度器](projects/从零实现推理引擎/03-连续批处理与调度器.md)
     - [04 PagedAttention 与 BlockManager](projects/从零实现推理引擎/04-pagedattention与blockmanager.md)
+    - [05 前缀缓存与 RadixCache](projects/从零实现推理引擎/05-前缀缓存与radixcache.md)
   - [从零造轮子：模型与训练](projects/从零造轮子.md)
   - [Agent 与 RAG 实战](projects/agent与rag实战.md)
 
