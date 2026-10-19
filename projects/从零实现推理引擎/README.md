@@ -101,7 +101,7 @@ TPOT ≈ decode 单步时间（batch 内所有请求共享）
 - [03 连续批处理与调度器](./03-连续批处理与调度器.md)
 - [04 PagedAttention 与 BlockManager](./04-pagedattention与blockmanager.md)
 - [05 前缀缓存与 RadixCache](./05-前缀缓存与radixcache.md)
-- 06 采样与停止条件（待写）
+- [06 采样与停止条件](./06-采样与停止条件.md)
 - 07 CUDA Graph 与性能优化（待写）
 - 08 TP、benchmark 与项目包装（待写）
 
@@ -115,14 +115,17 @@ projects/从零实现推理引擎/
 ├── 03-连续批处理与调度器.md
 ├── 04-pagedattention与blockmanager.md
 ├── 05-前缀缓存与radixcache.md
+├── 06-采样与停止条件.md
 └── code/
     ├── mini_engine_v0.py
     ├── mini_engine_v1.py
     ├── mini_engine_v2.py
     ├── mini_engine_v3.py
     ├── mini_engine_v4.py
+    ├── mini_engine_v5.py
     ├── block_manager.py
-    └── prefix_cache.py
+    ├── prefix_cache.py
+    └── sampling.py
 ```
 
 > 代码只依赖 `numpy`；每个文件都可以单独运行：
