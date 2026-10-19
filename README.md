@@ -49,6 +49,8 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-19：LLM 合集全量 triage——265/265 正文抓取，A 134 / B 50 / C 81，收敛 34 篇 A1 优先精读；新增 [resources/LLM合集265篇覆盖矩阵.md](resources/LLM合集265篇覆盖矩阵.md)（265 行，含机制/数字/仓内重合/建议落点/原文链接）；A1 精读与写入下一批进行。
+
 - 2026-10-19：LLM 合集四簇补录——① Agentic RL 前沿专题补 2026 六种接口外延（AgentWorld / OpenForge / RubricEM / Skill Self-Play / DRIFT / PNPO，含 4 道新面试题）；② 编译器专题扩写 AOTAutograd（joint graph / min-cut 重算）并新增 ComFuse（跨 GEMM 融合，均值 1.07–1.09×）；③ KV 两篇补 VeriCache（draft-verify 无损）、GVA（只存 value）、SAC / 三星 CXL 池（CXL 按需取数 vs RDMA 整块搬运）；④ 硬件专题补 Jalapeño（216GiB HBM4 / 两跳 Clos）、Tenstorrent QuietBox、HBM5 与 Hot Chips 内存六路；⑤ GPU 基础审计后补 GEMM 形状敏感性 / 波量化，kernel 选型补「先吃上层杠杆」顺序。
 
 - 2026-10-19：新增 distributed-training/gpu发起通信专题——从「LLM」合集（AI 圈的 9527，265 篇）抽出 GPU 发起通信一簇：NVSHMEM 对称内存/快慢路径与 DeepEP 基板用法、GPUNetIO 的 WQE→doorbell→CQE、mKernel 计算+NVLink+RDMA 内核内融合、小消息 AllReduce 四类无屏障协议；集群调度专题补 Green Contexts 进程内 SM 切分（148 SM 实测三档延迟）；同步考点地图、sidebar、通信专题互链与面试六题。

@@ -22,6 +22,7 @@
   - [JD 分析 · AI Infra 岗](resources/jd分析-ai-infra岗.md)
   - [JD 分析 · 北美 Infra 岗](resources/jd分析-北美infra岗.md)
   - [学习资源清单](resources/学习资源清单.md)
+  - [LLM 合集 265 篇覆盖矩阵](resources/LLM合集265篇覆盖矩阵.md)
   - [投递与 offer 实战](resources/投递与offer实战.md)
   - [模拟面试与口语化表达](resources/模拟面试与口语化表达.md)
   - [挂后复盘四步法](resources/挂后复盘四步法.md)
