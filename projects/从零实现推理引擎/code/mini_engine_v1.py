@@ -65,7 +65,7 @@ class HybridModel:
     def _attend(self, q: np.ndarray, k: np.ndarray, v: np.ndarray) -> np.ndarray:
         # q: [Tq, D], k/v: [Tk, D]，因果 mask 只对 full 路径需要；
         # cached 路径的 q 只有最后一行，天然只看得到历史。
-        scores = q @ k.T / np.sqrt(D)
+        scores = np.einsum("td,sd->ts", q, k) / np.sqrt(D)
         if q.shape[0] > 1:
             tq, tk = scores.shape
             mask = np.triu(np.ones((tq, tk), dtype=bool), k=1)
