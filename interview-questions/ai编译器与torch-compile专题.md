@@ -58,9 +58,26 @@ graph break：断点前后各成一个子图，断点处回退 eager 执行。**
 
 ### 2.2 AOTAutograd：backward 也提前追成图
 
-AOT 靠 torch_dispatch 拦截 autograd 注册，把 backward 的计算在编译期就追成图，
-forward/backward 两张图一起交给后端。注意 DDP/FSDP 的通信 bucket **留在图外**
-——图内做计算、图间做通信重叠，这是分布式训练栈和编译栈的标准接缝。
+Dynamo/FX 只抓前向；backward 由 autograd 引擎在运行时按算子动态生成，
+编译器只看到半张图，跨前反向的融合/重排无从谈起。AOTAutograd 用
+`__torch_dispatch__` 在 **ATen 层逐算子拦截**，把前向和后向追进同一张
+FX **joint graph**：每个算子先取 proxy、建 `call_function`、真实执行、
+再把结果绑回 proxy。
+
+追完要切回两张图，切法决定显存账：
+
+| 切分策略 | 保存什么 | 代价 |
+|---|---|---|
+| `default_partition` | 所有中间张量 | 显存占用高，后向不重算 |
+| `min_cut_rematerialization_partition` | 只留输入 + 最小割集 | 用少量重算换掉中间张量的写读，是 activation checkpointing 的一般化 |
+
+直觉：逐点链前后向都 memory-bound，默认每个中间张量前向写一次、后向读
+一次；min-cut 用几乎免费的多余 FLOPs（藏在访存延迟后）换掉这次往返。
+两张图分别编译后包进一个 `torch.autograd.Function`：前向图把后向需要的
+张量作为额外返回值，后向图把它们当输入。上游 Dynamo 抓前向 →
+AOTAutograd 出 fwd/bwd 图 → Inductor 降 kernel，这条 handoff 是
+torch.compile 的主干。DDP/FSDP 的通信 bucket **留在图外**——图内做计算、
+图间做通信重叠，这是分布式训练栈和编译栈的标准接缝。
 
 ### 2.3 Inductor：默认后端，FX 图到 kernel
 
@@ -117,6 +134,35 @@ blog 2025-08 转引）。但收益大头**不在 GEMM raw speed**，而在三处
 `torch.ops.vllm.unified_attention_with_output` 这个 custom op——Dynamo 看不
 进去，编译器只管它周围。这就是「编译赢什么、手件守什么」的分界线，也是
 本专题图里第三张卡的核心。
+
+### 三·增、跨 GEMM 边界的联合融合：ComFuse（2026-08，字节 × 南开）
+
+Inductor 的融合止于 GEMM 外：GEMM 走 cuBLAS/ATen，结果先写回 GMEM，
+下游 RMSNorm/LayerNorm/Softmax 再读回来——on-chip→off-chip→on-chip
+一个来回。ComFuse 把 GEMM 与依赖它的 elementwise/reduction 子图放进
+同一个 kernel 流水：
+
+- **Stage-Stream**：MatMul 一个 stage、下游子图一个 stage；stage 内按
+  DAG 调度，stage 间用可复用片上 buffer 串流，让 epilogue 与下一 tile
+  的 mainloop 重叠。
+- **跨 CTA 共享 + 三级 reduction**：Hopper/Blackwell 的 Thread Block
+  Cluster 经 DSMEM 跨 CTA 交换中间值，TMA 做 bulk 传输；reduction
+  依次走 warp shuffle → warpgroup SMEM → 跨 CTA DSMEM，只沿一个逻辑维
+  归约，同步边界收在 tile 局部子集。
+- **B2BGEMM**：producer/consumer warp group + dataflow scheduling，第一
+  GEMM 的 tile 留在寄存器/片上直接喂第二 GEMM，中间矩阵不落 GMEM。
+- **编译栈**：Code Translate → Frontend Mapping → Reduction Subgraph
+  Splitting → Backend Mapping；高层 tensor 子程序自动 lower 到
+  CUDA/CUTLASS。
+
+数字口径要收紧：公众号说「最高 1.24×」，论文（arXiv:2608.03537v1）给的
+三 pattern 均值是 **1.08× / 1.09× / 1.07×**，B2BGEMM 最好
+Target-Attention **1.97×**、DLRM Bottom MLP **1.23×**；实验是
+PyTorch 2.5.1 + CUDA 12.4 + TensorRT 10.3.0，Inductor 开 static-shape
++ max-autotune。**反例**：Self-Attention 场景 TorchInductor 因内置
+FlashAttention 更强，ComFuse 有明显差距；小规模/小 batch 也会因流水线
+未进稳态而略输。所以它是「GEMM 后拖长 epilogue + Hopper/Blackwell +
+stage 负载平衡」时的架构特定优化，不是通用替代。
 
 ## 四、Serving 侧落地：vLLM 与 SGLang（2026 现状）
 
@@ -260,7 +306,9 @@ unpacked cache 保存可读代码与 TORCH_LOGS 调试路径。
    2025 底长 decode 打平 FA3（100.7%），2026 官方在 AMD 默认 Triton；但大
    GEMM、MoE grouped GEMM、FP4 的手件仍领先。经验推导：新硬件 tensor core
    指令落地，手件先领先一年左右。策略=attention 和量化器**周围**交给编译器
-   融合，本体留给专用 kernel，保住 backend 可插拔。
+   融合，本体留给专用 kernel，保住 backend 可插拔。反方向证据是 ComFuse：
+   把 GEMM 与下游 reduction 联合融合，均值 1.07–1.09×、最高 1.24×；但依赖
+   Hopper/Blackwell，小规模会输。
 5. **CUDA Graph 与动态性的矛盾**。变长 attention 的 launch grid 依赖
    batch/seq，固定 graph 回放会浪费 wave；对策方向是 persistent kernel
    （固定 launch grid、工作量元数据从 GPU 内存读）——2026 attention kernel
@@ -287,6 +335,11 @@ unpacked cache 保存可读代码与 TORCH_LOGS 调试路径。
 - Inductor autotune 实例：decode GEMM（8×2048×3072）最优 Triton 模板
   **0.0130ms** < 默认 cuBLAS 派发 **0.0160ms**——vLLM integration docs，
   2026-10 抓取。
+- ComFuse：GEMM + 下游 reduction 联合融合，三 pattern 均值
+  **1.08× / 1.09× / 1.07×、最高 1.24×**；B2BGEMM 最好
+  Target-Attention **1.97×**、DLRM Bottom MLP **1.23×**——公众号 +
+  论文 arXiv:2608.03537v1（2026-08，字节 × 南开）；GPU 型号未给，
+  Self-Attention 场景以论文为准（Inductor 更强）。
 - Triton paged attention：**长 decode 达 FA3 的 100.7%、MI300 较旧实现快
   5.8 倍、约 800 行对 FA3 约 7 万行**——vLLM blog 2026-03 官方，
   官方标注 late 2025 基准、H100 单卡 bs=1、只覆盖长 decode 段。
@@ -332,6 +385,8 @@ generic-symbolic 组合；铁律「请求期绝不能触发新编译」（编译
 延迟融合（Async TP）。手件守：attention 变体、MoE grouped GEMM、大 shape
 FP8/FP4 GEMM、稀疏低 bit packing。边界走向：Triton/Gluon 持续啃手件地盘，
 新硬件 tensor core 指令落地手件先领先一年左右（推导判断，作答时标注）。
+反方向证据是 ComFuse：把 GEMM 与下游 reduction 联合融合，均值
+1.07–1.09×、最高 1.24×，但只在 Hopper/Blackwell 且 epilogue 够长时划算。
 
 **Q7（频率：中，RL infra 线升频中）数值漂移怎么来的、怎么办？**
 fusion 换归约顺序+低精度累加+batch 组成不同三条来源；解法谱系
@@ -370,6 +425,9 @@ KernelBench 上限尚低、产物仍需人工 review。追问：为什么进化�
   与 MI300，**只覆盖长 decode 段**，prefill 段官方未给同组数字。
 - GPT-fast 表内数字为 2023 末 A100 基准，2026 硬件/软件栈已多代演进，
   仅作「compile+quant 叠加收益形态」示例，勿当 2026 绝对性能引用。
+- ComFuse：公众号「最高 1.24×」是上限；论文 arXiv:2608.03537v1 给的三
+  pattern 均值 1.08×/1.09×/1.07×，Self-Attention 场景 Inductor 更强；
+  实验环境 PyTorch 2.5.1 + CUDA 12.4 + TensorRT 10.3.0，GPU 型号未给。
 
 ## 串联阅读
 

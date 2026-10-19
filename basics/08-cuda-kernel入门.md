@@ -273,6 +273,10 @@ memory），再由 Cube 单元整块吃矩阵。两边解的都是『别让算�
   ——从 HBM 堆叠到各家加速器的设计取舍。
 - 昇腾与国产卡对照：[国产卡推理引擎适配专题](../interview-questions/国产卡推理引擎适配专题.md)
   ——Q3 的追问终点，Cube/Vector/UB 的完整对位翻译。
+- 从 kernel 到通信：
+  [GPU 发起通信专题](../interview-questions/distributed-training/gpu发起通信专题.md)
+  ——NVSHMEM / GPUNetIO / mKernel，把本文的 thread/block 知识接到跨卡
+  数据搬运。
 
 > 内容出处：本篇主体改写自 Outcome School 的
 > [How do CUDA Kernels Work?](https://outcomeschool.com/blog/how-do-cuda-kernels-work)

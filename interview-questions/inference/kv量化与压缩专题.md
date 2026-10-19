@@ -1,4 +1,4 @@
-# KV 量化与压缩专题：位宽谱系 × 驱散谱系 × 引擎落地
+# KV 量化与压缩专题：位宽谱系 × 驱散谱系 × 结构/验证新轴
 
 > **面向**：已读过 [长上下文推理与 KV 多级体系](./长上下文推理与kv体系.md)
 >（KV 总量账、稀疏注意力「省算不省存」的分家）与
@@ -11,7 +11,9 @@
 > WKVQuant）带数字锚的时间线；③ 驱散裁剪谱系（StreamingLLM → H2O → SnapKV →
 > PyramidKV → RazorAttention → DuoAttention）的粒度演进轴；④ vLLM / SGLang
 > FP8 KV 的开关清单与四个部署坑位，MLA 时代为什么还要量 KV（FlashMLA 原生
-> FP8/FP4）；⑤ 两道面试题的完整答法——并发换算账、量化×驱散叠加三形态。
+> FP8/FP4）；⑤ 两道面试题的完整答法——并发换算账、量化×驱散叠加三形态；
+> ⑥ 2026 两条新轴——VeriCache 的 draft-verify 验证层与 GVA 的「只存
+> value、在线重建 key」结构压缩。
 >
 > **时效口径**：素材时间轴从 2023-06 H2O（arXiv:2306.14048）到 2026-09
 > FlashMLA V4.1 新 FP8/FP4 KV 格式；论文数字按 arXiv 摘要口径括注，引擎行为
@@ -28,13 +30,16 @@ KV cache 的「压缩」在仓库里被拆成了三篇，先划清边界才不�
 - [kv-offload 与分层存储专题](./kv-offload与分层存储专题.md)：把 KV **挪走
   存**——HBM/DRAM/SSD/远端池多级体系、LMCache/Mooncake/NIXL 换入换出。
 - **本篇**：把 KV **在原地压小**——两条互相正交的谱系：
-  **量化位宽派**（每个 token 还在，位宽变矮：FP16 → FP8 → 2bit → 1.5bit）与
-  **驱散裁剪派**（token 数变少，留下的仍是全精度：sink+滑窗、heavy hitter、
-  观察窗、逐层预算、头级二分），以及两派与引擎开关的接线。
+  **量化位宽派**（每个 token 还在，位宽变矮：FP16 → FP8 → 2bit → 1.5bit）、
+  **驱散裁剪派**（token 数变少，留下的仍是全精度：sink + 滑窗、heavy hitter、
+  观察窗、逐层预算、头级二分），再加两条 2026 新轴——**结构轴**（GVA
+  只缓存 value、在线重建 key）与**验证层**（VeriCache 用全量 KV 验证有损
+  draft，把压缩变成可验证协议）。
 
 先立一个坐标，全篇都靠它：**量化压的是「位宽」维，驱散压的是「条数」维，
-两个维度正交、可叠加**——MiKV 与 DuoAttention 就是两谱系合流的证据（第六
-节面试题二的正式答案）。
+GVA 压的是「结构」维；三个维度正交、可叠加**——MiKV 与 DuoAttention 就是
+前两谱系合流的证据（第六节面试题二的正式答案），GVA 则把「key 根本不
+必缓存」推到极致。VeriCache 不在这个三维里，它是横向的一层 verify。
 
 <div class="diagram-embed">
 <iframe src="assets/diagrams/kv-quant-evict.html" width="100%" height="890" style="border:none;border-radius:12px" loading="lazy"></iframe>
@@ -271,6 +276,34 @@ PyramidKV 按层分配预算（2024.06）→ RazorAttention / DuoAttention 把�
 从 token 换到头（2024.07 / 2024.10，后者可训练识别头）。**演进轴：粒度
 序列维 → 层维 → 头维；识别方式固定规则 → 启发式 → 可学。**
 
+### 四·增、VeriCache：把有损压缩「验证」成无损
+
+前面两派都在「压」；VeriCache 换了个方向：**不要求压缩本身无损，而是用
+全量 KV 做一次并行 verify，把有损 draft 变成 greedy 无损输出**。
+
+- **同模型、两份 KV**：压缩 KV 自回归出 k 个候选 token，全量 KV 一次
+  并行前向逐位校验；首个不匹配处截断，用全量 KV 的 token 替换。
+  greedy/零温下输出与全量 KV 一致。
+- **资源互补**：draft 吃 HBM 带宽，verify 吃 PCIe/网络；不 lock-step，
+  把验证请求打散进各轮 draft，让传输与 HBM 读重叠。
+- **接受长度**：draft 与 verify 只差 KV 版本，分布偏差远小于小模型 draft；
+  4× 压缩、draft 30 时接受率仍 >0.8，实测接受长度 19–23 token/次
+  （Eagle 1–2、小模型 draft 3–10）。
+- **质量崩塌锚**：KVzip 4× 压缩下 F1 仍 >75%，但代码格式准确率≈0、
+  函数调用准确率 <10%；单步 KL≈0.023 nats 时正确 token 仍有 98% 概率，
+  250 步累积≈6 nats，正确序列概率≈0.25%。**PPL/F1 看不出功能崩塌，
+  这是 KV 压缩评测的分水岭。**
+- **数字**：Llama-70B 1.92–2.73×（102→256 tok/s）；Qwen-32B 叠 Eagle
+  最高 4.26×；远程前缀 1.33–2.11×（240→485 tok/s）；HBM 中 KV 预算
+  0.74→0.2 时加速比 1.61→2.71×。
+- **代价**：只保证 greedy 等价，temperature>0 未覆盖；全量 KV 仍要存
+  CPU/远端，省的是 HBM 容量与带宽，不是总存储；verify 算力/传输是新增
+  开销；研究原型（vLLM+LMCache），非上游默认能力。
+
+**和投机解码的区别**：同模型、不同 KV 版本；精确匹配接受而非 rejection
+sampling；draft 吃 HBM、verify 吃 PCIe，资源互补。面试一句：
+**VeriCache 把「压缩」从质量赌博变成可验证的 draft-verify 协议。**
+
 ## 五、工程落地：vLLM / SGLang 的 FP8 KV 与 MLA 时代
 
 ### 5.1 vLLM：开关清单（官方文档 2026-10 口径）
@@ -337,6 +370,32 @@ MLA（DeepSeek-V2 起）把每 token 的 KV 压成低秩潜向量（相对 GQA �
 4. **口播版**：MLA 把每 token 的 KV 从 MB 压到 KB，FP8/FP4 再砍 2~4
    倍——省的是同一个线性项的常数，长上下文 × 高并发下这个常数决定
    单卡能塞几条会话。**MLA 不是 KV 量化的终点而是新起点。**
+
+### 5.5 GVA：只存 Value，在线重建 Key
+
+GQA 把 KV 头数从 H 降到 G；GVA 再进一步：**每组只缓存 value，key 用
+value 经每头一个固定线性映射在线重建**，把 KV 的「条数×头数」压成
+「条数×组数」。
+
+- **重建**：`K_h = V_g(h) × M_h`，`M_h` 是每 head 一张的
+  `d_h × d_n` 固定映射。
+- **吸收进 Q**：推理时 `q · (vM)^T = (qM^T) · v`，解码主路径不物化
+  内容 key，只多一次 query 侧的小矩阵乘。
+- **位置信息**：标准 RoPE 直接套在重建 key 上会破坏吸收；GVA 用跨 head
+  共享的解耦 RoPE，每 token 只花 `d_r` 个标量（不是 `G × d_r`）。
+- **初始化**：尺度匹配 `σ_M = σ_Q / (σ_V × sqrt(d_in))`，否则 key 过小
+  注意力近均匀、过大过度集中；直接 `K=V` 训练损失回不到 GQA——同一向量
+  兼顾打分与取回，注意力几何与输出几何被强行压进一个表示。
+- **数字**：350M 参数、30B FineWeb-Edu token，五任务平均 44.35 vs GQA
+  44.36、MLA 43.88（16 维位置通道）；持久缓存标量比同级 GQA 少 45–47%。
+  GQA 为 `2TGd_h`，GVA 为 `TGd_h + Td_r`，比值 `1/2 + d_r/(2Gd_h)`。
+- **代价**：改架构需从头预训练；仅 350M 规模；自定义解码 kernel 仍在
+  开发、端到端性能未评估；线性映射限制 key 表达；尚无 serving/paged
+  集成。
+
+**一句话**：GVA 是「结构轴」的压缩——不压位宽、不逐 token，而是把
+key 从缓存里彻底删掉，用 value 的线性变换重建；代价是模型架构与 kernel
+都要改。
 
 ## 六、面试题两组
 
@@ -416,6 +475,12 @@ memory-bound，吞吐收益**小于线性**——KIVI 实测 4 倍 batch 只换�
 6. 全部论文数字（3.2bit / 2.6 倍 / 2.35~3.47 倍 / 7 倍 / 400 万 / 29 倍 /
    12% / 0.7% / 70%+ / 2.55 倍 / 3.3M）为 arXiv 摘要口径，未逐一翻正文
    核验实验设置。
+7. **VeriCache**：公众号解读帖口径（arXiv:2605.17613v1），数字为作者
+   自报；只保证 greedy 等价，temperature>0 未覆盖；全量 KV 仍存 CPU/
+   远端，研究原型基于 vLLM+LMCache，非上游默认能力。
+8. **GVA**：公众号解读帖口径；350M 参数、30B FineWeb-Edu token 的单模型
+   实验，缓存减少比例为公式推导；自定义解码 kernel 仍在开发，尚无
+   serving/paged 集成，跨规模结论未验证。
 
 ## 串联阅读
 
@@ -429,7 +494,9 @@ memory-bound，吞吐收益**小于线性**——KIVI 实测 4 倍 batch 只换�
   PagedAttention 底座——理解「KV 池几乎全是 KV」的调度背景。
 - [稀疏注意力专题](./稀疏注意力专题.md)与
   [注意力变体 2026 专题](./注意力变体2026专题.md)：DSA/NSA/MoBA 与
-  MLA/GQA 的架构侧——「省算」两把刀，与本篇「省存」两把刀互为镜像。
+  MLA/GQA/GVA 的架构侧——「省算」两把刀，与本篇「省存」两把刀互为镜像。
+- [投机解码 2026 专题](./投机解码2026专题.md)：VeriCache 的 draft-verify
+  骨架与「同模型、不同 KV 版本」的差异——本篇四·增的对照。
 - [推理调度专题](./推理调度专题.md)：continuous batching 与 batch 上限—
   —并发换算账（6.1）的调度语境。
 - [agentic-serving 专题](./agentic-serving专题.md)：agent 多轮、长前缀复

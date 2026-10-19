@@ -1,18 +1,23 @@
-# Agentic RL 前沿手法专题：Search-R1、ReTool 与 On-Policy Distillation
+# Agentic RL 前沿手法专题：三个基础手法与 2026 六种接口外延
 
 > **面向**：已读过本仓 [agentic-rl专题](./agentic-rl专题.md)（多轮
 > credit assignment 与工业配方）、想再往下一层看「环境交互协议到底怎么
-> 设计」的读者。本篇只讲三个手法，每个都是从零实现视角拆开：检索环境
-> （Search-R1）、代码执行环境（ReTool）、教师在线指导（OPD）。
+> 设计」的读者。本篇先讲三个基础手法——检索环境（Search-R1）、代码执行
+> 环境（ReTool）、教师在线指导（OPD）；再补 2026 年六个接口外延——
+> 环境模拟（AgentWorld）、Harness 编排（OpenForge）、rubric 监督
+> （RubricEM）、技能自博弈（Skill Self-Play）、难度路由（DRIFT）与
+> 前缀几何平均（PNPO）。
 >
 > **读完获得**：① observation mask 为什么是所有 tool-RL 的必修课；
-> ② 三手法的环境接口/奖励源/代表数字一张对比表；③ 一条「为什么 mask」
-> 起手的面试追问链与参考答法。
+> ② 三基础手法的环境接口/奖励源/代表数字一张对比表；③ 2026 六种外延
+> 各自解决哪条缝、代表数字与代价；④ 一条「为什么 mask」起手的面试
+> 追问链与参考答法。
 >
-> **口径说明**：数字均引自一手出处（arXiv 摘要与 Thinking Machines
-> 官方 blog，2025），文末列 URL；论文口径是「作者自报」，不代表独立复现。
+> **口径说明**：2025 三手法数字引自一手出处（arXiv 摘要与 Thinking
+> Machines 官方 blog）；2026 六种外延为公众号解读帖转录，数字为作者/
+> 论文自报，文末「口径与未核实说明」逐条标注；均不代表独立复现。
 
-## 一、为什么单讲这三个
+## 一、为什么从这三个基础手法讲起
 
 [agentic-rl专题](./agentic-rl专题.md) 回答的是「多轮轨迹上
 credit 怎么分、各家工业配方怎么选」，偏顶层。面试到了 2025-2026 年
@@ -198,7 +203,87 @@ turn-aware 回合感知，是该族手法的自报名）。标准 OPD 单侧 rol
   Multi-Hop 两臂动态转移。官方论文编号 arXiv:2607.05804（本节原
   依据解读帖转录，正文复读后图表口径补全；官方一手论文仍未读）。
 
-## 五、三手法对比表
+## 五、2026 前沿：六种「接口外延」
+
+> 三个基础手法回答「环境、执行、教师」三类接口；2026 年这批工作把接口
+> 继续往外推：环境侧（AgentWorld / OpenForge）、监督侧（RubricEM）、
+> 任务侧（Skill Self-Play / DRIFT）、算法侧（PNPO）。六篇均为公众号
+> 解读帖转录，数字是作者/论文自报，逐条口径见文末。
+
+### 5.1 环境侧：让环境可模拟、可编排
+
+**AgentWorld（阿里 Qwen）**：用语言世界模型学「动作 → 下一
+observation」，覆盖 MCP / Search / Terminal / SWE / Web / OS / Android
+七域；GUI 用 accessibility tree 而非像素；CPT 1000 万 + 真实轨迹 + 逐轮
+信息论掩码（API echo 类轮次只留 5% 梯度）；SFT 256K 上下文，RL 用
+GSPO + rubric/规则混合奖励。数字：自建 AgentWorldBench 397B 58.71 vs
+GPT-5.4 58.25；35B 三阶段 47.73→56.39；Sim RL 在未见过的 4000 个
+OpenClaw 环境上 WideSearch F1 50.3% vs Real RL 45.6%；扰动不可控时会
+负迁移（32.4→31.5）。一句话：**Sim RL 的价值是低成本造真实环境难复现
+的压力，但模拟器质量就是天花板。**
+
+**OpenForge（微软）**：在推理服务前插轻量代理，拦截 rollout 容器请求、
+按标准样本重建轨迹，兼容 veRL；K8s 编排器弹性起删容器；wall-clock
+超时杀卡死作业、失败轨迹整条丢弃。数字：Claw Qwen3-30B-A3B 在 4 个
+Harness、8×B200 上 ClawEval 31.7/55.9；GUI Qwen3-VL-8B OSWorld 37.7、
+Mind2Web 63.0、WebVoyager 72.3；多 Harness 训练 OpenClaw +9.5、
+Codex +20.3。一句话：**Harness 端到端训练的卡点是「有状态多进程 +
+容器不在训练节点」，代理把推理与训练解耦。**
+
+### 5.2 监督侧：同一套 rubric 贯穿规划、裁判与反思
+
+**RubricEM（Google）**：同一个 rubric 贯穿 Plan→Research→Review→
+Answer，既是规划清单、也是裁判基准和反思模板；SS-GRPO 的阶段 k 回报 =
+自身分 + λ×下游分；反思候选由特权 LLM 打分后写入 rubric 库，异步不
+阻塞；「两次遭遇」课程先跨轮检索、再用自己的反思重放。数字：8B/1400
+步四长篇研究基准均分 55.5（DR Tulu-8B 1900 步 53.6、OpenAI Deep
+Research 59.9）；600 步消融 SS-GRPO/Meta-Policy 各 +2~3、合起来 5+。
+一句话：**rubric 不只是打分器，还是规划与反思的共享语言；代价是教师/
+裁判都是 LLM，反思可能朝错方向演化。**
+
+### 5.3 任务侧：换出题接口，或换配题强度
+
+**Skill Self-Play（阿里千问）**：动态技能库当任务模式接口；Controller
+从执行反馈提炼/淘汰技能；Proposer 按技能路由 + 开放探索，在 Solver
+当前学习前沿出题；验证器过滤后训练 Solver，循环共进化。数字：5 个骨干
+（Qwen3-4B/8B、Ministral-3-8B/14B、Granite-4-1-3B），Qwen3-4B 在多个
+工具基准达/超 Qwen3-8B；原文无绝对分。一句话：**self-play 的多样性由
+技能库显式化，可验证性由验证器兜底。**
+
+**DRIFT**：课程教师两阶段（自蒸馏热身→自蒸馏+RL）；难度路由做问题级
+RL 更新强度、token 级按预测不确定性调；节律门控做结构化探索；成功
+缓冲池重放成功轨迹。数字：AIME +15.6% vs GRPO、+9.8% vs SDPO；
+MATH +5.5%/+3.2%；工具调用基准超基线；原文未说明相对/绝对。一句话：
+**已掌握题过度优化、未掌握题监督弱，按掌握度分配优化强度。**
+
+### 5.4 算法侧：rollout 复用时，重要性比怎么算
+
+**PNPO（腾讯）**：把 token 级累积重要性比换成沿因果前缀的几何平均
+`w_t = exp((1/t) Σ log r_k)`，保留前缀依赖又压住 log-weight 尺度；
+对比 local（丢前缀）、精确累积（乘积爆炸）、GSPO（整响应均值广播、
+丢位置差异）。数字：长上下文数学（AMC 2023 / AIME 2024 / AIME 2025），
+每步 256 prompt×8=2048 response，4-epoch 每基准 Avg@32 最高，三基准
+峰值均值 50.24、比 GSPO 高 3.00；匹配 2400 update 最终 macro 49.66，
+只用 1/4 新 response；1-epoch 不持续占优。一句话：**PNPO 只在「重复用
+rollout / 重 off-policy」的 4-epoch 场景划算。**
+
+### 5.5 六方法对比
+
+| 方法 | 解决什么问题 | 关键机制 | 代表数字（自报） | 主要代价 |
+|---|---|---|---|---|
+| **AgentWorld** | 真实环境不可复现、难扩展 | 语言世界模型 + 可控扰动 Sim RL | WideSearch 50.3 vs 45.6；OOD +11.3 | 模拟器即天花板；397B 成本高 |
+| **RubricEM** | 长程研究无标准答案、终端奖励稀释 | rubric 贯穿四阶段 + SS-GRPO + 反思库 | 8B/1400 步均分 55.5（DR Tulu 53.6） | 依赖教师/裁判；仅 Gemini-flash 检索 |
+| **OpenForge** | Harness 有状态多进程，训练栈接不上 | 推理代理 + K8s 编排 + 轨迹重建 | ClawEval 31.7/55.9；GUI 63.0/72.3 | 终端奖励未解 credit；容器成本 |
+| **Skill Self-Play** | self-play 多样性与可验证性矛盾 | 动态技能库 + 提议/求解/控制共进化 | Qwen3-4B 达/超 8B（无绝对分） | 验证器瓶颈；技能库漂移 |
+| **DRIFT** | 所有题同一优化强度 | 课程教师 + 难度路由 + 节律门控 + 成功池 | AIME +15.6% vs GRPO | 四组件多超参；口径不明 |
+| **PNPO** | rollout 复用导致重 off-policy | 前缀似然比几何平均 | 4-epoch 峰值均值 50.24，+3.00 vs GSPO | 仅数学；有偏估计 |
+
+**一句话定位**：AgentWorld 换环境、OpenForge 换执行栈、RubricEM 换监督
+语言、Skill Self-Play 换出题器、DRIFT 换配题强度、PNPO 换重要性比。
+它们不是互相替代的六个 loss，而是 agentic RL 流水线上六个不同接口的
+外延。
+
+## 六、三手法对比表
 
 | 维度 | Search-R1 | ReTool | OPD |
 |---|---|---|---|
@@ -214,7 +299,7 @@ turn-aware 回合感知，是该族手法的自报名）。标准 OPD 单侧 rol
 朝着「结果可验证」或「分布不可 hack」设计**。这两句是 tool-RL
 工程的总纲。
 
-## 六、面试怎么考：一条追问链
+## 七、面试怎么考：一条追问链
 
 1. 「Search-R1 为什么要把检索内容 mask 掉？」——见 2.2 三条理由，
    追问「不 mask 会出什么现象」（背文档、梯度被无关 token 稀释、
@@ -291,6 +376,31 @@ OPD 冷启动 + RL 收尾是常见配方。
 而且 40% 的文本基线用了更多步数（1080 vs 400），说明的更多是
 **样本效率差距**。面试答数字顺手带上这个限定，显得读过论文。
 
+**Q8（中频）：Sim RL 为什么能超过 Real RL？**
+参考答法：模拟器能低成本造真实环境难复现的压力——分页、间歇性错误、
+不完整结果、长尾工具失败；AgentWorld 在未见过的 4000 个 OpenClaw 环境
+上 WideSearch F1 50.3% vs Real RL 45.6%。前提是模拟器够真、扰动可控；
+扰动不可控会负迁移（32.4→31.5），且自建榜有同源偏差。
+
+**Q9（中频）：rubric 除了打分还能干什么？**
+参考答法：RubricEM 用同一套 rubric 贯穿 Plan→Research→Review→Answer：
+规划时当清单、阶段信用当基准、反思时当模板；阶段回报 = 自身分 + λ×下游
+分，反思库异步更新。好处是三个环节共享一套语言、减少接口摩擦；代价是
+教师/裁判都是 LLM，反思可能朝错方向演化。
+
+**Q10（中频）：DRIFT 的难度路由和 TurnOPD 的回合预算是同一回事吗？**
+参考答法：不是。DRIFT 是**问题级**分配优化强度（按掌握度调 RL 更新、
+token 级按不确定性调节奏），再加节律门控与成功池；TurnOPD 是**回合级**
+分配监督预算（信号前载、轨迹归一化、KL 污染）。一个管「哪些题多练」，
+一个管「一条轨迹里哪些回合多学」，正交，可以叠加。
+
+**Q11（中频）：同一批 rollout 复用 4 次，GSPO 的问题是什么？PNPO 怎么改？**
+参考答法：GSPO 把整条响应的平均重要性比广播到所有 token，丢掉前缀位置
+差异；精确累积乘积又会在 log 尺度上爆炸。PNPO 取因果前缀的几何平均
+`w_t = exp((1/t) Σ log r_k)`，保留前缀依赖又压住尺度；4-epoch 复用下
+三基准峰值均值 50.24、比 GSPO 高 3.00，但 1-epoch 不持续占优，且只在
+数学任务验证——它是「重 off-policy 复用」的特化，不是通用替换。
+
 ## 口径与未核实说明
 
 - Search-R1：arXiv:2503.09516（2025-03 首版，v5 2025-08），
@@ -305,6 +415,12 @@ OPD 冷启动 + RL 收尾是常见配方。
   17,920 vs 1,800 GPU 小时为 Qwen3 技术报告表 21 的转引；
   9x/30x/50-100x 为 TM 复现实验口径（按 FLOPs 计，GPU 小时口径
   约 18x）。AIME 数字不同年份基准不可横比。
+- 2026 六篇：AgentWorld / RubricEM / OpenForge / Skill Self-Play /
+  DRIFT / PNPO，均为「LLM」合集（AI 圈的 9527）公众号解读帖转录，
+  2026-06～2026-10 发布；数字为作者/论文自报，未独立复现。DRIFT 的
+  +15.6% 未说明相对/绝对；OpenForge 的 31.7/55.9 原文未明确 pass@k；
+  Skill Self-Play 无绝对分；AgentWorld/RubricEM/OpenForge 均使用自建
+  或论文内基准，跨榜不可横比。
 - 共同免责：以上为论文/官方自报，非独立复现；面试引数字请带口径。
 
 ## 串联阅读
@@ -314,6 +430,9 @@ OPD 冷启动 + RL 收尾是常见配方。
 - [rlhf与对齐](./rlhf与对齐.md)：GRPO 推导、reward hacking 总论
 - [rl环境工程专题](./rl环境工程专题.md)：环境本身的工程实现
 - [rl奖励设计专题](./rl奖励设计专题.md)：奖励三选一的三角取舍
+- [rl 训练工程实战](./rl训练工程实战.md)：DRIFT 的课程采样与 batch size 工程
+- [推理模型训练专题](./推理模型训练专题.md)：GSPO / PNPO 所在的推理 RL
+  算法谱系
 - [post-training蒸馏生产线专题](./post-training蒸馏生产线专题.md)：
   蒸馏流水线全貌
 - [../蒸馏与剪枝专题](../蒸馏与剪枝专题.md)：离线蒸馏与 KL 方向之争
@@ -331,4 +450,5 @@ OPD 冷启动 + RL 收尾是常见配方。
 （GRPO/OPD/Search-R1/ReTool 四件套）与
 [hello-agents](https://github.com/datawhalechina/hello-agents)
 第 11 章的组织思路（二者均为 CC BY-NC-SA 4.0，仅借鉴结构，未复制
-原文）；一切事实与数字以上三节列出的一手出处为准。
+原文）；2026 六种外延的素材来自「LLM」合集（AI 圈的 9527）对应解读帖，
+已在口径节列明；一切事实与数字以上列出的出处为准。

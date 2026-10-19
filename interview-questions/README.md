@@ -85,7 +85,7 @@
 | 安全 / 红队 / Guardrail | 高（新题块） | [agent/agent安全与防护](agent/agent安全与防护.md) + [guardrail系统专题](agent/guardrail系统专题.md) | — | 2026 安全攻略 18 题 |
 | Coding Agent 源码路线 | 高（爬升） | [agent/pi-agent源码分析](agent/pi-agent源码分析.md) + [agent/deepseek-harness分析](agent/deepseek-harness分析.md) + [agent/codex源码分析](agent/codex源码分析.md) + [agent/claude-code源码机制专题](agent/claude-code源码机制专题.md) + [agent/hermes与openclaw生态专题](agent/hermes与openclaw生态专题.md)（争议与增长拆账） + [agent/openclaw源码机制专题](agent/openclaw源码机制专题.md)（Gateway/Context Engine 机制面） + [coding-agent横评专题](agent/coding-agent横评专题.md) | — | 「读过什么 agent 源码」五极话术（pi/dsh/codex/claude-code/openclaw）、开源伦理三立场 |
 | 多 Agent 协作与状态仲裁 | 中 | [agent/多agent与评测](agent/多agent与评测.md) | 模考卷 A 第 10 题 | 面试官追问链、抖音场景题 |
-| Agentic RL | 高（爬升） | [训练与对齐/agentic-rl专题](训练与对齐/agentic-rl专题.md) + [agentic-rl前沿手法专题](训练与对齐/agentic-rl前沿手法专题.md)（Search-R1/ReTool/OPD）+ [rl环境工程专题](训练与对齐/rl环境工程专题.md) | [coding/手写grpo-loss](../coding/模型手撕/手写grpo-loss.md) | 字节 agent RL 三面、美团 M17 教程 |
+| Agentic RL | 高（爬升） | [训练与对齐/agentic-rl专题](训练与对齐/agentic-rl专题.md) + [agentic-rl前沿手法专题](训练与对齐/agentic-rl前沿手法专题.md)（Search-R1/ReTool/OPD + 2026 六种外延）+ [rl环境工程专题](训练与对齐/rl环境工程专题.md) | [coding/手写grpo-loss](../coding/模型手撕/手写grpo-loss.md) | 字节 agent RL 三面、美团 M17 教程 |
 | **训练与对齐** ||||
 | PPO / DPO / GRPO 差异与推导 | 极高（算法岗） | ★[rlhf与对齐](训练与对齐/rlhf与对齐.md) + [经典rl地基专题](训练与对齐/经典rl地基专题.md)（MDP→贝尔曼→PPO 全程映射 RLHF，含 AlphaGo 案例锚）+ [rl训练工程实战](训练与对齐/rl训练工程实战.md) | [coding/手写grpo-loss](../coding/模型手撕/手写grpo-loss.md) + [对齐与并行代码](../coding/模型手撕/对齐与并行代码.md) | 滴滴四连追问、GRPO 13 关、米哈游 DPO 实战改法与长度漂移 |
 | SFT / OPD / RL 选型 | 新高 | [post-training蒸馏生产线专题](训练与对齐/post-training蒸馏生产线专题.md) | [coding/手写蒸馏kl](../coding/模型手撕/手写蒸馏kl.md) | 滴滴选型五连问、字节多模态 |
