@@ -243,6 +243,22 @@ DSL，显式控制 scaled MFMA、异步拷贝、软件流水）：
   [推理引擎 2026 新进展](../inference/推理引擎2026新进展.md) 的第八条
   收敛趋势。
 
+## 五·增三、A2 速记：从竞赛到生产
+
+- **Stanford AMD kernel（26）**：多 Agent 合成 HIP 任务 + SFT/GRPO；
+  500 任务/8 Agent；L2 正确率 **13%→60%**。
+- **CUDA Agent（64）**：合成算子任务 + 技能 Agent 循环 + 多阶段预热稳 RL，
+  里程碑奖励；6K 算子；稳定步 **17→200**；通过 **98.8%**、**2.11×**。
+- **Kernel Agent（115）**：类型化 Cake IR + 编译器本地化诊断 + harness
+  自演化；**1.144× vs 0.928×**；KDA **2.05×**；AlphaMoE **6.2×**。
+- **生产级 Agentic Kernel（129）**：模型级 trace 找跨核机会 + per-kernel
+  搜索 + 经验库；Qwen-Image FP8 **-15.8%**；CFG 缓存 **-2.1%**。
+- **Sage Attention 3 移植（180）**：Agent 用 INDEX/测试阶梯/PTX-SASS
+  指标把 CUDA C++ 搬到 CuTeDSL；**1.2× vs C++**、**2.8× vs cuDNN**；
+  spill **456→0**。
+- **Kernel Design Agent（232）**：多语言内核搜索；六道验门堵 reward
+  hacking；**2.96×（TIRx）**；误差 **0.29% vs 3.45%**；识破假 **3.74×**。
+
 ## 六、▶ 面试题与追问
 
 **Q1【高】给一个「让 agent 写 kernel」的需求，你会先建什么？**

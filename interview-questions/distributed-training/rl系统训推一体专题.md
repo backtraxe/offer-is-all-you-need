@@ -323,6 +323,13 @@ PrimeIntellect-ai/prime-rl 2,152★、字节 ByteDance-Seed/VeOmni 2,236★
 SpecActor 改 rollout 生成，QwenGyre 改资源重配——六条分别落在算法、
 数据面、生成、调度四个接口上。
 
+### 八·增二、A2 速记：两条 RL 系统增量
+
+- **Miles（31）**：小核心插件化；Rollout Routing Replay 让训练/推理的
+  MoE 路由对齐；解决的是「同一 token 在两侧走不同 expert」。
+- **GLM-5 万亿参数 RL（45）**：Wide EP + PD 分离 + R3 路由重放 +
+  DSA 自定义 CP；28×H200；**131k 序列**；步长 **<5min**。
+
 ## 九、▶ 高频面试题 8 条（全收）
 
 **Q1【极高】colocate vs disaggregated 怎么选？**

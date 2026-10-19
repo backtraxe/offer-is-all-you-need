@@ -115,6 +115,14 @@ token（prefill 计算近乎减半）、CUDA graphs 让修剪后的小 replay �
 GPU 而非卡在 CPU launch、kernel 改进加速计算本身——**近似、调度、
 kernel 三层各自独立、各自可证，叠加成 5 倍**。
 
+## 六·增、A2 速记：H20 与 SGLang 两条实录
+
+- **DeepSeek-V4-Pro on H20（119）**：按上下文切 PP2/PP4；decode 分
+  PP2-TP8 与 DP32-EP32；batch1 **271 vs 383.7 tok/s**；1M **43.7s**。
+- **V4.1-Flash SGLang 调优（159）**：修 GEMM 派发、融合小算子、mHC
+  重叠，verify 按 6 行重做；**35→873.6 tok/s**；EP4 **854.6 vs TP4
+  873.6**。
+
 ## 七、▶ 面试题与追问
 
 **Q1【高】SWA bounded replay 是什么？为什么不是精确重算也敢上？**
