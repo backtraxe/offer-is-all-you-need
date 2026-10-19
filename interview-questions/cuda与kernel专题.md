@@ -310,6 +310,18 @@ MXFP4 量化+QAT（Expert 参数占比最大、量化容错最高，其余模块
 - 结论话术："融不融看 roofline，融完看 occupancy，能不能进
   Graph 看同步点。"
 
+### 5·增、FA4 反向的 TMEM 别名：hdim 64 为什么慢
+
+FA4 反向在 hdim=64 时慢，不是 MMA 算力不够，而是 **P 与 dS 在 TMEM 里
+别名**：两者抢同一块累加器空间，编译器只能插 kernel 级 barrier 串行化。
+修法：
+
+- 用空闲 TMEM 列给 P/dS 去别名，删掉核级 barrier；
+- 重排 MMA，把 QK 提前发射，填掉等待窗口；
+- 结果：**903 TFLOPS**、**1.06–1.15×**；基线只有峰值的 **26–32%**。
+- 面试点：Blackwell 上「TMEM 是新的寄存器压力」——很多 attention 反向
+  的瓶颈不是 FLOPs，而是 TMEM 分配与 barrier。
+
 ## 六、口试常撕三大件：骨架要点（代码不重复）
 
 以下三题是手撕现场出场率最高的；代码与逐步讲解一律挂到

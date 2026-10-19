@@ -166,6 +166,30 @@ GPU HBM → host memory → filesystem/SSD → object store → 远端 peer（�
   是容量规划的新输入变量，对接
   [推理服务 SLO 与运营](./推理服务slo与运营.md)的口径。
 
+## 四·增、架构级 KV 压缩：CED / CSA2 / FP4
+
+DeepSeek-V4.1-Flash 把 KV 分两本账：**运行时全局 KV**（受 HBM 限）与
+**持久 KV**（受 SSD/主机内存限）。三层同压：
+
+- **CED（因果编码器）**：40 层中底 20 层作编码器，解码器各层全局 KV 由
+  第 20 层隐状态经逐层投影得到；prefill 只算一半层，O(N·L)→约
+  O(N·L/2)。SWA 仍逐层算，需重放；Bounded Replay 只对末窗 prefill。
+- **CSA2 三轴同压**：条目（MLA）、序列（每 m token 一条）、层（共享
+  main KV 与 indexer K）。每层三模式：Full 自算、Reindex 复用 KV/indexer
+  K 但自算 top-K、Reuse 连索引一起复用；把缓存共享与索引复用解耦。
+- **分层索引器**：首个 Full 层建 2048 块×8 位置=16384 候选池，后续
+  Reindex 只在池内打分，单 query 成本与上下文长度无关。
+- **FP4 主 KV**：MXFP4（E2M1 + 每 16 通道 E4M3 scale，无二级 global
+  scale），RoPE 后量化；SWA KV 留 FP8。
+- **数字**：全局 KV **890 B/token**，约 V4-Flash 的 **1/4**、V1 的
+  **1/437**；持久 KV 约 **1/8**；552B 主干 + 196B Engram；prefill 激活
+  8B、decode 16B；45T token；4K→1M 解码 FLOPs 仅增约 1/4；候选池
+  16384、每层 top-512；视觉 3×3 反混洗使 token 降 1/9。
+- **边界**：SWA 重放使 prefill 多算约「窗口×L/2」token；FP4 只省存储
+  不加速矩阵乘，注意力前需反量化；SWA 对量化敏感不能同降。
+- **和稀疏的分工**：CSA2 省的是跨层共享与低精度，不是稀疏本身；DSA
+  仍负责「选哪些 token」，两者正交。
+
 ## 五、▶ 面试追问 5 条
 
 | 追问 | 答题要点 |
@@ -193,4 +217,4 @@ GPU HBM → host memory → filesystem/SSD → object store → 远端 peer（�
 *相关阅读：[vLLM 与推理加速核心](./vllm与推理加速核心.md) ·
 [量化与压缩](./量化与压缩.md) ·
 [推理服务 SLO 与运营](./推理服务slo与运营.md) ·
-[模块导航](./README.md)*
+[模块导航](../README.md)*

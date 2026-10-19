@@ -161,6 +161,49 @@ KV 复用（llm-d agentic-serving guide 部署形态，2026）**。
 出 PD 分离本身不算完，要指出 agent 负载下这唯一「规则改变」的点（机制
 细节见 [长上下文推理与kv体系](./长上下文推理与kv体系.md)）。
 
+### 3.4 AgentX：混合 KV、会话保留与按模型选并行
+
+- **混合 KV 共池**：统一页为分配单位，滑窗/线性态/全注意力 KV 共池、
+  动态重分，不按类型静态分区；V4 初版拆 3 个尺寸桶、92 个张量，改每块
+  连续 backing allocation；FP4 indexer 再省约 **10% KV**。
+- **会话感知保留**：每轮末存 prompt/线性态；同一前缀第二次出现才落
+  检查点，命中却无检查点的缺口在边界重算补存。AgentX 中位 **43 轮**、
+  输入 **142K**、输出 **444**、前缀命中 **>96%**；44% 会话含 subagent
+  （中位 4 个）。
+- **并行随架构**：K3（MLA+KDA）用 DCP，对称内存直写、query 多播、
+  partial 输出与 LSE 写对端、单 kernel 融合，每层省约 **13%**；V4
+  压缩稀疏 MLA 用 PCP 切 prompt、decode 默认 DEP；宽 EP 下 batch>3 时
+  DEP16 胜 DCP8。
+- **调度**：`--long-prefill-token-threshold 512` 让长 prefill 给短轮
+  让路；`--prefill-schedule-interval N` 用跨 DP 计数器对齐各 rank 的
+  prefill 步。V4 Pro/B300 上 TPGS **+93%**、p90 交互度 **2.3×**，代价是
+  长请求 TTFT 变差。
+- **取舍**：低阈值换短轮延迟，牺牲长冷 prompt 的 TTFT；均衡输给 sticky
+  ——迁会话要取 KV，预取占容量，队列平了但在飞并发更少；PP 只适合冷长
+  prefill。
+
+### 3.5 GLM-5.3 在 GB200 NVL72：P/D 拓扑与调度气泡
+
+- **拓扑**：Dynamo + vLLM + NIXL 做 P/D 解耦，decode 不跑 prefill，KV
+  到即入 batch，p90 ITL 降约 **40%**。prefill 选 DEP8（8 个 DP attention
+  rank、EP 组内共享），每 rank 缓存不同请求；TEP8 会把每请求 KV 在 8 rank
+  各复制一份，可用前缀缓存约 **5×**。DEP16 比 2×DEP8 慢 **17.9%**。
+- **调度气泡**：KV 早 ready，请求仍要等 running batch 决策；每 GPU
+  prefill 预算 **8K 砍到 4K**，步子变短、请求更早上车；排队中位
+  **550→110ms**，TTFT 中位降约 **20%**。
+- **Decode 选 TP4**：AgentX 64 会话 ITL **6.08ms**，TP8+DCP4
+  **14.02ms**；TP 复制 4 份 latent KV，但 sparse attention 每 query 最多
+  读 2048 token，DCP 省的计算抵不过通信。
+- **NVFP4 KV**：512 维 latent 压 4bit、每 16 值一个 FP8 scale、64 维位置
+  保 FP8；原生 kernel 片上解包，FP16 算、FP32 累加。KV 行 **576→352B**，
+  容量 **+50%**，109 万→163 万 token/decoder。
+- **BLHNC 块主布局**：LBHNC 按层存，20 万 token 请求到单 TP4 rank 触发
+  3.2 万次小拷贝，NVLink 反比 IB 慢 **292ms**；BLHNC 同块多层连放，
+  描述符 **19,559→1,940**、传输 **146→78ms**。
+- **取舍**：DEP8 用 DP 同步气泡换 5× 前缀缓存，DEP16 已递减；4K 预算
+  利好缓存复用轮，损长冷 prompt；NVFP4 省容量但个别代码任务掉点
+  （HumanEval -0.30、HumanEval+ -0.92）。
+
 ## 四、机制三：结构化输出约束
 
 ### 4.1 逐 token 掩码的开销已被压到近零

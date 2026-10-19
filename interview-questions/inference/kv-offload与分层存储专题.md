@@ -346,6 +346,46 @@ manager 意味着分配/淘汰/传输逻辑双份维护，且命中边界必须�
 - **面试句**：DRAM 装不下后，重算成本压倒搬运成本；CXL 池用「略慢但
   够大」的内存把重算换成搬运，拐点在容量而不是带宽。
 
+### 五·增五、SGLang Unified Radix Cache：一棵树 + 组件投票
+
+混合模型（FullAttn / SWA / Mamba）的前缀复用语义不同：FULL 认整条路径、
+SWA 只认尾窗、MAMBA 只认检查点。为每种组合造缓存类会爆炸，SGLang 的做法是
+把「前缀身份」与「组件有效性」拆开：
+
+- **一棵 token radix 树**给唯一坐标；三种组件挂成 TreeComponent，只实现
+  match/split/insert/lock/evict 钩子。
+- **边界靠投票**：沿 FULL 路径下走，各激活组件出 validator，全部接受才
+  推进；单层拒绝不阻断遍历。遍历深度与可复用深度由此解耦。
+- **anchor vs sidecar**：anchor 定语义并给页索引；sidecar 只借源池索引存
+  载荷，不投票、不占 radix 槽。
+- **会话驱逐**把引用当复用信号而非 pin：FULL 按引用计数排序，SWA/MAMBA
+  先扫未引用再回退；关会话只移信号，且只覆盖 L1/L2。
+- 数字：DeepSeek-V4-Flash 500GiB L3 命中近 **98%**、TTFT 均值 **<9s**、
+  有效输入吞吐 **145.5K tok/s**；Inkling-Small 三组件命中 **96.8%**、
+  **1.23s** TTFT、**67.1K tok/s**；SWE-bench 设备命中 DeepSeek-V4-Pro
+  **42%→51%**、Qwen3.5-397B **5%→34%**；Rust 核 SWA 负载 TTFT 降
+  **38%**、后 24 回合 **42%**。
+- 边界：SWE-bench 同时换缓存实现与驱逐策略，不是 session awareness 的
+  隔离消融；Rust 核仅 L1-only，不支持 HiCache。
+
+### 五·增六、vLLM Hybrid HiSparse：稀疏 MLA 的按需驻留
+
+- 稠密 offload 提不了并发：每个 token 都可能被读，KV 必须常驻或反复换入，
+  GPU 占用无上界。稀疏 MLA 的 indexer 只选 top-K，可只留被选中 token、
+  其余卸 CPU，给每请求有效上界；indexer KV 仍留 GPU，IndexShare 每四层
+  共享一个 indexer 摊薄。
+- Hybrid 仅在压力下卸：放得下就全驻留。三态按页跟踪——**full** 全留并
+  预拷前缀到 host；**mixed** 尾部留 GPU、老页在 CPU、所需行进热缓冲；
+  **no** 前缀只在 CPU，从热页加占位符起步。
+- 热缓冲页就是普通 KV block，经 HMA 与驻留页共池、按 token 索引，故一页
+  可跨多个 CPU 块；融合 kernel 解 top-K：驻留行原地读、热行读并刷 LRU、
+  miss 拷单行；decode 不等 CPU 裁决，仍可 CUDA graph 捕获。
+- 数字：8×H200、OpenHands 13 轮，首轮 74,160 token；Hybrid 切
+  **384GiB HiSparse + 128GiB 普通 offload**；热缓冲默认 **2× top-K**
+  行/请求；MTP 口径按（投机 token+2）×top-K 定体积。
+- 边界：热缓冲给每请求加固定 GPU 成本，调大是用并发换覆盖；只对稀疏
+  MLA 成立，计算器为预估，长度倾斜与调度会压低实际并发。
+
 ## 六、部署形态速查
 
 被问「你们环境怎么挂的」，按五张牌回答：

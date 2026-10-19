@@ -298,6 +298,31 @@ PrimeIntellect-ai/prime-rl 2,152★、字节 ByteDance-Seed/VeOmni 2,236★
    能穿透 router 对后面的 SGLang worker 精确 abort（slime #2340），
    粗粒度 kill 会误伤同节点其他在途请求。
 
+## 八·增、2026 六条增量：SAO / SAT / Mooncake RL / NIXL 同步 / SpecActor / QwenGyre
+
+- **SAO（智谱 GLM 5.2）**：单轨迹异步 + 双侧重要性裁剪 + 快更新价值模型；
+  1000 步稳定 vs GRPO 160 步崩，AIME **97.3/84.2**。解决的是「组采样
+  本身就是同步屏障」，把 wait 从组内挪到轨迹级。
+- **SAT（腾讯混元）**：用 `|log ρ|` 作陈旧度代理，逐 token 收窄裁剪半径；
+  lag=1 **35.83**、lag=8 **34.79**，失配约 **10×**。与固定 clip 的差别是
+  「按陈旧度自适应」，不是又一个 trust region 超参。
+- **Mooncake for RL**：控制面/数据面分离，按字段布局打包碎片化 rollout；
+  GET **10–14×**、PUT **1.2–1.6×**，单样本 **3,422B**。把 KV 池的
+  transfer engine 复用到 rollout 数据搬运。
+- **NIXL 权重同步**：单边 RDMA + lazy 张量 trace 拆「前缀寻址/后缀重放」；
+  **86.1s→3.9s**、1.6TB、单卡 **45GB/s**。权重热更从「全量广播」变成
+  「按需拉取」。
+- **SpecActor**：草稿与验证分卡解耦，按接受率调 draft window，尾部叠加
+  多草稿；rollout 占 **70–80%**，提速 **2.0–2.4×**、端到端 **1.4×**。
+  与推理侧投机解码同源，但优化的是 rollout 墙钟而非 TPOT。
+- **QwenGyre**：弹性 RL，按未完成 rollout 动态重分 GPU，TITO 轨迹树
+  前缀去重；**1.85×**、75.42h vs 91.47/134.55h、**+6.0pp**。解决的是
+  「长尾 rollout 拖死整批」的资源轴，不是算法轴。
+
+**一句话定位**：SAO/SAT 改异步优化，Mooncake/NIXL 改数据与权重搬运，
+SpecActor 改 rollout 生成，QwenGyre 改资源重配——六条分别落在算法、
+数据面、生成、调度四个接口上。
+
 ## 九、▶ 高频面试题 8 条（全收）
 
 **Q1【极高】colocate vs disaggregated 怎么选？**

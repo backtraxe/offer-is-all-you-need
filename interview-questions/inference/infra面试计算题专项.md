@@ -232,6 +232,20 @@ AI = T_e·h·d / (h·d + T_e(h+d))
 
 ---
 
+### 三·增、临界 batch 与注意力算术强度
+
+decode 的 batch 不是越大越好：batch 增大提高算术强度，但 KV 读取字节数也
+线性涨；两者相等时就是**临界 batch**。
+
+- 公式：`B_crit ≈ (算力 × 每 token 计算量) / (带宽 × 每 token KV 字节)`；
+  超过它，decode 从 memory-bound 翻到 compute-bound，再加大 batch 的
+  边际吞吐下降。
+- 例子：13B 模型、8K 上下文，KV 约 **6.7GB**；batch=4 时单步约
+  **2.5ms**；原文给的临界 batch 在 **240/280** 量级（随 GPU 算力/带宽比
+  变化）。
+- 面试用法：先算每 token KV 字节，再算 `B_crit`，最后解释「为什么
+  continuous batching 不是无限扩 batch」——显存和算力两端都会封顶。
+
 ## 四、并行度与通信量
 
 ### EP 该开多大（以 DeepSeek 规格为例，固定单卡 batch = 16）
