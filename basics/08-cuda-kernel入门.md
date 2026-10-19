@@ -115,6 +115,20 @@ CUDA 有对高频词：**主机（host）= CPU + 内存**；**设备（device）
 第 6 步  cudaFree(d_a) ...                        释放显存
 ```
 
+落到代码就是这段（省略错误检查）：
+
+```cuda
+float *d_a, *d_b, *d_c;                                        // 设备指针
+cudaMalloc(&d_a, n * sizeof(float));                           // 第 2 步
+cudaMalloc(&d_b, n * sizeof(float));
+cudaMalloc(&d_c, n * sizeof(float));
+cudaMemcpy(d_a, a, n * sizeof(float), cudaMemcpyHostToDevice); // 第 3 步
+cudaMemcpy(d_b, b, n * sizeof(float), cudaMemcpyHostToDevice);
+add<<<blocks, threadsPerBlock>>>(n, d_a, d_b, d_c);            // 第 4 步
+cudaMemcpy(c, d_c, n * sizeof(float), cudaMemcpyDeviceToHost); // 第 5 步
+cudaFree(d_a); cudaFree(d_b); cudaFree(d_c);                   // 第 6 步
+```
+
 第 3、5 步走 PCIe / NVLink 这类总线，比 GPU 算数慢得多——04 讲 roofline
 时那句「GPU 不是算不快，而是搬不动」，税根就在这两步。所以「这个任务值
 不值得上 GPU」的判断朴素得很：**搬运开销要是盖过省下的计算时间，就别上**。
@@ -160,6 +174,14 @@ warp 带来一条常识和一个陷阱：
 算力几乎全部来自 Tensor Core**，CUDA Core 更多负责地址计算、循环推进
 这类杂活。线程模型负责把活分下去，矩阵乘的活最终都落在 Tensor Core 上。
 
+把镜头拉远：你写 `torch.matmul(a, b)` 时一行 CUDA 没写，但 PyTorch
+最终调的是 cuBLAS 里高度优化的 GEMM kernel；LLM 每生成一个 token，
+GPU 上会接连启动成千上万个 kernel（GEMM 只是其中最重的一类）。
+**框架把「写 kernel」藏了起来，性能上限却仍由这些 kernel 决定**——
+这正是 AI Infra 岗既要会用框架、又要能下钻到 kernel 的原因。想看一次
+forward 里 kernel 怎么排队、cuBLAS 怎么挑变体，接
+[Torch Profiler 入门实战专题](../interview-questions/torch-profiler入门实战专题.md)。
+
 ## 五、显存三层：寄存器、共享内存、全局内存
 
 Kernel 里每个变量住在哪，直接决定这段代码快不快。设备内存分三层：
@@ -180,7 +202,25 @@ CUDA 编程最经典的一招：**把一块数据从全局内存搬进共享内�
 （块内线程怎么对齐步骤：`__syncthreads()` 栅栏——所有人都到齐了，才允许
 读白板。它在手撕代码里高频出现，先混个脸熟。）
 
-## 六、▶ 面试挂钩
+## 六、Kernel 的边界：什么时候值得上 GPU
+
+Kernel 不是万能加速器。把「适不适合」压成一张对照表：
+
+| 适合上 GPU | 不适合上 GPU |
+| --- | --- |
+| 同一操作作用于大量数据：GEMM、卷积、attention | 任务太小：10 个数相加，拷贝比计算还贵 |
+| 各元素的计算互不依赖，能拆给不同线程 | 强串行依赖：第 2 步必须等第 1 步结果 |
+| 计算量足够大，摊得平主机与设备间的拷贝 | warp 内重度分支发散，32 路各走各的 |
+| 数据装得进显存，且访存模式规整（相邻线程读相邻地址） | 数据装不下，要在内存与显存之间来回搬 |
+
+判断顺序可以很朴素：**先看并行度，再看计算强度，最后看数据装不装得
+下**。三条里有一条明显不满足，GPU 的加速就可能被拷贝、串行或搬运吃
+光——04 的 roofline 与搬运开销，就是用来算这笔买卖的。
+
+面试若问「什么任务不适合上 GPU」，照这张表分四点答即可：粒度太小、
+强串行、分支发散、装不下。
+
+## 七、▶ 面试挂钩
 
 **Q1【高 · 实录】SIMD 和 SIMT 有什么区别？**（腾讯 TEG 推理优化岗三面
 原题）
@@ -220,7 +260,7 @@ memory），再由 Cube 单元整块吃矩阵。两边解的都是『别让算�
 再取整到 2 的幂，兼顾多维网格的规整性，以及访存合并（coalescing：相邻
 线程访问相邻地址时，硬件能把多次访存合并成少数几次大事务，对齐友好）。」
 
-## 七、延伸阅读（仓内进阶指针）
+## 八、延伸阅读（仓内进阶指针）
 
 - 口试体系篇：[CUDA 与 Kernel 专题](../interview-questions/cuda与kernel专题.md)
   ——FA 四代演进、decode kernel 族、融合方法论与真题 10 条，本篇是它的地基。
