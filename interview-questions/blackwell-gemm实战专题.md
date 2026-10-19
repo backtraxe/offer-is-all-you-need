@@ -184,6 +184,14 @@ decode attention output 最惨：grid 只有 64 个 CTA（148 个 SM
    **同一个 knob 在项目两个时点给出相反结论，因为瓶颈搬家了**。
    参数扫掠结论离开 regime 即失效。
 
+## 四·增、A2 速记：NVFP4 超 cuBLAS
+
+- **#114 7 warp 四角色、K96/256 双 CTA MMA、TMEM 双缓冲、L2 分区
+  调度**：超 cuBLAS **4.7%**；读 `%laneid` 提速 **77.5%**；SMEM 占用
+  **99.1%**。
+- 面试点：Blackwell 上「SMEM 打满」不是事故，而是用占用率换单 CTA
+  吞吐；关键是 TMEM 双缓冲与 CTA 协作。
+
 ## 五、▶ 面试题
 
 **Q1【高】Blackwell 相对 Hopper 在 GEMM 编程模型上的本质变化？**

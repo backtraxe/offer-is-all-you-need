@@ -229,6 +229,13 @@ dev    2026/01  激活 offloading 主线、Muon/Layer-wise 优化器、
 被问"最近 Megatron 有什么新动作"时按这个节奏答，重点是 **MoE 通信隐藏 + 精度 +
 FSDP 收敛** 三条线还在演进。
 
+## 十一·增、A2 速记：Parallel Folding
+
+- **#123 Parallel Folding 解耦 attention/MoE 并行**：三墙拆解；
+  DSv3 **1233 TF/GPU**；all-to-all 占比 **30–60%→<5%**。
+- 面试点：attention 与 MoE 的最优并行度不同，强行同一套 TP/EP 会让
+  一边等另一边；解耦后用不同并行组各自打满。
+
 ## 十二、▶ 面试题小结（六道背熟）
 
 | # | 题目 | 记忆锚 |

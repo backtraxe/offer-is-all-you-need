@@ -353,6 +353,13 @@ component-residency 四档、conditioning cache、LoRA、ComfyUI 插件与多
 | Wan 系 | 2025 持续 | 开源权重加闭源 API 双层——2.5/2.6 代只陈述「开源加闭源 API」这一事实分层，不引未核实规格 | 开源档以 README 为准 |
 | LTX-2 | 2025-10-23 公告 | 原生音视频同步、4K/50fps、10s | 产品规格新基线 |
 
+## 六·增、A2 速记：SGLang Diffusion 加速
+
+- **#130 Cache-DiT 跨步复用 + SubBlock 块稀疏 + 融合核**：无损约
+  **2×**；组合最高 **6.24×**；SSIM **0.76–0.91**。
+- 面试点：diffusion 加速的三把刀——跨步缓存、块稀疏、kernel 融合；
+  先看哪一步是访存瓶颈，再决定缓存还是稀疏。
+
 ## 七、▶ 面试题十条（按频率排序）
 
 | # | 频率 | 追问 | 答题要点 |
@@ -382,7 +389,7 @@ component-residency 四档、conditioning cache、LoRA、ComfyUI 插件与多
   kernel——SageAttention 那一代的直接上下文
 - [显存计算专题](./显存计算专题.md)：显存五笔账与 KV 三旋钮，本文第五节
   offload 显存治理的对照账
-- [推理模块导航](./inference/README.md)
+- [推理模块导航](./README.md)
 
 ## 口径与未核实项说明
 

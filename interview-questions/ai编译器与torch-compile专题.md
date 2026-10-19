@@ -349,6 +349,13 @@ unpacked cache 保存可读代码与 TORCH_LOGS 调试路径。
 - SkyRL IsoExec：**官宣把 logprob 差压到 1e-6 以下、开销约 25%（代价）**——
   2026-08 blog 官宣数据。
 
+## 八·增、A2 速记：Inductor 树外后端
+
+- **#260 树外后端：stick 布局图级优化 + scratchpad 规划 + 工作划分
+  协同**：273k→**38.6k 行**；matmul **29–69%**；softmax **-27%**。
+- 面试点：Inductor 的可扩展性不只在「加一个 backend」，还在布局与
+  scratchpad 的协同；树外后端是国产/新硬件接入的现实路径。
+
 ## 九、▶ 面试题（带频率标注）
 
 **Q1（频率：极高）torch.compile 为什么快？**

@@ -409,6 +409,14 @@ optimization（eval 驱动），以及 agent abstractions 本身。LangChain 的
    传递（Cognition 称之为未解难题）、agent 部署的 rainbow/灰度、end-state
    eval 的标准化——这些是 2026-27 的开放问题。
 
+## 七·增、A2 速记：动态 subagent 编排
+
+- **#6 动态拆解 + 数百 subagent 交叉验证**：主 Agent 按任务动态拆解，
+  派数百个子 Agent 并行验证；工程量为 **Bun 75 万行 Rust**，**11 天**
+  完成，**99.8% 测试通过**。
+- 面试点：subagent 不是「越多越好」，关键是拆解边界、结果汇总与冲突
+  裁决；这套打法的成本是编排与验证，不是模型调用。
+
 ## 八、面试口径（可直接背）
 
 ### Q1：你们为什么用 LangGraph 不用 Dify？

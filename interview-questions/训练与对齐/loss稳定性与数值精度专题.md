@@ -297,6 +297,13 @@ MiniCPM v1（arXiv:2404.06395）全文检索**没有** loss spike 内容（2026-
 | block size 128 | Qwen3 官方 FP8 checkpoint 量化粒度（**推理侧 PTQ**） | Qwen3-235B-A22B-FP8 model card，2025 |
 | dual-clip 等四件套 | MiniCPM-4 治 off-policy rollout spike | MiniCPM-4 报告，2025，官方口径 |
 
+## 七·增、A2 速记：4-bit NVFP4 RL
+
+- **#59 逆量化反向 + 4/6 块缩放**：对齐前先做向量化决策；4/6 误差
+  **1/6→1/8**；PTX **2.8×**；FP4/FP8 相关系数 **0.924**。
+- 面试点：低精度 RL 的难点在反向，不在前向；逆量化要保证梯度尺度，
+  否则 advantage 被量化噪声淹没。
+
 ## ▶ 面试题
 
 **Q1（高频）：你们训练崩了怎么救？**
