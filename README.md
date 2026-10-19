@@ -49,6 +49,8 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
+- 2026-10-19：新增 distributed-training/gpu发起通信专题——从「LLM」合集（AI 圈的 9527，265 篇）抽出 GPU 发起通信一簇：NVSHMEM 对称内存/快慢路径与 DeepEP 基板用法、GPUNetIO 的 WQE→doorbell→CQE、mKernel 计算+NVLink+RDMA 内核内融合、小消息 AllReduce 四类无屏障协议；集群调度专题补 Green Contexts 进程内 SM 切分（148 SM 实测三档延迟）；同步考点地图、sidebar、通信专题互链与面试六题。
+
 - 2026-10-19：basics/08 补录微信原文三块未收内容——完整 host/device 六步代码（cudaMalloc / cudaMemcpy / launch / cudaFree）、`torch.matmul → cuBLAS GEMM kernel` 的框架视角桥接（链 Torch Profiler 专题）、新增「Kernel 的边界」一节：适合/不适合上 GPU 的四条对照与「并行度 → 计算强度 → 显存容量」判断顺序；小节顺延为七/八。
 
 - 2026-10-19：basics/08「CUDA Kernel 入门」新增——微信公众号《CUDA Kernel 是如何工作的》（AI 圈的 9527 编译 Outcome School 原文）对仓查重收账：六成内容撞 basics/04 宏观账与 roofline（CPU vs GPU 直觉、搬运开销、torch.matmul→cuBLAS）不录，四成真缺口按仓体例新写为 08 篇——Kernel 单线程心智模型、thread/block/grid 三级与 i=blockIdx×blockDim+threadIdx 来龙去脉、host/device 六步流程、warp/SIMT/SM/分支发散、寄存器-SMEM-全局三层、CUDA Core vs Tensor Core，数据口径对齐仓规（共享/全局差一个数量级以上，不沿用原文「约 100 倍」）；▶ 面试挂钩全挂实录：腾讯 TEG 三面「SIMD vs SIMT+thread id 组合追问」、理想推理引擎「SIMT/UB/CUDA 与昇腾差异」、优酷一面「CUDA Core vs Tensor Core」；同步修复 cuda与kernel专题 §九 硬件直觉断链（原指 basics/04 声称讲 SM/SMEM 实未涉及，改双指 04+08），cuda算子手撕加零基础先读指引，_sidebar 与 basics/README 阅读顺序表加 08 行，学习路线图 L1（05-07→05-08）与 W1-2（七篇连读→八篇连读）同步挂链

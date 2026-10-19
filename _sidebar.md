@@ -229,6 +229,7 @@
     - [训推逐位一致专题](interview-questions/distributed-training/训推逐位一致专题.md)
     - [Megatron 源码深度拆解](interview-questions/distributed-training/megatron源码深度拆解.md)
     - [通信与网络专题](interview-questions/distributed-training/通信与网络专题.md)
+    - [GPU 发起通信专题](interview-questions/distributed-training/gpu发起通信专题.md)
 
 - **手撕题**
   - [题库导读](coding/README.md)
