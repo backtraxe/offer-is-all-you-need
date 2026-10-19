@@ -49,7 +49,7 @@ Agent 开发与 AI Infra 方向的面试备战仓库，记录我在求职季的�
 
 ## 最近更新
 
-- 2026-10-19：新增 [从零实现推理引擎](projects/从零实现推理引擎/README.md) 系列——总纲 + 第 1–7 章；纯 `numpy` 可运行 v0–v5 + CUDA Graph 模拟器，覆盖单请求 while 循环、KV Cache、prefill/decode 拆分、连续批处理、PagedAttention/BlockManager、前缀缓存/RadixCache、采样与停止条件、launch overhead/break-even，代码在 `projects/从零实现推理引擎/code/`。
+- 2026-10-19：新增 [从零实现推理引擎](projects/从零实现推理引擎/README.md) 系列——总纲 + 第 1–8 章完结；纯 `numpy` 可运行 v0–v5 + CUDA Graph/TP/benchmark 模拟器，覆盖单请求 while 循环、KV Cache、prefill/decode 拆分、连续批处理、PagedAttention/BlockManager、前缀缓存/RadixCache、采样与停止条件、launch overhead/break-even、TP 列切/行切与 TTFT/TPOT/吞吐，代码在 `projects/从零实现推理引擎/code/`。
 
 - 2026-10-19：LLM 合集全量 triage——265/265 正文抓取，A 134 / B 50 / C 81，收敛 34 篇 A1 优先精读；新增 [resources/LLM合集265篇覆盖矩阵.md](resources/LLM合集265篇覆盖矩阵.md)（265 行，含机制/数字/仓内重合/建议落点/原文链接）；A1 34 篇已于 2026-10-19 全部写入对应专题；A2 100 篇也已全部落位（69 篇独立速记 + 31 篇补记/交叉索引）。
 
