@@ -30,6 +30,9 @@
 - **项目篇章**
   - [项目篇章导读](projects/README.md)
   - [推理引擎实战](projects/推理引擎实战.md)
+  - [从零实现推理引擎](projects/从零实现推理引擎/README.md)
+    - [01 最小引擎循环](projects/从零实现推理引擎/01-最小引擎循环.md)
+    - [02 KV Cache 与 prefill/decode](projects/从零实现推理引擎/02-kv-cache与prefill-decode.md)
   - [从零造轮子：模型与训练](projects/从零造轮子.md)
   - [Agent 与 RAG 实战](projects/agent与rag实战.md)
 

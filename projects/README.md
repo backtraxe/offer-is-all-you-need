@@ -105,6 +105,9 @@
 
 - [推理引擎实战](./推理引擎实战.md)：tiny-llm 或 nano-vllm/mini-sglang
   二选一为主，llama2.c/llm.c/Liger 补 kernel 谈资，PR 收尾；
+- [从零实现推理引擎](./从零实现推理引擎/README.md)：一步一步写
+  mini-vLLM，从单请求 while 循环到 KV Cache / continuous batching /
+  PagedAttention，每章有可运行代码与验收指标；
 - [从零造轮子：模型与训练](./从零造轮子.md)：LLMs-from-scratch /
   nanoGPT / minimind / llms-from-scratch-cn，重点讲"烂大街怎么救"；
 - [Agent 与 RAG 实战](./agent与rag实战.md)：OpenManus 硬化 +
